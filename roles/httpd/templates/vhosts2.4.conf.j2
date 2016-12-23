@@ -2,7 +2,7 @@
     ServerName   {{ item.name }}
     DocumentRoot /var/www/vhosts/{{ item.name }}/htdocs
 
-{% if item.ssl_only is defined %}
+{% if item.ssl.only | bool %}}
 
     ErrorLog      "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/error_log.%Y%m%d 86400 540"
     CustomLog     "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/access_log.%Y%m%d 86400 540" combined
@@ -54,7 +54,7 @@
 {% endif %}
 </virtualhost>
 
-{% if ( item.letsencrypt | bool ) or ( item.ssl.key is defined ) %}
+{% if ( item.letsencrypt | bool ) or ( item.ssl.use | bool ) %}
 
 <VirtualHost *:443>
     ServerName   {{ item.name }}
@@ -103,7 +103,7 @@
     ProxyPassReverse /mt/ http://localhost:8080/mt/
 {% endif %}
 
-    {% if item.ssl_only | bool %}
+    {% if item.ssl.only | bool %}
     Header set Strict-Transport-Security "max-age=31536000"
     {% endif%}
 

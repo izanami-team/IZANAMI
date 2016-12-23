@@ -12,7 +12,7 @@ server {
     access_log  /var/www/vhosts/{{ item.name }}/logs/access.log  main;
     error_log   /var/www/vhosts/{{ item.name }}/logs/error.log warn;
 
-    {% if item.ssl_only is defined %}
+    {% if item.ssl.only | bool %}
     if ( $scheme = "http" ) {
         return 301 https://$host$request_uri;
     }
