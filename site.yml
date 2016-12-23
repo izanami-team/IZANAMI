@@ -36,7 +36,7 @@
       tags: ImageMagick
     - role: php
       tags: php 
-      when: "{{ php | bool }}" and "{{ apache | bool }}"
+      when: "{{ php | bool }}"
     - role: perl
       tags: perl 
     - role: daemontools
