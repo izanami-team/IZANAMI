@@ -130,6 +130,10 @@
   with_fileglob: "ssl/*"
   tags: httpd
 
+- name: modify apache users
+  user: name=apache group={{shared_group}} groups=apache append=yes
+  tags: httpd
+
 - name: set cronvar
   cronvar: user="root" name="{{ item.name }}" value="{{ item.value }}"
   with_items:

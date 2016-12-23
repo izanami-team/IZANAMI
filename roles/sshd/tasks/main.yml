@@ -61,16 +61,6 @@
   when: sftp_users is defined
   tags: ssh
 
-- name: modify apache users
-  user: name=apache group={{shared_group}} groups=apache append=yes
-  tags: ssh
-  when: "{{ apache | bool }}"
-
-- name: modify nginx users
-  user: name=nginx group={{shared_group}} groups=nginx append=yes
-  tags: ssh
-  when: "{{ nginx | bool }}"
-
 - name: users exist - wheel
   user:
     name: "{{item.name}}"
