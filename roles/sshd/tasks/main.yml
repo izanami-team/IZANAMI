@@ -1,7 +1,7 @@
 - name: install the denyhosts
   yum: name=denyhosts state=present enablerepo=epel
   tags: ssh
-  when: denyhosts | bool
+  when: (denyhosts | bool) and (inventory_file != 'local')
 
 - name: replace /usr/bin/denyhosts.py
   replace: dest=/usr/bin/denyhosts.py regexp='\#!/usr/bin/python$' replace='#!/usr/bin/python26'
