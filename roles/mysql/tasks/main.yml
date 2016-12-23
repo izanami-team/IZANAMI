@@ -24,6 +24,18 @@
    - mysql-community-devel
   tags: mysql
 
+- name: install the 'python-pip'
+  yum: name="python-pip" state=present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+  tags: python
+
+- name: python passlib installed
+  command: pip install {{ item }}
+  with_items:
+    - passlib
+    - MySQL-python
+  tags: python
+
 - name: Create Mysql configuration file
   template: src=my.cnf.j2 dest=/etc/my.cnf
   tags: mycnf
