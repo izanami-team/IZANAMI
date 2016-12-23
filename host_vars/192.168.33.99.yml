@@ -25,7 +25,9 @@ mt:
 vhosts:
   - name: movabletype.local
     letsencrypt: False
-    ssl_only: False
+    ssl:
+      use: False
+      only: False
     email: youremail@example.com
 wheel_users:
   - { name: test,       password: "test"}
