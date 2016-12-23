@@ -1,0 +1,48 @@
+upstream app-servers {
+    server 127.0.0.1:8080;
+}
+
+server {
+    {% if item.ssl is defined %}
+    listen 443 ssl;
+    {% endif %}
+    listen 80;
+    server_name {{ item.name }};
+    root /var/www/vhosts/{{ item.name }}/htdocs;
+    access_log  /var/www/vhosts/{{ item.name }}/logs/access.log  main;
+    error_log   /var/www/vhosts/{{ item.name }}/logs/error.log warn;
+
+    {% if item.ssl_only is defined %}
+    if ( $scheme = "http" ) {
+        return 301 https://$host$request_uri;
+    }
+    {% endif%}
+
+    location /mt {
+        {% if mt.basic is defined %}
+        auth_basic "auth";
+        auth_basic_user_file /var/www/htpasswd; 
+        {% endif %}
+        client_max_body_size 300M;
+        proxy_redirect off;
+        proxy_read_timeout  600;
+        {% if item.ssl is defined %}
+        proxy_set_header    X-Forwarded-HTTPS on;
+        {% endif %}
+        proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header    X-Forwarded-Host  $host;
+        proxy_set_header    Host              $host;
+        proxy_set_header    X-Real-IP         $remote_addr;
+        proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_pass http://app-servers;
+    }
+
+    {% if item.ssl is defined %}
+    ssl_certificate /etc/letsencrypt/live/{{ item.name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ item.name }}/privkey.pem;
+    ssl_session_cache   shared:SSL:3m;
+    ssl_buffer_size     8k;
+    ssl_session_timeout 10m;
+    {% endif %}
+}
+

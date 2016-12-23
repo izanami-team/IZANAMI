@@ -1,0 +1,20 @@
+- name: install the 'firewalld'
+  yum: name="firewalld" state=present
+  tags: firewall
+
+- name: firewall is runnning and enabled
+  service: name=firewalld state=running enabled=yes
+  tags: firewall
+
+- name: to open the https
+  firewalld: service=https permanent=true state=enabled immediate=true
+  tags: firewall
+
+- name: to open the http
+  firewalld: service=http permanent=true state=enabled immediate=true
+  tags: firewall
+
+- name: to open the ssh
+  firewalld: service=ssh permanent=true state=enabled immediate=true
+  tags: firewall
+

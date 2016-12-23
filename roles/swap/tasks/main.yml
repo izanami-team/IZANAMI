@@ -1,0 +1,36 @@
+- name: check swapfile
+  shell: swapon -s | grep 'swap'
+  ignore_errors: True
+  register: result_swap
+  tags: swap
+
+- name: crete swap
+  command: dd if=/dev/zero of=/mnt/swapfile bs=1M count=1024
+  when: result_swap|failed
+  tags: swap
+
+- name: mkswap
+  command: mkswap /mnt/swapfile
+  when: result_swap|failed
+  tags: swap
+
+- name: swap permissions
+  file: path=/mnt/swapfile owner=root group=root mode=0600
+  when: result_swap|failed
+  tags: swap
+
+- name: swapon swap file
+  command: swapon /mnt/swapfile
+  when: result_swap|failed
+  tags: swap
+
+- name:  mount swap
+  mount: name=swap src=/mnt/swapfile fstype=swap opts=defaults passno=0 dump=0 state=present
+  when: result_swap|failed
+  tags: swap
+
+- name: auto mount for swapfile
+  lineinfile: dest=/etc/fstab line='/mnt/swapfile swap        swap    defaults        0   0'
+  tags: swap
+
+

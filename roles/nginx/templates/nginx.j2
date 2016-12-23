@@ -1,0 +1,15 @@
+/var/www/vhosts/*/logs/*log {
+    daily
+    missingok
+    rotate 90
+    dateext
+    compress
+    delaycompress
+    notifempty
+    create 640 nginx adm
+    sharedscripts
+    postrotate
+        [ -f /var/run/nginx.pid ] && kill -USR1 `cat /var/run/nginx.pid`
+    endscript
+}
+

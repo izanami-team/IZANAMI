@@ -1,0 +1,7 @@
+*.bak
+*.old
+*.db
+*.swp
+site.retry
+MT-*
+*.pem

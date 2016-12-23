@@ -1,0 +1,16 @@
+---
+# ImageMagick
+- name: ImageMagick is installed
+  yum: name={{ item }} state=present
+  with_items:
+   - ImageMagick
+   - ImageMagick-devel
+   - ImageMagick-perl
+  tags: ImageMagick
+
+- name: insert "Policymap" configuation block in /etc/ImageMagick/policy.xml
+  blockinfile:
+    dest: /etc/ImageMagick/policy.xml
+    block: "{{ policymap }}"
+  tags: ImageMagick
+

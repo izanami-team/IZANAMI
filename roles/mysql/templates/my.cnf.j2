@@ -1,0 +1,58 @@
+[mysqld]
+socket                          = /var/lib/mysql/mysql.sock
+user                            = mysql
+datadir                         = /var/lib/mysql
+symbolic-links                  = 0
+pid-file                        = /var/run/mysqld/mysqld.pid
+log_error                       = /var/log/mysqld.log
+slow_query_log                  = 1
+slow_query_log_file             = /var/lib/mysql/slow-query.log
+character-set-server            = utf8mb4
+default-storage-engine          = InnoDB
+thread_stack                    = 192K
+key_buffer_size                 = 16M
+sort_buffer_size                = 2M
+read_buffer_size                = 2M
+read_rnd_buffer_size            = 1M
+join_buffer_size                = 1M
+net_buffer_length               = 2K
+innodb_data_home_dir            = /var/lib/mysql
+innodb_log_group_home_dir       = /var/lib/mysql
+innodb_data_file_path           = ibdata1:10M:autoextend
+innodb_file_per_table
+innodb_buffer_pool_size         = 1024M
+innodb_log_file_size            = 32M
+innodb_log_buffer_size          = 8M
+innodb_lock_wait_timeout        = 50
+innodb_flush_log_at_trx_commit  = 2
+innodb_thread_concurrency       = 4
+innodb_commit_concurrency       = 4 
+query_cache_size                = 0
+thread_cache_size               = 128
+max_connections                 = 386
+max_connect_errors              = 30
+max_allowed_packet              = 16M
+max_heap_table_size             = 4M
+tmp_table_size                  = 4M
+long_query_time                 = 0.5
+server-id                       = 1
+sync_binlog                     = 1
+log-bin                         = mysql-bin
+log-bin-index                   = mysql-bin
+expire_logs_days                = 14
+default_password_lifetime       = 0
+log_timestamps                  = SYSTEM
+explicit_defaults_for_timestamp
+skip-character-set-client-handshake
+
+[mysqldump]
+quick
+max_allowed_packet              = 16M
+default-character-set           = utf8mb4
+single-transaction
+
+[client]
+port                            = 3306
+default-character-set           = utf8mb4
+socket                          = /var/lib/mysql/mysql.sock
+

@@ -1,0 +1,18 @@
+httpd_conf24:
+   - { regexp: '^#ServerName www.example.com:80$', replace: 'ServerName {{ vhosts[0].name  }}:80' }
+   - { regexp: '^Group apache$', replace: 'Group {{ shared_group }}' }
+   - { regexp: '^ServerTokens OS$', replace: 'ServerTokens Prod' }
+   - { regexp: '^\s+Options Indexes FollowSymLinks$', replace: '#Options Indexes FollowSymLinks' }
+   - { regexp: '^\s+Require all granted$', replace: 'Require all denied' }
+   - { regexp: '^ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\"$', replace: '#ScriptAlias /cgi-bin/ "/var/www/cgi-bin/"' }
+   - { regexp: '^\#NameVirtualHost \*:80$', replace: 'NameVirtualHost *:80' }
+disalbe_module: 
+   - { regexp: '^LoadModule suexec_module modules/mod_suexec.so$', replace: '#LoadModule suexec_module modules/mod_suexec.so' }
+   - { regexp: '^LoadModule userdir_module modules/mod_userdir.so$', replace: '#LoadModule userdir_module modules/mod_userdir.so' }
+aliasdirectory: | 
+  <Directory /var/www/movabletype/mt-static>
+    Options FollowSymLinks
+    AllowOverride All
+    Require all granted
+  </Directory>
+

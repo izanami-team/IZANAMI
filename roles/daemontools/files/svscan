@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+# svscan        Start svscan.
+#
+# Author:       TAKIZAWA Takashi <taki@cyber.email.ne.jp>
+#
+# chkconfig: 345 99 50
+# description:  svscan starts and monitors a collection of services. 
+#                see http://cr.yp.to/daemontools.html
+# processname: svscan
+# service directory: /service
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PATH="/usr/local/bin:$PATH"
+prog=svscan
+SVDIR=/service
+RETVAL=0
+export PATH SVDIR
+
+
+start() {
+	echo -n $"Starting $prog: "
+	daemon svscan $SVDIR &
+	RETVAL=$?
+	echo_success
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/svscan
+}
+
+stop() {
+	echo -n $"Stopping $prog: "
+	killproc svscan
+	RETVAL=$?
+	(cd $SVDIR && svc -dx $SVDIR/*)
+	(cd $SVDIR && svc -dx $SVDIR/*/log)
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/svscan
+}
+
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	status svscan
+	RETVAL=$?
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo $"Usage: $prog {start|stop|status|restart|reload}"
+	exit 1
+esac
+
+exit $RETVAL
+

@@ -1,0 +1,8 @@
+shared_group: contents
+sftponly_group: sftponly
+sshd_sftp: |
+  Match Group {{ sftponly_group }}
+  ChrootDirectory /var/www/vhosts
+  X11Forwarding no
+  AllowTcpForwarding no
+  ForceCommand internal-sftp

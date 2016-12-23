@@ -1,0 +1,4 @@
+[vagrant]
+192.168.33.99
+[vagrant:vars]
+mysql_root_password="@Movabletype6"

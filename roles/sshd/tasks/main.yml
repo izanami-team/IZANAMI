@@ -1,0 +1,102 @@
+- name: install the denyhosts
+  yum: name=denyhosts state=present enablerepo=epel
+  tags: ssh
+  when: denyhosts | bool
+
+- name: replace /usr/bin/denyhosts.py
+  replace: dest=/usr/bin/denyhosts.py regexp='\#!/usr/bin/python$' replace='#!/usr/bin/python26'
+  tags: ssh
+  when: (denyhosts | bool) and (ansible_distribution == "Amazon")
+
+- name: denyhosts is runnning and enabled
+  service: name=denyhosts state=running enabled=yes
+  tags: ssh
+  when: denyhosts | bool
+
+- name: replace /etc/sudoers
+  replace: dest=/etc/sudoers regexp='\# \%wheel\s+ALL=\(ALL\)\s+ALL' replace='%wheel        ALL=(ALL)       ALL'
+  tags: ssh
+
+- name: replace sshd_config
+  replace: dest="/etc/ssh/sshd_config" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items:
+   - { regexp: '^Subsystem\s+sftp\s+/usr/libexec/openssh/sftp-server$', replace: 'Subsystem sftp internal-sftp' }
+  tags: ssh
+
+- name: replace sshd_config
+  replace: dest="/etc/ssh/sshd_config" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items:
+   - { regexp: '^#PermitRootLogin yes$', replace: 'PermitRootLogin no' }
+   - { regexp: '^#Protocol 2$', replace: 'Protocol 2' }
+   - { regexp: '^#PermitEmptyPasswords no$', replace: 'PermitEmptyPasswords no' }
+  tags: ssh
+  when: ansible_distribution == "CentOS"
+
+- name: insert sshd configuation block in /etc/sshd_config
+  blockinfile:
+    dest: /etc/ssh/sshd_config
+    block: "{{ sshd_sftp }}"
+  notify:
+   - restart sshd
+  tags: ssh
+
+- name: add shared,sftp groups
+  group: name={{ item }} state=present
+  with_items:
+    - "{{shared_group}}"
+    - "{{sftponly_group}}"
+  tags: ssh
+
+- name: add ssh groups
+  group: name={{ item.name }} state=present
+  with_items:
+    - "{{ ssh_users }}"
+    - "{{ sftp_users }}"
+  tags: ssh
+
+- name: modify apache users
+  user: name=apache group={{shared_group}} groups=apache append=yes
+  tags: ssh
+
+- name: users exist - wheel
+  user:
+    name: "{{item.name}}"
+    state: present
+    password: "{{item.password}}"
+    groups: wheel
+  with_items:
+    - "{{ wheel_users }}"
+  tags: ssh
+
+- name: users exist - ssh
+  user:
+    name: "{{item.name}}"
+    state: present
+    password: "{{item.password}}"
+    group: "{{shared_group}}"
+    groups: "{{ item.name }},apache"
+  with_items:
+    - "{{ ssh_users }}"
+  tags: ssh
+
+- name: users exist - sftp
+  user:
+    name: "{{item.name}}"
+    state: present
+    password: "{{item.password}}"
+    group: "{{shared_group}}"
+    groups: "{{ item.name }},apache,{{ sftponly_group }}"
+  with_items:
+    - "{{ sftp_users }}"
+  tags: ssh
+
+- name: Set up authorized_keys for the deploy user 
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
+  with_items:
+    - "{{ wheel_users }}"
+    - "{{ ssh_users }}"
+    - "{{ sftp_users }}"
+  tags: ssh
+

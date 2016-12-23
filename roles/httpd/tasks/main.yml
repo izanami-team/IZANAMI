@@ -1,0 +1,154 @@
+---
+# httpd
+- name: install the latest version of Apache
+  yum: name={{ item }} state=present
+  with_items:
+   - httpd
+   - httpd-devel
+   - mod_ssl
+  tags: httpd
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: install the latest version of Apache
+  yum: name={{ item }} state=present
+  with_items:
+   - httpd24
+   - httpd24-devel
+   - httpd24-tools
+   - mod24_ssl
+  tags: httpd
+  when: ansible_distribution == "Amazon"
+
+- name: remove file
+  file: path=/etc/httpd/conf.d/{{ item }} owner=root group=root mode=0644 state=absent
+  with_items:
+    - autoindex.conf
+    - README
+    - ssl.conf
+    - userdir.conf
+    - welcome.conf
+  tags: httpd-overwrite
+
+- name: touch file
+  file: path=/etc/httpd/conf.d/{{ item }} owner=root group=root mode=0644 state=touch
+  with_items:
+    - autoindex.conf
+    - README
+    - ssl.conf
+    - userdir.conf
+    - welcome.conf
+  tags: httpd-overwrite
+
+- name: remove file
+  file: path=/etc/httpd/conf.modules.d/{{ item }} owner=root group=root mode=0644 state=absent
+  with_items:
+    - 00-dav.conf
+    - 00-lua.conf
+  tags: httpd
+
+- name: touch file
+  file: path=/etc/httpd/conf.modules.d/{{ item }} owner=root group=root mode=0644 state=touch
+  with_items:
+    - 00-dav.conf
+    - 00-lua.conf
+  tags: httpd
+
+- name: replace httpd.conf
+  replace: dest="/etc/httpd/conf/httpd.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items: httpd_conf24
+  tags: httpd
+
+- name: insert 'mt-static' configuation block in httpd.conf
+  blockinfile:
+    dest: /etc/httpd/conf/httpd.conf
+    block: "{{ aliasdirectory }}"
+  tags: httpd
+
+- name: replace 00-base.conf
+  replace: dest="/etc/httpd/conf.modules.d/00-base.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items: disalbe_module 
+  tags: httpd
+
+- name: check sysconfig/httpd
+  shell: grep 'umask 002' /etc/sysconfig/httpd
+  ignore_errors: True
+  register: result_sysconfig_httpd
+  tags: httpd
+
+- name: replace sysconfig/httpd
+  shell: echo "umask 002" >> /etc/sysconfig/httpd
+  tags:  httpd
+  when: result_sysconfig_httpd|failed
+
+- name: Create Apache configuration file
+  template: src=00.setting.conf.j2 dest=/etc/httpd/conf.d/00.setting.conf
+  tags: httpd
+
+- name: Create vhost.dummy configuration file
+  template: src=01.dummy.conf.j2 dest=/etc/httpd/conf.d/01.dummy.conf
+  tags: httpd
+
+- name: Create ssl configuration file
+  template: src=02.ssl.conf.j2 dest=/etc/httpd/conf.d/02.ssl.conf
+  tags: httpd
+
+- name: Create mpm configuration file
+  template: src=03.mpm.conf.j2 dest=/etc/httpd/conf.d/03.mpm.conf
+  tags: httpd
+
+- name: Create Apache2.4 configuration file vhosts
+  template: src=vhosts2.4.conf.j2 dest=/etc/httpd/conf.d/{{ item.name }}.conf
+  with_items: vhosts
+  tags: httpd
+
+- name: httpd vhosts directory
+  file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner={{ owner }} group={{ shared_group }} mode=0775
+  with_items: vhosts
+  tags: httpd
+
+- name: change owner
+  file: path=/var/www/vhosts owner=root group=root mode=0755
+  tags: httpd
+
+- name: httpd vhosts cgi-bin
+  file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
+  with_items: vhosts
+  tags: httpd
+
+- name: httpd vhosts htdocs
+  file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
+  with_items: vhosts
+  tags: httpd
+
+- name: httpd vhosts logs
+  file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
+  with_items: vhosts
+  tags: httpd
+
+- name: copy a new ssl files
+  copy: src="{{ item }}" dest=/etc/httpd/ssl/ owner=root group=root mode=0644
+  with_fileglob: "ssl/*"
+  tags: httpd
+
+- name: set cronvar
+  cronvar: user="root" name="{{ item.name }}" value="{{ item.value }}"
+  with_items:
+   - { name: 'PATH', value: '/bin:/sbin:/usr/bin:/usr/local/bin' }
+  tags: httpd
+
+- name: compress the log
+  cron: name='compress the log' job="find /var/www/vhosts/*/logs/ -type f ! -name \"*`date +\\%Y\\%m\\%d`*\" ! -name \"*.gz\" -print0 | xargs -0 gzip 1>/dev/null" minute=1 hour=0 state=present
+  tags: httpd
+
+- name: delete the log
+  cron: name='delete the log' job="find /var/www/vhosts/*/logs/ -type f -name '*.gz' -mtime +31 -print0 | xargs -0 rm -rf 1>/dev/null" minute=5 hour=0 state=present
+  tags: httpd
+
+# pip passlibに依存
+- name: create htpasswd
+  htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner={{ owner }} group={{shared_group}} mode=0644
+  tags: httpd
+
+- name: httpd is runnning and enabled
+  service: name=httpd state=running enabled=yes
+  tags: httpd

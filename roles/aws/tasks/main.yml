@@ -1,0 +1,31 @@
+- name: set locale to /etc/cloud/cloud.cfg
+  lineinfile: 'dest=/etc/cloud/cloud.cfg line="locale: {{locale}}"'
+  tags: aws
+
+- name: set repo_upgrade to /etc/cloud/cloud.cfg
+  lineinfile: 'dest=/etc/cloud/cloud.cfg regexp="repo_upgrade\:" line="repo_upgrade: {{repo_upgrade}}"'
+  tags: aws
+
+- name: snapshot.py 
+  copy: src="snapshot.py" dest="/usr/local/bin/snapshot.py" owner=root group=root mode=0755
+  when: snapshot is defined
+  tags: aws
+
+- name: crontab
+  cron: name='create snapshot' job="/usr/bin/setlock -nx /tmp/snapshot.lock /usr/local/bin/snapshot.py" hour="3" minute="0" user="root" state=present
+  when: snapshot is defined
+  tags: aws
+
+- name: aws configure directory
+  file: path=/root/.aws state=directory owner=root group=root mode=0755
+  tags: aws
+
+- name: copy aws configure file with default region
+  template: src=.aws_config.j2 dest=/root/.aws/config owner=root mode=0600
+  tags: aws
+
+- name: cloudwatch
+  shell: curl -L https://raw.githubusercontent.com/onagatani/cloudwatch-create-alarm/master/cloudwatch-create-alarm | bash /dev/stdin -a {{ server_hostname }} -t {{ server_hostname }} -e {{ alert.email }}
+  when: cloudwatch is defined
+  tags: aws
+  

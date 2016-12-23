@@ -1,0 +1,83 @@
+- name: add mysql-repo for centos7 
+  yum: name="https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm" 
+  tags: mysql
+  ignore_errors: yes
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: add mysql-repo for centos6 and amazon linux
+  yum: name="https://dev.mysql.com/get/mysql57-community-release-el6-9.noarch.rpm"
+  tags: mysql
+  ignore_errors: yes
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon")
+
+- name: disable repo
+  replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
+  tags: mysql
+
+- name: Install Mysql package
+  yum: name={{ item }} state=present enablerepo=mysql57-community
+  with_items:
+   - mysql-community-client
+   - mysql-community-libs
+   - mysql-community-server
+   - mysql-community-devel
+  tags: mysql
+
+- name: Create Mysql configuration file
+  template: src=my.cnf.j2 dest=/etc/my.cnf
+  tags: mycnf
+
+- name: Start Mysql Service
+  service: name=mysqld state=started enabled=yes
+  tags: mysql
+
+- name: exists for /root/.my.cnf
+  stat: path=/root/.my.cnf
+  register: res
+  tags: mysql
+
+- name: first root password
+  shell: cat /var/log/mysqld.log | grep password | awk '{ print $NF }' | head -n 1
+  register: mysql_passwd
+  tags: mysql
+  when: not res.stat.exists
+
+- name: set mysql root password
+  command: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' -e "set password for root@'localhost' = PASSWORD('{{ mysql_root_password }}')"
+  when: not res.stat.exists
+  tags: mysql
+
+- name: copy .my.cnf file with root password credentials
+  template: src=.my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+  tags: mysql
+  when: not res.stat.exists
+
+- name: update mysql root password for all root accounts
+  mysql_user: name=root host={{ item }} password={{ mysql_root_password }} 
+  with_items:
+   - "{{ ansible_hostname }}"
+   - 127.0.0.1
+   - ::1
+   - localhost
+  tags: mysql
+
+- name: delete anonymous MySQL server user 
+  action: mysql_user user="" host="{{ ansible_hostname }}" state="absent" 
+  tags: mysql
+
+- name: delete anonymous MySQL server user for localhost
+  action: mysql_user user="" host="localhost" state="absent"
+  tags: mysql
+
+- name: remove the MySQL test database
+  action: mysql_db db=test state=absent 
+  tags: mysql
+
+- name: create database for mt
+  mysql_db: db={{ mt.db.name }} state=present encoding=utf8 
+  tags: mysql
+
+- name: create database user
+  mysql_user: name={{ mt.db.user }} password="{{ mt.db.passwd }}" priv={{ mt.db.name }}.*:ALL state=present 
+  tags: mysql

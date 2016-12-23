@@ -1,0 +1,41 @@
+# php
+- name: php is installed
+  yum: name={{ item }} enablerepo=remi state=present
+  with_items:
+   - php70
+   - php70-php
+   - php70-php-fpm
+   - php70-php-mbstring
+   - php70-php-mcrypt 
+   - php70-php-gd
+   - php70-php-pdo
+   - php70-php-opcache
+   - php70-php-pecl-apcu
+   - php70-php-mysqlnd
+   - php70-php-pecl-crypto
+   - php70-php-pecl-apcu
+   - php70-php-pecl-imagick
+   - php70-php-pecl-memcache
+   - php70-php-pecl-memcached
+   - php70-php-pecl-mysql
+   - php70-php-pecl-xdebug
+   - php70-php-pecl-yaml
+   - php70-php-xml
+  tags: php
+
+- name: php is configured
+  notify:
+    - restart httpd
+  lineinfile: dest="/etc/opt/remi/php70/php.ini" state=present regexp="{{ item.regexp }}" line="{{ item.line }}" backrefs=yes
+  with_items:
+    - { regexp: '^\;date.timezone =$', line: 'date.timezone = Asia/Tokyo'} 
+    - { regexp: '^expose_php = On$', line: 'expose_php = Off'} 
+    - { regexp: '^\;error_log = php_errors.log$', line: 'error_log = /var/log/php_errors.log'} 
+    - { regexp: '^post_max_size = 8M', line: 'post_max_size = 32M'} 
+    - { regexp: '^upload_max_filesize = 2M', line: 'upload_max_filesize = 32M'} 
+    - { regexp: '^session.hash_function = 0', line: 'session.hash_function = sha256'} 
+    - { regexp: '^max_execution_time = 30', line: 'max_execution_time = 300'} 
+    - { regexp: '^; max_input_vars = 1000', line: 'max_input_vars = 10000'} 
+    - { regexp: '^memory_limit = 128M', line: 'memory_limit = 1024M'} 
+    - { regexp: '^upload_max_filesize = 2M', line: 'upload_max_filesize = 32M'} 
+  tags: phpini

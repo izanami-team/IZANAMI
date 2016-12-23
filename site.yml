@@ -1,0 +1,48 @@
+- name: Movable Type6.3, MySQL5.7, Apache2.4 or Nginx,  Starman(PSGI), PHP7(Apache only) installed 
+  hosts: all
+  gather_facts: True
+  roles:
+    - role: common
+      tags: common
+    - role: postfix
+      tags: postfix
+    - role: iptables
+      tags: iptables
+      when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6")
+    - role: firewall
+      tags: firewall
+      when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "7")
+    - role: swap
+      tags: swap
+    - role: aws
+      tags: aws
+      when: ansible_distribution == "Amazon"
+    - role: sshd
+      tags: sshd
+    - role: mysql
+      tags: mysql 
+    - role: python
+      tags: python
+    - role: letsencrypt
+      tags: letsencrypt
+      when: "{{ letsencrypt | bool }}"
+    - role: nginx
+      tags: nginx
+      when: "{{ nginx | bool }}"
+    - role: httpd
+      tags: httpd
+      when: "{{ apache | bool }}"
+    - role: ImageMagick
+      tags: ImageMagick
+    - role: php
+      tags: php 
+      when: "{{ php | bool }}" and "{{ apache | bool }}"
+    - role: perl
+      tags: perl 
+    - role: daemontools
+      tags: daemontools
+      when: movabletype 
+    - role: movabletype
+      tags: movabletype
+      when: movabletype 
+  

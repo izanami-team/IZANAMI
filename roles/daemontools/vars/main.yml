@@ -1,0 +1,3 @@
+daemontools:
+  url: 'http://mirrors.qmailtoaster.com/daemontools-toaster-0.76-1.3.6.src.rpm'
+  sha256sum: '4442afb3758891b47202c7314abed47c594f988e44a50c8180137507c512bce9' 

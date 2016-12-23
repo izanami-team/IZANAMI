@@ -1,0 +1,40 @@
+- name: cpanm installed
+  shell: curl -L http://cpanmin.us | perl - App::cpanminus
+  tags: perl
+
+- name: cpan module installed 
+  shell: /usr/local/bin/cpanm {{item}}
+  with_items:
+   - DBI
+   - DBD::mysql
+   - Test::TCP
+   - Env
+   - File::Which
+   - LWP
+   - LWP::Protocol::https
+   - Crypt::SSLeay
+   - Crypt::DSA
+   - Cache::File
+   - YAML
+   - Time::HiRes
+   - IO::Socket::SSL
+   - Archive::Zip
+   - Authen::SASL
+   - IPC::Run
+   - Archive::Tar
+   - Digest::SHA1
+   - IO::Stringy
+   - XML::Parser
+   - XMLRPC::Transport::HTTP::Plack
+   - Net::Server::SS::PreFork
+   - Net::SSLeay
+   - Net::OAuth
+   - Cache::Memcached
+   - YAML::Syck
+   - Fatal
+   - XML::SAX::Expat
+   - XML::SAX::ExpatXS
+   - XML::LibXML
+   - XML::LibXML::SAX
+   - Task::Plack
+  tags: perl

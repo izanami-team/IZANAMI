@@ -1,0 +1,116 @@
+- name: Install libselinux-python
+  yum: name=libselinux-python state=present
+  when: ansible_distribution == 'CentOS'
+  tags: SELinux
+
+- name: CentOS 6 add repository
+  yum: name={{ item }} state=present 
+  with_items:
+    - "http://ftp-srv2.kddilabs.jp/Linux/distributions/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm"
+    - "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
+  tags: package
+  ignore_errors: yes
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+
+- name: CentOS 7 add repository state=present 
+  yum: name={{ item }}
+  with_items:
+    - "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
+  tags: package
+  ignore_errors: yes
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: install the 'epel repositry'
+  yum: name="epel-release" state=present
+  tags: package
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: install the 'Development tools' package group
+  yum: name="@Development tools" state=present
+  tags: package
+
+- name: install the latest libraries
+  yum: name={{ item }} state=present
+  with_items: packages
+  tags: package
+
+- name: yum update
+  yum: state=latest name=*
+  tags: yumupdate
+
+- name: remove the sendmail package
+  yum: name=sendmail state=absent
+  tags: sendmail
+
+- name: set locale to /etc/sysconfig/i18n
+  replace:
+    dest: /etc/sysconfig/i18n
+    regexp: '^LANG=en_US\.UTF-8'
+    replace: 'LANG={{locale}}'
+  tags: locale
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon")
+
+- name: set zone to /etc/sysconfig/clock
+  replace:
+    dest: /etc/sysconfig/clock
+    regexp: '^ZONE=\"UTC\"'
+    replace: 'ZONE="{{zone}}"'
+  tags: locale
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon")
+
+- name: set false to clock utc
+  replace:
+    dest: /etc/sysconfig/clock
+    regexp: '^UTC=true'
+    replace: 'UTC=false'
+  tags: locale
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon")
+
+- name: set timezone to Asia/Tokyo
+  file:
+    src: {{zoneinfo_path}}
+    dest: /etc/localtime
+    state: link
+    force: yes
+  tags: locale
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon")
+
+- name: set timezone to Asia/Tokyo
+  command: timedatectl set-timezone Asia/Tokyo
+  tags: locale 
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: disable SELinux
+  selinux: state=disabled
+  when: ansible_distribution == 'CentOS'
+  tags: SELinux
+
+- name: set path to ldconfig
+  template: src=usr_local.conf.j2 dest=/etc/ld.so.conf.d/usr_local.conf
+  tags: ldconfig
+
+- name: set hostname
+  hostname: name={{server_hostname}}
+  tags: hostname
+
+- name: set hostname to current ansible name
+  action: command hostname {{server_hostname}}
+  tags: hostname
+
+- name: set forward
+  template: src=forward.j2 dest=/root/.forward
+  tags: forward
+
+- name: postifx is runnning and enabled
+  service: name=postfix state=running enabled=yes
+  tags: postfix
+
+- name: crean for slab cache 
+  cron: name='slab cache' job="/sbin/sysctl -w vm.drop_caches=2" hour="*/1" minute="0" user="root" state=present
+  tags: slabcache
+
+

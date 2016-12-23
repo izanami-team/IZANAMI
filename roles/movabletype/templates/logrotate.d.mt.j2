@@ -1,0 +1,13 @@
+/var/www/movabletype/movabletype.log {
+    daily
+    dateext
+    rotate 3
+    dateext
+    compress
+    missingok
+    notifempty
+    sharedscripts
+    postrotate
+        /usr/bin/svc -du /service/movabletype > /dev/null 2>/dev/null || true
+    endscript
+}

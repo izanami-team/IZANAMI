@@ -1,0 +1,36 @@
+server_hostname:  "movabletype.local"
+root_email: "youremail@example.com"
+letsencrypt: False
+denyhosts: True
+php: True
+nginx: False
+apache: True
+mt:
+  file: MT-6.3.2.zip
+  ver: MT-6.3.2
+  psgi: True
+  config: 
+    - {name: 'AdminScript', value: 'mt.cgi'}
+  plugins:
+    - PageBute
+    - PSGIRestart
+  db:
+    name: movabletype
+    user: movabletype
+    passwd: '@Mt6password'
+    server: localhost
+  basic:
+    user: username
+    passwd: password
+vhosts:
+  - name: movabletype.local
+    letsencrypt: False
+    ssl_only: False
+    email: youremail@example.com
+wheel_users:
+  - { name: test,       password: "test"}
+ssh_users:
+  - { name: test,       password: "test"}
+sftp_users:
+  - { name: test,       password: "test"}
+
