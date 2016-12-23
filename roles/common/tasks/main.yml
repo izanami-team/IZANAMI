@@ -31,7 +31,7 @@
 
 - name: install the latest libraries
   yum: name={{ item }} state=present
-  with_items: packages
+  with_items: "{{ packages }}"
   tags: package
 
 - name: yum update
@@ -71,7 +71,7 @@
 
 - name: set timezone to Asia/Tokyo
   file:
-    src: {{zoneinfo_path}}
+    src: "{{ zoneinfo_path }}"
     dest: /etc/localtime
     state: link
     force: yes
