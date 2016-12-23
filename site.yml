@@ -4,8 +4,8 @@
   roles:
     - role: common
       tags: common
-    - role: postfix
-      tags: postfix
+    #- role: postfix
+    #  tags: postfix
     - role: iptables
       tags: iptables
       when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6")
