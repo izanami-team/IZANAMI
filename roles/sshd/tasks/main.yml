@@ -11,7 +11,7 @@
 - name: denyhosts is runnning and enabled
   service: name=denyhosts state=running enabled=yes
   tags: ssh
-  when: denyhosts | bool
+  when: (denyhosts | bool) and (inventory_file != 'local')
 
 - name: replace /etc/sudoers
   replace: dest=/etc/sudoers regexp='\# \%wheel\s+ALL=\(ALL\)\s+ALL' replace='%wheel        ALL=(ALL)       ALL'
