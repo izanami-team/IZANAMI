@@ -51,7 +51,14 @@
   group: name={{ item.name }} state=present
   with_items:
     - "{{ ssh_users }}"
+  when: ssh_users is defined
+  tags: ssh
+
+- name: add ssh groups
+  group: name={{ item.name }} state=present
+  with_items:
     - "{{ sftp_users }}"
+  when: sftp_users is defined
   tags: ssh
 
 - name: modify apache users
@@ -72,6 +79,7 @@
     groups: wheel
   with_items:
     - "{{ wheel_users }}"
+  when: wheel_users is defined
   tags: ssh
 
 - name: users exist - ssh
@@ -83,6 +91,7 @@
     groups: "{{ item.name }},apache"
   with_items:
     - "{{ ssh_users }}"
+  when: ssh_users is defined
   tags: ssh
 
 - name: users exist - sftp
@@ -94,6 +103,7 @@
     groups: "{{ item.name }},apache,{{ sftponly_group }}"
   with_items:
     - "{{ sftp_users }}"
+  when: sftp_users is defined
   tags: ssh
 
 - name: Set up authorized_keys for the deploy user 
@@ -102,7 +112,25 @@
     key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
   with_items:
     - "{{ wheel_users }}"
-    - "{{ ssh_users }}"
-    - "{{ sftp_users }}"
+  when: wheel_users is defined
   tags: ssh
+
+- name: Set up authorized_keys for the deploy user 
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
+  with_items:
+    - "{{ ssh_users }}"
+  when: ssh_users is defined
+  tags: ssh
+
+- name: Set up authorized_keys for the deploy user 
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
+  with_items:
+    - "{{ sftp_users }}"
+  when: sftp_users is defined
+  tags: ssh
+
 
