@@ -55,7 +55,7 @@
 
 - name: replace httpd.conf
   replace: dest="/etc/httpd/conf/httpd.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
-  with_items: httpd_conf24
+  with_items: "{{ httpd_conf24 }}"
   tags: httpd
 
 - name: insert 'mt-static' configuation block in httpd.conf
@@ -66,7 +66,7 @@
 
 - name: replace 00-base.conf
   replace: dest="/etc/httpd/conf.modules.d/00-base.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
-  with_items: disalbe_module 
+  with_items: "{{ disalbe_module }}"
   tags: httpd
 
 - name: check sysconfig/httpd
@@ -98,12 +98,12 @@
 
 - name: Create Apache2.4 configuration file vhosts
   template: src=vhosts2.4.conf.j2 dest=/etc/httpd/conf.d/{{ item.name }}.conf
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: httpd vhosts directory
   file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner={{ owner }} group={{ shared_group }} mode=0775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: change owner
@@ -112,17 +112,17 @@
 
 - name: httpd vhosts cgi-bin
   file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: httpd vhosts htdocs
   file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: httpd vhosts logs
   file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: copy a new ssl files
