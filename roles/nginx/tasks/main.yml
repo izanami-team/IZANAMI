@@ -42,6 +42,10 @@
   with_items: vhosts
   tags: nginx
 
+- name: create htpasswd
+  htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner=nginx group={{shared_group}} mode=0644
+  tags: nginx
+
 - name: logrotate.d for nginx
   template: src=nginx.j2 dest=/etc/logrotate.d/nginx
   tags: nginx

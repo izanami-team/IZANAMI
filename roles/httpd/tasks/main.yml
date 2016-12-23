@@ -102,7 +102,7 @@
   tags: httpd
 
 - name: httpd vhosts directory
-  file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner={{ owner }} group={{ shared_group }} mode=0775
+  file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=apache group={{ shared_group }} mode=0775
   with_items: "{{ vhosts }}"
   tags: httpd
 
@@ -111,17 +111,17 @@
   tags: httpd
 
 - name: httpd vhosts cgi-bin
-  file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
+  file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner=apache group={{ shared_group }} mode=2775
   with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: httpd vhosts htdocs
-  file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
+  file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner=apache group={{ shared_group }} mode=2775
   with_items: "{{ vhosts }}"
   tags: httpd
 
 - name: httpd vhosts logs
-  file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner={{ owner }} group={{ shared_group }} mode=2775
+  file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner=apache group={{ shared_group }} mode=2775
   with_items: "{{ vhosts }}"
   tags: httpd
 
@@ -146,7 +146,7 @@
 
 # pip passlibに依存
 - name: create htpasswd
-  htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner={{ owner }} group={{shared_group}} mode=0644
+  htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner=apache group={{shared_group}} mode=0644
   tags: httpd
 
 - name: httpd is runnning and enabled
