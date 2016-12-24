@@ -2,8 +2,21 @@
   shell: curl -L http://cpanmin.us | perl - App::cpanminus
   tags: perl
 
+- name: xbuild downloaded
+  get_url: url=https://github.com/tagomoris/xbuild/archive/master.zip dest=/tmp/xbuild.zip force=True
+  tags: perl
+
+- name: copy and unzip files
+  unarchive: src=/tmp/xbuild.zip dest=/root/ copy=no
+  tags: perl
+
+- name: perl installed
+  shell: |
+    /root/xbuild-master/perl-install 5.18.2 /usr/local/perl-5.18
+  tags: perl
+
 - name: cpan module installed 
-  shell: /usr/local/bin/cpanm {{item}}
+  shell: /usr/local/perl-5.18/bin/cpanm {{item}}
   with_items:
    - DBI
    - DBD::mysql
