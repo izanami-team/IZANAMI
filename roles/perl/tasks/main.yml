@@ -38,6 +38,9 @@
    - Digest::SHA1
    - IO::Stringy
    - XML::Parser
+   - Imager
+   - FCGI::Client
+   - Task::Plack
    - XMLRPC::Transport::HTTP::Plack
    - Net::Server::SS::PreFork
    - Net::SSLeay
@@ -49,5 +52,4 @@
    - XML::SAX::ExpatXS
    - XML::LibXML
    - XML::LibXML::SAX
-   - Task::Plack
   tags: perl
