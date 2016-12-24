@@ -50,14 +50,14 @@
 - name: add ssh groups
   group: name={{ item.name }} state=present
   with_items:
-    - "{{ ssh_users }}"
+    - "{{ ssh_users | default([]) }}"
   when: ssh_users is defined
   tags: ssh
 
 - name: add ssh groups
   group: name={{ item.name }} state=present
   with_items:
-    - "{{ sftp_users }}"
+    - "{{ sftp_users | default([]) }}"
   when: sftp_users is defined
   tags: ssh
 
@@ -68,7 +68,7 @@
     password: "{{item.password}}"
     groups: wheel
   with_items:
-    - "{{ wheel_users }}"
+    - "{{ wheel_users | default([]) }}"
   when: wheel_users is defined
   tags: ssh
 
@@ -80,7 +80,7 @@
     group: "{{shared_group}}"
     groups: "{{ item.name }},apache"
   with_items:
-    - "{{ ssh_users }}"
+    - "{{ ssh_users | default([]) }}"
   when: ssh_users is defined
   tags: ssh
 
@@ -92,7 +92,7 @@
     group: "{{shared_group}}"
     groups: "{{ item.name }},apache,{{ sftponly_group }}"
   with_items:
-    - "{{ sftp_users }}"
+    - "{{ sftp_users | default([]) }}"
   when: sftp_users is defined
   tags: ssh
 
@@ -101,7 +101,7 @@
     user: "{{ item.name }}"
     key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
   with_items:
-    - "{{ wheel_users }}"
+    - "{{ wheel_users | default([]) }}"
   when: wheel_users is defined
   tags: ssh
 
@@ -110,7 +110,7 @@
     user: "{{ item.name }}"
     key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
   with_items:
-    - "{{ ssh_users }}"
+    - "{{ ssh_users | default([]) }}"
   when: ssh_users is defined
   tags: ssh
 
@@ -119,7 +119,7 @@
     user: "{{ item.name }}"
     key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
   with_items:
-    - "{{ sftp_users }}"
+    - "{{ sftp_users | default([]) }}"
   when: sftp_users is defined
   tags: ssh
 
