@@ -6,6 +6,9 @@
   command: mv /var/www/{{mt.ver}} /var/www/movabletype creates=/var/www/movabletype/
   tags: movabletype
 
+- name: fix perl shibang
+  command: grep '#!/usr/bin/perl' -rl /var/www/movabletype | xargs perl -i -ple 's{#!/usr/bin/perl}{#!/usr/local/perl-5.18/bin/perl}g'
+
 - name: Install the mt-plugins
   copy: src="mt-plugins/{{ item }}" dest="/var/www/movabletype/plugins/" owner={{ owner }} group=contents mode=0775
   with_items:
@@ -36,10 +39,10 @@
   tags: movabletype
 
 - name: replace run
-  replace: >-
-    dest='/service/.movabletype/run'
-    regexp='^sleep 3$'
-    replace='{{ runfile }}'
+  replace:
+    dest: '/service/.movabletype/run'
+    regexp: '^sleep 3$'
+    replace: '{{ runfile }}'
   when: mt.psgi is defined and result_service_mt|failed
   tags: movabletype
 
