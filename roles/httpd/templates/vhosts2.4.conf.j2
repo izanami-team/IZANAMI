@@ -13,7 +13,7 @@
     {% endif %}
     TraceEnable  Off
 
-    {% if movabletype and mt.psgi is not defined %}
+    {% if movabletype and mt.psgi | bool %}
     ScriptAlias  /mt /var/www/movabletype
     {% endif %}
 
@@ -41,7 +41,7 @@
     </Location>
 {% endif %}
 
-    {% if movabletype and mt.psgi is defined %}
+    {% if movabletype and mt.psgi | bool %}
     ProxyRequests    Off
     ProxyPass        /mt/ http://localhost:8080/mt/
     ProxyPassReverse /mt/ http://localhost:8080/mt/
@@ -67,7 +67,7 @@
 {% endif %}
     TraceEnable  Off
 
-{% if movabletype and mt.psgi is not defined %}
+{% if movabletype and mt.psgi | bool %}
     ScriptAlias  /mt /var/www/movabletype
 {% endif %}
 
