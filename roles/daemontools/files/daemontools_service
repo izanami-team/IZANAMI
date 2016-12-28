@@ -1,0 +1,11 @@
+[Unit]
+Description = daemontools
+After = network.target
+
+[Service]
+ExecStart = /command/svscanboot
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

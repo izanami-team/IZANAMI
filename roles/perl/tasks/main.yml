@@ -16,7 +16,7 @@
   tags: perl
 
 - name: cpan module installed 
-  shell: /usr/local/perl-5.18/bin/cpanm {{item}}
+  shell: /usr/local/perl-5.18/bin/cpanm {{item}} -n
   with_items:
    - DBI
    - DBD::mysql

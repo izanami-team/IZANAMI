@@ -105,12 +105,9 @@
   template: src=forward.j2 dest=/root/.forward
   tags: forward
 
-- name: postifx is runnning and enabled
-  service: name=postfix state=running enabled=yes
-  tags: postfix
-
-- name: crean for slab cache 
-  cron: name='slab cache' job="/sbin/sysctl -w vm.drop_caches=2" hour="*/1" minute="0" user="root" state=present
-  tags: slabcache
-
-
+- name: add groups
+  group: name={{ item }} state=present
+  with_items:
+    - "{{shared_group}}"
+    - "{{sftponly_group}}"
+  tags: ssh

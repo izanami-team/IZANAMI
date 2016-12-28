@@ -99,7 +99,7 @@
 - name: Create Apache2.4 configuration file vhosts
   template: src=vhosts2.4.conf.j2 dest=/etc/httpd/conf.d/{{ item.name }}.conf
   with_items: "{{ vhosts }}"
-  tags: httpd
+  tags: httpd-vhost
 
 - name: httpd vhosts directory
   file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=apache group={{ shared_group }} mode=0775

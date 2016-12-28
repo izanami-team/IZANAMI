@@ -1,30 +1,33 @@
 - name: copy MT.zip
-  unarchive: src="{{mt.file}}" dest=/var/www/ owner={{ owner }} group=contents mode=0775 creates=/var/www/movabletype/
+  unarchive: src="{{mt.file}}" dest=/var/www/ owner="{{ owner }}" group=contents mode=0775 creates=/var/www/movabletype/
   tags: movabletype
 
 - name: Move movabletype to mt
   command: mv /var/www/{{mt.ver}} /var/www/movabletype creates=/var/www/movabletype/
   tags: movabletype
 
-- name: fix perl shibang
-  command: grep '#!/usr/bin/perl' -rl /var/www/movabletype | xargs perl -i -ple 's{#!/usr/bin/perl}{#!/usr/local/perl-5.18/bin/perl}g'
-
 - name: Install the mt-plugins
   copy: src="mt-plugins/{{ item }}" dest="/var/www/movabletype/plugins/" owner={{ owner }} group=contents mode=0775
   with_items:
-    - "{{ mt.plugins }}"
+    - "{{ mt.plugins | default([]) }}"
   when: mt.plugins is defined
   tags: mt-plugins
 
 - name: Install the mt-static
   copy: src="mt-static/{{ item }}" dest="/var/www/movabletype/mt-static/" owner={{ owner }} group=contents mode=0775
   with_items:
-    - "{{ mt.static }}"
+    - "{{ mt.static | default([]) }}"
   when: mt.static is defined
   tags: mt-plugins
 
 - name: replace mt-config
   template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group=contents mode=0775
+  tags: movabletype
+
+- name: replace mt-config
+  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.18/bin/perl}g'
+  args:
+    chdir: /var/www/movabletype
   tags: movabletype
 
 - name: check service
@@ -35,7 +38,7 @@
 
 - name: addsv movabletype
   shell: /usr/local/bin/addsv.sh movabletype
-  when: mt.psgi is defined and result_service_mt|failed
+  when: mt.psgi | bool  and result_service_mt|failed
   tags: movabletype
 
 - name: replace run
@@ -43,12 +46,12 @@
     dest: '/service/.movabletype/run'
     regexp: '^sleep 3$'
     replace: '{{ runfile }}'
-  when: mt.psgi is defined and result_service_mt|failed
+  when: mt.psgi | bool and result_service_mt|failed
   tags: movabletype
 
 - name: Move .movabletype to movabletype
   command: creates="/service/movabletype" mv /service/.movabletype /service/movabletype
-  when: mt.psgi is defined
+  when: mt.psgi | bool 
   tags: movabletype
 
 - name: set run-periodic-tasks
@@ -57,7 +60,7 @@
 
 - name: restart mt
   command: /usr/bin/svc -du /service/movabletype
-  when: mt.psgi is defined
+  when: mt.psgi | bool 
   tags: movabletype
 
 - name: logrotate

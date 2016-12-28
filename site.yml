@@ -22,14 +22,14 @@
     - role: letsencrypt
       tags: letsencrypt
       when: "{{ letsencrypt | bool }}"
+    - role: sshd
+      tags: sshd
     - role: nginx
       tags: nginx
       when: "{{ nginx | bool }}"
     - role: httpd
       tags: httpd
       when: "{{ apache | bool }}"
-    - role: sshd
-      tags: sshd
     - role: ImageMagick
       tags: ImageMagick
     - role: php

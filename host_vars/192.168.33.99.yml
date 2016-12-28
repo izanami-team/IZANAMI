@@ -5,12 +5,14 @@ denyhosts: False
 php: True
 nginx: False
 apache: True
+owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 mt:
   file: MT-6.3.2.zip
   ver: MT-6.3.2
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'mt.cgi'}
+    - {name: 'ImageDriver', value: 'Imager'}
   plugins:
     - PageBute
     - PSGIRestart
@@ -29,10 +31,4 @@ vhosts:
       use: False
       only: False
     email: youremail@example.com
-wheel_users:
-  - { name: test,       password: "test"}
-ssh_users:
-  - { name: test,       password: "test"}
-sftp_users:
-  - { name: test,       password: "test"}
 

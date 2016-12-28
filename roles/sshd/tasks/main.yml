@@ -40,13 +40,6 @@
    - restart sshd
   tags: ssh
 
-- name: add shared,sftp groups
-  group: name={{ item }} state=present
-  with_items:
-    - "{{shared_group}}"
-    - "{{sftponly_group}}"
-  tags: ssh
-
 - name: add ssh groups
   group: name={{ item.name }} state=present
   with_items:
@@ -78,7 +71,7 @@
     state: present
     password: "{{item.password}}"
     group: "{{shared_group}}"
-    groups: "{{ item.name }},apache"
+    groups: "{{ owner }},{{ item.name }}"
   with_items:
     - "{{ ssh_users | default([]) }}"
   when: ssh_users is defined
@@ -90,7 +83,7 @@
     state: present
     password: "{{item.password}}"
     group: "{{shared_group}}"
-    groups: "{{ item.name }},apache,{{ sftponly_group }}"
+    groups: "{{ item.name }},{{ owner }},{{ sftponly_group }}"
   with_items:
     - "{{ sftp_users | default([]) }}"
   when: sftp_users is defined

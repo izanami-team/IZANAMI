@@ -5,12 +5,8 @@
   tags: daemontools
 
 - name: download daemontools
-  get_url: url={{ daemontools.url }} sha256sum={{ daemontools.sha256sum }} dest=/usr/local/src/daemontools-toaster-0.76-1.3.6.src.rpm force=True
+  get_url: url={{ daemontools.url }} checksum=sha256:{{ daemontools.sha256sum }} dest=/usr/local/src/daemontools-toaster-0.76-1.3.6.src.rpm force=True
   when: result|failed
-  tags: daemontools
-
-- name: copy svscan
-  copy: src=svscan dest=/etc/init.d/svscan owner=root group=root mode=0755
   tags: daemontools
 
 - name: users exist
@@ -38,11 +34,32 @@
   tags: daemontools
   when: result|failed and (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
 
+- name: download svscan
+  get_url: url={{ svscan.url }} sha256sum={{ svscan.sha256sum }} dest=/etc/init.d/svscan owner=root group=root mode=0755
+  when: result|failed and ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon"))
+  tags: daemontools
+
+- name: copy systemd
+  copy: src=daemontools_service dest=/etc/systemd/system/daemontools.service owner=root group=root mode=0755
+  tags: daemontools
+  when: result|failed and (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
 - name: svscan start
   service: name=svscan state=started enabled=yes
   tags: daemontools
+  when: result|failed and ((ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon"))
 
-# http://blog.hansode.org/archives/51311837.html
+- name: systemd started
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: daemontools
+    enabled: yes
+  tags: daemontools
+  when: result|failed and (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
 - name: copy addsv
   copy: src=addsv.sh dest=/usr/local/bin/addsv.sh owner=root group=root mode=0755
   tags: addsv
