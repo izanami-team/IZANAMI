@@ -18,6 +18,10 @@ localではvagrant upで開発環境を構築する事も可能です。
 - host_vars内にサンプルを参考にサーバ名.ymlファイルを設置し、中身をカスタマイズする
 - 起動コマンドを実行する
 
+### 詳細
+
+http://blog.onagatani.com/archives/izanami.html  
+
 ## 起動方法
 
 ansible-playbook -s -i hosts site.yml -u SSHユーザ名 --private-key=~/SSHの鍵のパス -l 対象サーバ（無指定ならhosts内全て） --extra-vars="mysql_root_password=MySQLのrootパスワード"  

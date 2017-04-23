@@ -32,9 +32,9 @@ vhosts:
       only: True
     email: "alert@mt.example.com"
 wheel_users:
-  - { name: admin_user, password: "hash_passwd" }
+  - { name: admin_user, password: "openssl passwd -1 'passwd'でhash化したものを記載" }
 ssh_users:
-  - { name: ssh_user,   password: "hash_passwd" }
+  - { name: ssh_user,   password: "openssl passwd -1 'passwd'でhash化したものを記載" }
 sftp_users:
-  - { name: sftp_user,  password: "hash_passwd" }
+  - { name: sftp_user,  password: "openssl passwd -1 'passwd'でhash化したものを記載" }
 
