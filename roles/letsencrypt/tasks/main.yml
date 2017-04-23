@@ -1,37 +1,33 @@
----
-# ssl
 - name: downloaded letsencrypt
-  get_url: url=https://github.com/certbot/certbot/archive/v0.6.0.zip dest=/tmp/v0.6.0.zip force=True
+  get_url: url=https://github.com/certbot/certbot/archive/v0.13.0.zip dest=/tmp/v0.13.0.zip force=True
   tags: letsencrypt
 
 - name: copy and unzip files
-  unarchive: src=/tmp/v0.6.0.zip dest=/opt/ copy=no
+  unarchive: src=/tmp/v0.13.0.zip dest=/opt/ copy=no
   tags: letsencrypt
 
-- name: auto install
-  shell: /opt/certbot-0.6.0/letsencrypt-auto --help --debug
+- name: letsencrypt installed
+  shell: /opt/certbot-0.13.0/letsencrypt-auto --help --debug
   tags: letsencrypt
 
 - name: create ssl
-  shell: /opt/certbot-0.6.0/letsencrypt-auto certonly --keep-until-expiring --non-interactive --standalone -d {{ item.name }} --agree-tos -m {{ item.email }}
-  when: item.letsencrypt | bool
+  shell: /opt/certbot-0.13.0/letsencrypt-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}"
+  when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt
 
-- name: ssl renew
-  cron: name="letsencrypt auto renew {{ item.name }}" job="/opt/certbot-0.6.0/letsencrypt-auto certonly  --renew-by-default --webroot -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
-  when: item.letsencrypt is defined
+- name: renew ssl 
+  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-0.13.0/letsencrypt-auto certonly  --renew-by-default --webroot -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
+  when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt
 
 - name: httpd restart
   cron: name='ssl-renew-httpd-restart' job="service httpd restart" minute=10 hour=0 day=1 state=present
   tags: letsencrypt
-  when: apache | bool
+  when: "{{ apache | bool }}"
 
 - name: nginx restart
   cron: name='ssl-renew-nginx-restart' job="service nginx restart" minute=10 hour=0 day=1 state=present
   tags: letsencrypt
-  when: nginx | bool
-
-
+  when: "{{ nginx | bool }}"

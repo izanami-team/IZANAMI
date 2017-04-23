@@ -15,4 +15,26 @@ aliasdirectory: |
     AllowOverride All
     Require all granted
   </Directory>
+httpd_conf22:
+   - { regexp: '^#ServerName www.example.com:80$', replace: 'ServerName {{ vhosts[0].name  }}:80' }
+   - { regexp: '^Group apache$', replace: 'Group {{ shared_group }}' }
+   - { regexp: '^ServerSignature On$', replace: 'ServerSignature Off' }
+   - { regexp: '^ServerTokens OS$', replace: 'ServerTokens Prod' }
+   - { regexp: '^ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\"$', replace: '#ScriptAlias /cgi-bin/ "/var/www/cgi-bin/"' }
+   - { regexp: '^\#NameVirtualHost \*:80$', replace: 'NameVirtualHost *:80' }
+   - { regexp: '^LoadModule suexec_module modules/mod_suexec.so$', replace: '#LoadModule suexec_module modules/mod_suexec.so' }
+   - { regexp: '^LoadModule proxy_balancer_module modules/mod_proxy_balancer.so$', replace: '#LoadModule proxy_balancer_module modules/mod_proxy_balancer.so' }
+   - { regexp: '^LoadModule userdir_module modules/mod_userdir.so$', replace: '#LoadModule userdir_module modules/mod_userdir.so' }
+   - { regexp: '^LoadModule dav_fs_module modules/mod_dav_fs.so$', replace: '#LoadModule dav_fs_module modules/mod_dav_fs.so' }
+   - { regexp: '^LoadModule dav_module modules/mod_dav.so$', replace: '#LoadModule dav_module modules/mod_dav.so' }
+   - { regexp: '^LoadModule ldap_module modules/mod_ldap.so$', replace: '#LoadModule ldap_module modules/mod_ldap.so' }
+   - { regexp: '^LoadModule authnz_ldap_module modules/mod_authnz_ldap.so$', replace: '#LoadModule authnz_ldap_module modules/mod_authnz_ldap.so' }
+
+   - { regexp: '^Timeout 60$', replace: 'Timeout 300' }
+   - { regexp: '^KeepAlive Off$', replace: 'KeepAlive On' }
+   - { regexp: '^KeepAliveTimeout\s+15$', replace: 'KeepAliveTimeout 120' }
+   - { regexp: '^StartServers\s+8$', replace: 'StartServers       20' }
+   - { regexp: '^MinSpareServers\s+5$', replace: 'MinSpareServers    20' }
+   - { regexp: '^MaxSpareServers\s+20$', replace: 'MaxSpareServers   256' }
+   - { regexp: '^MaxRequestsPerChild\s+4000$', replace: 'MaxRequestsPerChild  2000' }
 

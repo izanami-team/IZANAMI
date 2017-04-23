@@ -30,7 +30,7 @@
    - { regexp: '^#Protocol 2$', replace: 'Protocol 2' }
    - { regexp: '^#PermitEmptyPasswords no$', replace: 'PermitEmptyPasswords no' }
   tags: ssh
-  when: ansible_distribution == "CentOS"
+  when: ansible_distribution == "CentOS" or ansible_distribution == 'RedHat'
 
 - name: insert sshd configuation block in /etc/sshd_config
   blockinfile:

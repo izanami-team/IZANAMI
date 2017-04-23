@@ -1,29 +1,39 @@
 - name: Install libselinux-python
   yum: name=libselinux-python state=present
-  when: ansible_distribution == 'CentOS'
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
   tags: SELinux
+
+- name: rpmforge installed
+  yum: name={{ item }}  state=present
+  with_items: 
+    - "http://ftp.riken.jp/Linux/repoforge/redhat/el7/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm"
+  when: ansible_distribution == "RedHat"
+  tags: package
 
 - name: CentOS 6 add repository
   yum: name={{ item }} state=present 
   with_items:
-    - "http://ftp-srv2.kddilabs.jp/Linux/distributions/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm"
+    - "http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
     - "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
   tags: package
   ignore_errors: yes
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
 
-- name: CentOS 7 add repository state=present 
-  yum: name={{ item }}
+- name: CentOS 7 add repository
+  yum: name={{ item }} state=present
   with_items:
+    - "http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
     - "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
   tags: package
   ignore_errors: yes
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
 
 - name: install the 'epel repositry'
   yum: name="epel-release" state=present
   tags: package
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
 
 - name: install the 'Development tools' package group
   yum: name="@Development tools" state=present
@@ -48,8 +58,15 @@
     regexp: '^LANG=en_US\.UTF-8'
     replace: 'LANG={{locale}}'
   tags: locale
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "6")) or 
         (ansible_distribution == "Amazon")
+
+- name: set locale
+  command: localectl set-locale LANG={{ locale }} 
+  tags: locale
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
 
 - name: set zone to /etc/sysconfig/clock
   replace:
@@ -57,7 +74,8 @@
     regexp: '^ZONE=\"UTC\"'
     replace: 'ZONE="{{zone}}"'
   tags: locale
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "6")) or 
         (ansible_distribution == "Amazon")
 
 - name: set false to clock utc
@@ -66,7 +84,8 @@
     regexp: '^UTC=true'
     replace: 'UTC=false'
   tags: locale
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "6")) or 
         (ansible_distribution == "Amazon")
 
 - name: set timezone to Asia/Tokyo
@@ -76,17 +95,34 @@
     state: link
     force: yes
   tags: locale
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "6")) or 
         (ansible_distribution == "Amazon")
 
 - name: set timezone to Asia/Tokyo
   command: timedatectl set-timezone Asia/Tokyo
   tags: locale 
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
+
+- name: confirm existence of yum-cron
+  shell: rpm -qa | grep 'yum-cron'
+  ignore_errors: True
+  register: result_yum_cron
+  tags: yum
+
+- name: stopped cron.service
+  service:
+    name: yum-cron
+    state: stopped
+    enabled: False
+  tags: yum
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" ) and
+        result_yum_cron | success
 
 - name: disable SELinux
   selinux: state=disabled
-  when: ansible_distribution == 'CentOS'
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS")
   tags: SELinux
 
 - name: set path to ldconfig
@@ -105,7 +141,7 @@
   template: src=forward.j2 dest=/root/.forward
   tags: forward
 
-- name: add groups
+- name: create groups
   group: name={{ item }} state=present
   with_items:
     - "{{shared_group}}"

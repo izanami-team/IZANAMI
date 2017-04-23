@@ -1,0 +1,14 @@
+description "supervisord"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+{% if ansible_distribution == 'Amazon' %}
+exec /usr/local/bin/supervisord -n
+pre-stop exec /usr/local/bin/supervisorctl stop all
+{% else %}
+exec /usr/bin/supervisord -n
+pre-stop exec /usr/bin/supervisorctl stop all
+{% endif %}
+

@@ -1,0 +1,10 @@
+#  参考：http://knowledge.sakura.ad.jp/beginner/4048/
+
+- name: Create iptables configuration file
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables
+  tags: iptables
+
+- name: iptables is runnning and enabled
+  service: name=iptables state=started enabled=yes
+  tags: iptables
+

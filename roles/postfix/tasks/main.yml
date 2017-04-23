@@ -1,0 +1,13 @@
+- name: install the postfix
+  yum: name="postfix" state=present
+  tags: postfix
+
+- name: replace for main.cf
+  replace: dest="/etc/postfix/main.cf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items: "{{ main_cf }}"
+  tags: postfix
+
+- name: postifx is runnning and enabled
+  service: name=postfix state=started enabled=yes
+  tags: postix
+

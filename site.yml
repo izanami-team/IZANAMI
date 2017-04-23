@@ -4,14 +4,14 @@
   roles:
     - role: common
       tags: common
-    #- role: postfix
-    #  tags: postfix
-    #- role: iptables
-    #  tags: iptables
-    #  when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6")
+    - role: postfix
+      tags: postfix
+    - role: iptables
+      tags: iptables
+      when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6")
     - role: firewall
       tags: firewall
-      when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "7")
+      when: ((ansible_distribution == "CentOS" ) or (ansible_distribution == 'RedHat' )) and ( ansible_distribution_major_version == "7")
     - role: swap
       tags: swap
     - role: aws
@@ -22,14 +22,14 @@
     - role: letsencrypt
       tags: letsencrypt
       when: "{{ letsencrypt | bool }}"
-    - role: sshd
-      tags: sshd
     - role: nginx
       tags: nginx
       when: "{{ nginx | bool }}"
     - role: httpd
       tags: httpd
       when: "{{ apache | bool }}"
+    - role: sshd
+      tags: sshd
     - role: ImageMagick
       tags: ImageMagick
     - role: php
@@ -37,10 +37,10 @@
       when: "{{ php | bool }}"
     - role: perl
       tags: perl 
-    - role: daemontools
-      tags: daemontools
       when: movabletype 
     - role: movabletype
       tags: movabletype
       when: movabletype 
+    - role: supervisord
+      tags: supervisord
   

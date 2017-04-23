@@ -2,30 +2,27 @@ packages:
   - python-devel
   - apr-devel
   - apr-util-devel
-  - aspell-devel
-  - bison-devel
   - bzip2-devel
   - curl-devel
   - dstat
   - expect
-  - giflib-devel
+  - giflib
   - libX11-devel
   - libXext-devel
   - libXt-devel
-  - libedit-devel
-  - libevent-devel
+  - libedit
+  - libevent
   - libicu-devel
   - libjpeg-devel
   - libpng-devel
   - libtiff-devel
   - libtool-ltdl-devel
-  - libwmf-devel
+  - libwmf
   - libxml2
   - libxml2-devel
   - libxslt-devel
   - logwatch
   - mlocate
-  - mod_ssl
   - ncurses-devel
   - net-snmp-devel
   - nmap

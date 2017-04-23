@@ -1,13 +1,13 @@
-/var/www/movabletype/movabletype.log {
+/var/log/movabletype/*log {
     daily
     dateext
-    rotate 3
+    rotate 7
     dateext
     compress
     missingok
     notifempty
     sharedscripts
     postrotate
-        /usr/bin/svc -du /service/movabletype > /dev/null 2>/dev/null || true
+        /usr/bin/supervisorctl pid movabletype | xargs kill -HUP > /dev/null 2>/dev/null || true
     endscript
 }

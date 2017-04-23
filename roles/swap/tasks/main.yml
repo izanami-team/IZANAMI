@@ -1,36 +1,27 @@
-- name: check swapfile
-  shell: swapon -s | grep 'swap'
-  ignore_errors: True
-  register: result_swap
-  tags: swap
+- name: Show Swap and RAM
+  debug: msg="ram={{ ansible_memtotal_mb }}, swap={{ ansible_swaptotal_mb }}"
 
 - name: crete swap
-  command: dd if=/dev/zero of=/mnt/swapfile bs=1M count=1024
-  when: result_swap|failed
+  command: dd if=/dev/zero of=/mnt/swapfile bs=1M count={{ ansible_memtotal_mb }}
+  when: "ansible_swaptotal_mb == 0" 
   tags: swap
 
 - name: mkswap
   command: mkswap /mnt/swapfile
-  when: result_swap|failed
+  when: "ansible_swaptotal_mb == 0" 
   tags: swap
 
-- name: swap permissions
+- name: change permissions to swap
   file: path=/mnt/swapfile owner=root group=root mode=0600
-  when: result_swap|failed
+  when: "ansible_swaptotal_mb == 0"
   tags: swap
 
-- name: swapon swap file
+- name: set swapon 
   command: swapon /mnt/swapfile
-  when: result_swap|failed
+  when: "ansible_swaptotal_mb == 0 "
   tags: swap
 
 - name:  mount swap
   mount: name=swap src=/mnt/swapfile fstype=swap opts=defaults passno=0 dump=0 state=present
-  when: result_swap|failed
+  when: "ansible_swaptotal_mb == 0" 
   tags: swap
-
-- name: auto mount for swapfile
-  lineinfile: dest=/etc/fstab line='/mnt/swapfile swap        swap    defaults        0   0'
-  tags: swap
-
-

@@ -1,6 +1,0 @@
-runfile: |
-    cd /var/www/movabletype/ || exit 1
-    NCPU=`getconf _NPROCESSORS_ONLN`
-    WORKERS=$(expr $NCPU \* 5)
-    exec setuidgid apache envuidgid apache /usr/local/perl-5.18/bin/starman --workers=$WORKERS --listen :8080 --listen /var/www/movabletype/movabletype.sock --error-log=/var/www/movabletype/movabletype.log --pid=/var/www/movabletype/movabletype.pid /var/www/movabletype/mt.psgi
-

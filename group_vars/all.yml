@@ -3,5 +3,4 @@ region: ap-northeast-1
 zone: Asia/Tokyo
 zoneinfo_path: /usr/share/zoneinfo/Asia/Tokyo
 movabletype: yes
-daemontools: yes
 

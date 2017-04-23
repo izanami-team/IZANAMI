@@ -1,0 +1,20 @@
+php_ini_path: /etc/opt/remi/php70/php.ini
+php_package:
+   - php70
+   - php70-php
+   - php70-php-mbstring
+   - php70-php-mcrypt
+   - php70-php-gd
+   - php70-php-pdo
+   - php70-php-opcache
+   - php70-php-pecl-apcu
+   - php70-php-mysqlnd
+   - php70-php-pecl-apcu
+   - php70-php-pecl-imagick
+   - php70-php-pecl-memcache
+   - php70-php-pecl-memcached
+   - php70-php-pecl-mysql
+   - php70-php-pecl-xdebug
+   - php70-php-pecl-yaml
+   - php70-php-xml
+

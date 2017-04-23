@@ -1,0 +1,8 @@
+main_cf:
+   - { regexp: '^#myhostname = virtual.domain.tld$', replace: 'myhostname = {{ server_hostname }}' }
+   - { regexp: '^#mydomain = domain.tld$', replace: 'mydomain = {{  server_hostname }}' }
+   - { regexp: '^#myorigin = \$mydomain$', replace: 'myorigin = $mydomain' }
+   - { regexp: '^inet_protocols = all$', replace: 'inet_protocols = ipv4' }
+   - { regexp: '^mydestination = \$myhostname, localhost.\$mydomain, localhost$', replace: 'mydestination = localhost' }
+   - { regexp: '^#mynetworks = 168.100.189.0/28, 127.0.0.0/8$', replace: 'mynetworks = 127.0.0.1' }
+

@@ -2,6 +2,7 @@
   yum: name={{ item }} state=present
   with_items:
    - nginx
+   - mod_ssl
   tags: nginx
 
 - name: replace nginx.conf
@@ -13,12 +14,12 @@
   template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf
   tags: nginx
 
-- name: Create Apache2.4 configuration file vhosts
+- name: Create nginx configuration file vhosts
   template: src=vhosts.conf.j2 dest=/etc/nginx/conf.d/{{ item.name }}.conf
   with_items: vhosts
   tags: nginx
 
-- name: httpd vhosts directory
+- name: nginx vhosts directory
   file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=nginx group={{ shared_group }} mode=0775
   with_items: vhosts
   tags: nginx
@@ -27,17 +28,17 @@
   file: path=/var/www/vhosts owner=root group=root mode=0755
   tags: nginx
 
-- name: httpd vhosts cgi-bin
+- name: nginx vhosts cgi-bin
   file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner=nginx group={{ shared_group }} mode=2775
   with_items: vhosts
   tags: nginx
 
-- name: httpd vhosts htdocs
+- name: nginx vhosts htdocs
   file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner=nginx group={{ shared_group }} mode=2775
   with_items: vhosts
   tags: nginx
 
-- name: httpd vhosts logs
+- name: nginx vhosts logs
   file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner=nginx group={{ shared_group }} mode=2775
   with_items: vhosts
   tags: nginx
