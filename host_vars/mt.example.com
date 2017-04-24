@@ -10,9 +10,9 @@ mt:
   file: MT-6.3.2.zip
   ver: MT-6.3.2
   psgi: True
-  config:
-    - {name: 'AdminScript', value: 'mt.cgi'}
-    - {name: 'ImageDriver', value: 'Imager'}
+  #config:
+  #  - {name: 'AdminScript', value: 'mt.cgi'}
+  #  - {name: 'ImageDriver', value: 'Imager'}
   plugins:
     - PageBute
     - PSGIRestart
@@ -21,9 +21,9 @@ mt:
     user: movabletype
     passwd: 'ABC@123456example'
     server: localhost
-  basic:
-    user: example
-    passwd: example
+  #basic:
+  #  user: example
+  #  passwd: example
 vhosts:
   - name: mt.example.com
     letsencrypt: True

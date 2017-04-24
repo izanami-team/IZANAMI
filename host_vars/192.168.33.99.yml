@@ -7,15 +7,15 @@ nginx: False
 apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 mt:
-  file: MT-6.3.2.zip
-  ver: MT-6.3.2
+  file: MTOS-5.2.13.zip
+  ver: MTOS-5.2.13
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'mt.cgi'}
     - {name: 'ImageDriver', value: 'Imager'}
-  plugins:
-    - PageBute
-    - PSGIRestart
+  #plugins:
+    #- PageBute
+    #- PSGIRestart
   db:
     name: movabletype
     user: movabletype
