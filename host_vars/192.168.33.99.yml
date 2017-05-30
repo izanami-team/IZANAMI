@@ -31,4 +31,3 @@ vhosts:
       use: False
       only: False
     email: youremail@example.com
-

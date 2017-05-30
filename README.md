@@ -44,3 +44,4 @@ ansible-playbook -s -i hosts site.yml -u SSHユーザ名 --private-key=~/SSHの�
 
 MySQLではDBパスワードに必ず英数字大文字＆記号を１つ以上使用して下さい。ERRORになります。
 
+

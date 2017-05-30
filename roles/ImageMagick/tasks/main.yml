@@ -1,3 +1,5 @@
+---
+# ImageMagick
 - name: ImageMagick is installed
   yum: name={{ item }} state=present
   with_items:
@@ -6,3 +8,11 @@
    - ImageMagick-perl
   ignore_errors: True
   tags: ImageMagick
+
+# https://access.redhat.com/security/cve/cve-2016-3714
+#- name: insert "Policymap" configuation block in /etc/ImageMagick/policy.xml
+#  blockinfile:
+#    dest: /etc/ImageMagick/policy.xml
+#    block: "{{ policymap }}"
+#  tags: ImageMagick
+

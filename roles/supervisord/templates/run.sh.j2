@@ -8,4 +8,4 @@ WORKERS=$(expr $NCPU \* 2)
 
 cd /var/www/movabletype
 
-exec starman --workers=$WORKERS --listen :8080 --listen /var/run/movabletype/sock --error-log=/var/log/movabletype/error.log --pid=/var/run/movabletype/pid mt.psgi
+exec starman --workers=$WORKERS --listen :8080 --listen /var/run/movabletype/mt.sock --error-log=/var/log/movabletype/error.log --pid=/var/run/movabletype/mt.pid mt.psgi

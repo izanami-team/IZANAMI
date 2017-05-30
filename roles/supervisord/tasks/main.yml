@@ -43,7 +43,14 @@
   tags: supervisord
 
 - name: Create movabletype run file
-  template: src=run.sh.j2 dest=/var/run/movabletype/run.sh mode=0755
+  template: src=run.sh.j2 dest=/var/www/mt_run.sh mode=0755
+  tags: supervisord
+
+- name: Create movabletype tmpfile.d
+  template: src=movabletype.conf.j2 dest=/etc/tmpfiles.d/movabletype.conf mode=0755
+  tags: supervisord
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
   tags: supervisord
 
 - name: start supervisord

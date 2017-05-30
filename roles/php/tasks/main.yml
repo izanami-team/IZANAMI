@@ -1,3 +1,5 @@
+# php
+
 - name: vars for centos & redhat
   include_vars: centos_redhat.yml
   when: ansible_distribution == "CentOS" or ansible_distribution == 'RedHat'
@@ -9,7 +11,7 @@
   tags: php
 
 - name: php installed
-  yum: name={{ item }} enablerepo=epel,remi,remi-php70 state=present
+  yum: name={{ item }} enablerepo=epel,remi,remi-php70 state=present skip_broken=yes
   with_items: "{{ php_package }}"
   when: ansible_distribution == "CentOS" or ansible_distribution == 'RedHat'
   tags: php

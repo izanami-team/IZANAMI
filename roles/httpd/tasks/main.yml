@@ -190,6 +190,7 @@
 - name: create htpasswd
   htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner=apache group={{shared_group}} mode=0644
   tags: httpd
+  when: "{{ mt.basic is defined }}"
 
 - name: httpd is runnning and enabled
   service: name=httpd state=started enabled=yes
