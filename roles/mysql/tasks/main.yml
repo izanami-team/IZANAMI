@@ -103,7 +103,7 @@
     name: "{{ mt.db.user }}"
     host: "{{ item }}"
     password: "{{ mt.db.passwd }}"
-    priv: '"{{ mt.db.name }}".*:ALL'
+    priv: "{{ mt.db.name }}.*:ALL"
     state: present
   with_items:
    - "{{ ansible_hostname }}"
