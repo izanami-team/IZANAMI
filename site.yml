@@ -21,20 +21,20 @@
       tags: mysql 
     - role: letsencrypt
       tags: letsencrypt
-      when: "{{ letsencrypt | bool }}"
+      when: letsencrypt | bool
     - role: nginx
       tags: nginx
-      when: "{{ nginx | bool }}"
+      when: nginx | bool
     - role: httpd
       tags: httpd
-      when: "{{ apache | bool }}"
+      when: apache | bool
     - role: sshd
       tags: sshd
     - role: ImageMagick
       tags: ImageMagick
     - role: php
       tags: php 
-      when: "{{ php | bool }}"
+      when: php | bool
     - role: perl
       tags: perl 
       when: movabletype 

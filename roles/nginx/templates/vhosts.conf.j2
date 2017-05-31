@@ -3,7 +3,7 @@ upstream app-servers {
 }
 
 server {
-    {% if item.ssl is defined %}
+    {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
     listen 443 ssl;
     {% endif %}
     listen 80;
@@ -31,7 +31,7 @@ server {
         client_max_body_size 300M;
         proxy_redirect off;
         proxy_read_timeout  600;
-        {% if item.ssl is defined %}
+        {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
         proxy_set_header    X-Forwarded-HTTPS on;
         {% endif %}
         proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
@@ -42,12 +42,14 @@ server {
         proxy_pass http://app-servers;
     }
 
-    {% if item.ssl is defined %}
+    {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
+    {% if item.letsencrypt == True %}
     ssl_certificate /etc/letsencrypt/live/{{ item.name }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ item.name }}/privkey.pem;
-    ssl_session_cache   shared:SSL:3m;
-    ssl_buffer_size     8k;
-    ssl_session_timeout 10m;
-    {% endif %}
+    {% else %}
+    ssl_certificate /etc/nginx/ssl/{{ item.ssl.crt }};
+    
+    ssl_certificate_key /etc/nginx/ssl/{{ item.ssl.key }}
+    {% endif -%}
 }
 

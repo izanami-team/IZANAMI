@@ -7,7 +7,12 @@
 
 - name: replace nginx.conf
   replace: dest="/etc/nginx/nginx.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
-  with_items: replace_vars
+  with_items: "{{ replace_vars }}"
+  tags: nginx
+
+- name: copy a new ssl files
+  copy: src="{{ item }}" dest=/etc/nginx/ssl/ owner=root group=root mode=0644
+  with_fileglob: "ssl/*"
   tags: nginx
 
 - name: revers proxy
@@ -16,12 +21,12 @@
 
 - name: Create nginx configuration file vhosts
   template: src=vhosts.conf.j2 dest=/etc/nginx/conf.d/{{ item.name }}.conf
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: nginx vhosts directory
   file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=nginx group={{ shared_group }} mode=0775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: change owner
@@ -30,21 +35,22 @@
 
 - name: nginx vhosts cgi-bin
   file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner=nginx group={{ shared_group }} mode=2775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: nginx vhosts htdocs
   file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner=nginx group={{ shared_group }} mode=2775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: nginx vhosts logs
   file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner=nginx group={{ shared_group }} mode=2775
-  with_items: vhosts
+  with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: create htpasswd
   htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner=nginx group={{shared_group}} mode=0644
+  when: mt.basic is defined
   tags: nginx
 
 - name: modify nginx users
@@ -56,7 +62,7 @@
   tags: nginx
 
 - name: nginx is runnning and enabled
-  service: name=nginx state=running enabled=yes
+  service: name=nginx state=started enabled=yes
   notify: restart nginx
   tags: nginx
 
