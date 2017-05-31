@@ -18,6 +18,11 @@ server {
     }
     {% endif%}
 
+    location /.well-known {
+        satisfy any;
+        allow all;
+    }
+
     location /mt {
         {% if mt.basic is defined %}
         auth_basic "auth";
