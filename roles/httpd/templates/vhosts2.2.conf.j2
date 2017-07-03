@@ -17,7 +17,7 @@
         AllowOverride All
     </Directory>
 
-    {% if mt.basic is defined -%}
+    {% if (mt.basic is defined) and (inventory_file != 'local') %}
     <Location "/mt/">
         AuthType Basic
         AuthName "MovableType"
@@ -72,7 +72,7 @@
         AllowOverride All
     </Directory>
 
-    {% if mt.basic is defined %}
+    {% if (mt.basic is defined) and (inventory_file != 'local') %}
     <Location "/mt/">
         AuthType Basic
         AuthName "MovableType"

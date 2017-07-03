@@ -18,7 +18,7 @@
         Require all granted
     </Directory>
 
-    {% if mt.basic is defined -%}
+    {% if (mt.basic is defined) and (inventory_file != 'local') %}
     <Location "/mt/">
         AuthType Basic
         AuthName "MovableType"
@@ -75,7 +75,7 @@
 
     #RequestHeader set X_FORWARDED_PROTO "https"
 
-    {% if mt.basic is defined %}
+    {% if (mt.basic is defined) and (inventory_file != 'local') %}
     <Location "/mt/">
         AuthType Basic
         AuthName "MovableType"

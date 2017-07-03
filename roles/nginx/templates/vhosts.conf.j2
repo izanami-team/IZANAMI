@@ -24,16 +24,16 @@ server {
     }
 
     location /mt {
-        {% if mt.basic is defined %}
+      {% if (mt.basic is defined) and (inventory_file != 'local') %}
         auth_basic "auth";
         auth_basic_user_file /var/www/htpasswd; 
-        {% endif %}
+      {% endif %}
         client_max_body_size 300M;
         proxy_redirect off;
         proxy_read_timeout  600;
-        {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
+      {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
         proxy_set_header    X-Forwarded-HTTPS on;
-        {% endif %}
+      {% endif %}
         proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
         proxy_set_header    X-Forwarded-Host  $host;
         proxy_set_header    Host              $host;
