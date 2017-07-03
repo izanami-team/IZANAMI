@@ -38,6 +38,8 @@
 
     {% if mt.psgi == True -%}
     ProxyRequests    Off
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "http"
     ProxyPass        /mt/ http://localhost:8080/mt/
     ProxyPassReverse /mt/ http://localhost:8080/mt/
     {% endif %}
@@ -93,6 +95,8 @@
 
     {% if mt.psgi == True %}
     ProxyRequests    Off
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "https"
     ProxyPass        /mt/ http://localhost:8080/mt/
     ProxyPassReverse /mt/ http://localhost:8080/mt/
     {% endif %}
