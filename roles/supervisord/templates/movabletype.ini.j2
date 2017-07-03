@@ -13,3 +13,19 @@ stderr_logfile=/var/log/supervisord/movabletype.log
 stderr_logfile_maxbytes=0
 stderr_logfile_backups=0
 directory=/var/www/movabletype
+[program:run-periodic-tasks]
+command=/var/www/mt_rtp.sh
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=5
+user={{ owner }}
+redirect_stderr=true
+stdout_logfile=/var/log/supervisord/run-periodic-tasks.log
+stdout_logfile_maxbytes=0
+stdout_logfile_backups=0
+stderr_logfile=/var/log/supervisord/run-periodic-tasks.log
+stderr_logfile_maxbytes=0
+stderr_logfile_backups=0
+directory=/var/www/movabletype
+

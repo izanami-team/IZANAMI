@@ -36,10 +36,6 @@
     chdir: /var/www/movabletype/tools
   tags: movabletype
 
-- name: set run-periodic-tasks
-  cron: name='run-periodic-tasks' job="cd /var/www/movabletype/; ./tools/run-periodic-tasks" minute="*/5" user="{{ owner }}" state=present
-  tags: movabletype
-
 - name: logrotate
   template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0664
   tags: logrotate

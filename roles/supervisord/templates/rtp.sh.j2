@@ -1,0 +1,8 @@
+#!/bin/sh
+
+PATH=/usr/local/perl-5.18/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
+export PATH
+
+cd /var/www/movabletype
+
+exec ./tools/run-periodic-tasks --daemon --load=1000
