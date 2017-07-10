@@ -7,6 +7,7 @@ Also supports vagrant
 
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
+| Amazon Linux | OK | - | - | - | - | - |
 | RHEL 7 | OK | OK | OK | - | - | - |
 | CentOS 7 | OK | OK | OK | - | OK |
 | CentOS 6 | OK | OK | OK | - | - |
