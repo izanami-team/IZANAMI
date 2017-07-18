@@ -1,47 +1,49 @@
 # IZANAMI
 
-MovableType環境を自動で構築します  
-localではvagrant upで開発環境を構築する事も可能です。
+Construct the MovableType environment with ansible
+Also supports vagrant
 
-## 動作テスト
+## environment
 
-| OS | AWS | GCP | Azure | さくら | local |
+| OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
-| RHEL 7 | ◯ | ◯ | ◯  | - | - | - | 
-| CentOS 7 | ◯  | ◯  | ◯  | - | ◯  |
-| CentOS 6 | ◯  | ◯  | ◯  | - | - |
+| Amazon Linux | OK | - | - | - | - | - |
+| RHEL 7 | OK | OK | OK | - | - | - |
+| CentOS 7 | OK | OK | OK | - | OK |
+| CentOS 6 | OK | OK | OK | - | - |
 
-## 準備
+## configuration
 
-- roles/movabletype/files/にMT-6.3.2.zipなどのデプロイする本体を設置  
-- hostsファイルに該当サーバ名を追記 
-- host_vars内にサンプルを参考にサーバ名.ymlファイルを設置し、中身をカスタマイズする
-- 起動コマンドを実行する
+- copy MT-6.3.x.zip path to roles/movabletype/files/
+- add server name in hosts file
+- place server name.yml file in host_vars
+- customize name.yml
 
-### 詳細
+### details
 
-http://blog.onagatani.com/archives/izanami.html  
+http://blog.onagatani.com/archives/izanami.html
 
-## 起動方法
+## provisioning
 
-ansible-playbook -s -i hosts site.yml -u SSHユーザ名 --private-key=~/SSHの鍵のパス -l 対象サーバ（無指定ならhosts内全て） --extra-vars="mysql_root_password=MySQLのrootパスワード"  
+### vagrant
 
-## 設定
+`vagrrant up`
 
-- プラグイン
--- host_vars/サーバ名.yml 内のpluginsをコメントアウトし、必要なファイルを設置してください
---- roles/movabletype/mt-plugins/ここに設置したディレクトリなどがそのままplugins配下に設置されます
---- roles/movabletype/mt-static/ここに設置したディレクトリなどがそのままmt-static配下に設置されます
-- MT
--- ドキュメントルート
---- /var/www/vhosts/movabletype.local/htdocs
-- ドメイン
--- movabletype.local (hostsが必要です）
-- Basic認証
--- MTディレクトリはデフォルトでBasic認証配下になりますが必要なければhost_vars/サーバ名.yml 内のBasicをコメントアウトしてください
+### server
+`ansible-playbook -s -i hosts site.yml -u "ssh user name" --private-key="path to private key file" -l "target server (all in hosts if not specified)" --extra-vars="mysql_root_password="mysql root password""`
 
-## 注意
+## settings
 
-MySQLではDBパスワードに必ず英数字大文字＆記号を１つ以上使用して下さい。ERRORになります。
+- plugin
+    - add necessary plugin to plugins in server name.yml
+        - set plugin in roles/movabletype/files/mt-plugins
+        - set mt-static in roles/movabletype/files/mt-mt-static
+- apache
+    - document root  
+    - /var/www/vhosts/movabletype.local/htdocs
+- domain
+    - movabletype.local (hosts 192.168.33.99)
 
+## caution
 
+alphanumeric capital letters & symbols for DB password in MySQL
