@@ -1,23 +1,19 @@
 - name: downloaded letsencrypt
-  get_url: url=https://github.com/certbot/certbot/archive/v0.13.0.zip dest=/tmp/v0.13.0.zip force=True
-  tags: letsencrypt
-
-- name: copy and unzip files
-  unarchive: src=/tmp/v0.13.0.zip dest=/opt/ copy=no
+  get_url: url=https://dl.eff.org/certbot-auto dest=/opt/certbot-auto force=True
   tags: letsencrypt
 
 - name: letsencrypt installed
-  shell: /opt/certbot-0.13.0/letsencrypt-auto --help --debug
+  shell: /opt/certbot-auto --help --debug
   tags: letsencrypt
 
 - name: create ssl
-  shell: /opt/certbot-0.13.0/letsencrypt-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}"
+  shell: /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}"
   when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt
 
 - name: renew ssl 
-  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-0.13.0/letsencrypt-auto certonly  --renew-by-default --webroot -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
+  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-auto certonly  --renew-by-default --webroot -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
   when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt
