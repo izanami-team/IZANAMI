@@ -1,13 +1,9 @@
 - name: downloaded letsencrypt
-  get_url: url=https://dl.eff.org/certbot-auto dest=/opt/certbot-auto force=True
-  tags: letsencrypt
-
-- name: letsencrypt installed
-  shell: /opt/certbot-auto --help --debug
+  get_url: url=https://dl.eff.org/certbot-auto dest=/opt/certbot-auto force=True mode=0755
   tags: letsencrypt
 
 - name: create ssl
-  shell: /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}"
+  shell: sudo opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
   when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt
