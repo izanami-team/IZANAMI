@@ -50,6 +50,15 @@
     RewriteRule     ^(/.*)$ https://%{HTTP_HOST}$1  [R,L]
 {% endif %}
 
+{% if item.letsencrypt == True %}
+    Alias /.well-known /var/www/vhosts/{{ item.name }}/htdocs/.well-known
+    <Location /.well-known>
+        Satisfy any
+        order allow,deny
+        allow from all
+    </Location>
+{% endif %}
+
 </Virtualhost>
 
 {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
@@ -71,6 +80,15 @@
         Options FollowSymLinks
         AllowOverride All
     </Directory>
+
+    {% if item.letsencrypt == True %}
+    Alias /.well-known /var/www/vhosts/{{ item.name }}/htdocs/.well-known
+    <Location /.well-known>
+        Satisfy any
+        order allow,deny
+        allow from all
+    </Location>
+    {% endif %}
 
     {% if (mt.basic is defined) and (inventory_file != 'local') %}
     <Location "/mt/">

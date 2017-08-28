@@ -50,6 +50,13 @@
     RewriteRule     ^(/.*)$ https://%{HTTP_HOST}$1  [R,L]
 {% endif %}
 
+{% if item.letsencrypt == True %}
+    Alias /.well-known /var/www/vhosts/{{ item.name }}/htdocs/.well-known
+    <Location /.well-known>
+        Require all granted
+    </Location>
+{% endif %}
+
 </Virtualhost>
 
 {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
@@ -73,7 +80,12 @@
         Require all granted
     </Directory>
 
-    #RequestHeader set X_FORWARDED_PROTO "https"
+    {% if item.letsencrypt == True %}
+    Alias /.well-known /var/www/vhosts/{{ item.name }}/htdocs/.well-known
+    <Location /.well-known>
+        Require all granted
+    </Location>
+    {% endif %}
 
     {% if (mt.basic is defined) and (inventory_file != 'local') %}
     <Location "/mt/">
