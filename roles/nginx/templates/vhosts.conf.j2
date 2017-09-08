@@ -34,7 +34,7 @@ server {
       {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
         proxy_set_header    X-Forwarded-HTTPS on;
       {% endif %}
-        proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header    X-Forwarded-Proto $scheme;
         proxy_set_header    X-Forwarded-Host  $host;
         proxy_set_header    Host              $host;
         proxy_set_header    X-Real-IP         $remote_addr;
