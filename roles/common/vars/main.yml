@@ -37,4 +37,14 @@ packages:
   - t1lib*
   - tcsh
   - telnet
-
+disable_daemon:
+  - blk-availability
+  - kdump
+  - messagebus
+  - rpcbind
+  - rpcgssd
+disable_daemon_amazon:
+  - ip6tables
+  - mdmonitor
+  - rngd
+  - udev-post

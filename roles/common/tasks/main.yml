@@ -52,6 +52,15 @@
   yum: name=sendmail state=absent
   tags: sendmail
 
+- name: disable the daemon
+  service: name={{ item }} enabled=no state=stopped
+  with_items: "{{ disable_daemon }}"
+
+- name: disable the daemon
+  service: name={{ item }} enabled=no state=stopped
+  with_items: "{{ disable_daemon_amazon }}"
+  when: ansible_distribution == "Amazon"
+
 - name: set locale to /etc/sysconfig/i18n
   replace:
     dest: /etc/sysconfig/i18n
