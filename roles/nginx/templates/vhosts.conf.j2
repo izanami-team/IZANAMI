@@ -49,8 +49,8 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/{{ item.name }}/privkey.pem;
     {% else %}
     ssl_certificate /etc/nginx/ssl/{{ item.ssl.crt }};
-    
     ssl_certificate_key /etc/nginx/ssl/{{ item.ssl.key }}
+    {% endif -%}
     {% endif -%}
 }
 
