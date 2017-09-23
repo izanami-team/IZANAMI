@@ -58,19 +58,14 @@ $ git clone git@github.com:izanami-team/IZANAMI.git
 * Let'sEncrypt以外のSSL証明書を利用する場合は以下の場所に証明書を設置してください
     * Nginxを利用する場合　roles/nginx/ssl/
     * Apacheを利用する場合　roles/httpd/ssl/
-* サーバに接続するSSHユーザの公開鍵認証用のファイルを作成します
-    * 以下のコマンドでファイルを生成します。生成された.pubファイルは作成するSSHユーザ名と同一にし、roles/sshd/files/public_keys/以下に設置します（.pub拡張子は削除します）
-
+* 以下のコマンドでサーバに接続するSSHユーザの公開鍵認証用のファイルを作成し、roles/sshd/files/public_keys/以下に設置します（.pub拡張子は削除し、ファイル名はSSHユーザ名と同一にします）
 ```bash
 $ ssh-keygen -t rsa -b 4096
 ```
-
-    * 以下のコマンドでパスフレーズをハッシュ化し、メモしておきます(後述するymlファイルに記載します）
-
+* 以下のコマンドでパスフレーズをハッシュ化し、メモしておきます(後述するymlファイルに記載します）
 ```bash
 $ openssl passwd -1 '上記で入力したパスフレーズを指定'
 ```
-
 * host_varsの中にあるサンプルの設定ファイルをコピーし、今回作成するサーバのホスト名.ymlとして保存します
 * ホスト名.ymlファイルの中身を必要に応じて変更します。（vagrantの場合は必要ありません）
 * hostsファイルのdevelopment,staging,productionのいずれかのグループに今回作成するサーバのホスト名を設定します。（vagrantの場合は必要ありません）
