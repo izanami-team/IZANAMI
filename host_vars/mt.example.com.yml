@@ -2,17 +2,17 @@ server_hostname:  "mt.examaple.com"
 root_email: "alert@mt.example.com"
 letsencrypt: True
 denyhosts: True
-php: True
-nginx: False
-apache: True
+php: False
+nginx: True
+apache: False
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 mt:
-  file: MT-6.3.2.zip
-  ver: MT-6.3.2
+  file: MT-6.3.4.zip
+  ver: MT-6.3.4
   psgi: True
-  #config:
-  #  - {name: 'AdminScript', value: 'mt.cgi'}
-  #  - {name: 'ImageDriver', value: 'Imager'}
+  config:
+    - {name: 'AdminScript', value: 'mt.cgi'}
+    - {name: 'ImageDriver', value: 'Imager'}
   plugins:
     - PageBute
     - PSGIRestart

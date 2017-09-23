@@ -1,5 +1,4 @@
 server_hostname:  "movabletype.local"
-root_email: "youremail@example.com"
 letsencrypt: False
 denyhosts: False
 php: True
@@ -13,9 +12,9 @@ mt:
   config: 
     - {name: 'AdminScript', value: 'mt.cgi'}
     - {name: 'ImageDriver', value: 'Imager'}
-  #plugins:
-    #- PageBute
-    #- PSGIRestart
+  plugins:
+    - PageBute
+    - PSGIRestart
   db:
     name: movabletype
     user: movabletype
@@ -30,4 +29,3 @@ vhosts:
     ssl:
       use: False
       only: False
-    email: youremail@example.com
