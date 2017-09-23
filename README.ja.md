@@ -15,11 +15,15 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 * MovableType5.2以降対応(MTOS含む)、PSGIもしくはCGI起動
 * Perl5.18.2
 * PHP(option)7.0
-* Nginx DynamicPublishingには非対応
-* Apache CentOS6系は2.2、CentOS7系は2.4系がインストールされます
+* Nginx
+    * DynamicPublishingには非対応
+* Apache
+    * CentOS6は2.2系
+    * CentOS7は2.4系
 * MySQL5.7
 * supervisord
-* Let'sEncryptでSSL証明書を自動取得可能です
+* Let'sEncrypt
+    * SSL証明書を自動取得可能です
 
 ## Requirement
 
@@ -56,18 +60,25 @@ $ git clone git@github.com:izanami-team/IZANAMI.git
     * Apacheを利用する場合　roles/httpd/ssl/
 * サーバに接続するSSHユーザの公開鍵認証用のファイルを作成します
     * 以下のコマンドでファイルを生成します。生成された.pubファイルは作成するSSHユーザ名と同一にし、roles/sshd/files/public_keys/以下に設置します（.pub拡張子は削除します）
+
 ```bash
 $ ssh-keygen -t rsa -b 4096
 ```
+
     * 以下のコマンドでパスフレーズをハッシュ化し、メモしておきます(後述するymlファイルに記載します）
+
 ```bash
 $ openssl passwd -1 '上記で入力したパスフレーズを指定'
 ```
+
 * host_varsの中にあるサンプルの設定ファイルをコピーし、今回作成するサーバのホスト名.ymlとして保存します
 * ホスト名.ymlファイルの中身を必要に応じて変更します。（vagrantの場合は必要ありません）
 * hostsファイルのdevelopment,staging,productionのいずれかのグループに今回作成するサーバのホスト名を設定します。（vagrantの場合は必要ありません）
 
 ### ymlファイルの編集方法
+
+以下のようにymlファイルを設定することでプロビジョニング対象のサーバを細かく設定する事が可能です  
+なお、利用しない項目は#でコメントアウトできます
 
 ```yaml
 server_hostname:  "サーバのhostnameになります。通常はドメイン名を設定するとよいでしょう"
