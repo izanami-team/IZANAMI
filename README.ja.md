@@ -10,6 +10,9 @@ Use Ansible to provision a full-stack MovableType Server
 OSの初期セットアップからSSL証明書の取得、sshユーザの追加まで全て自動で構築されます。  
 また、セキュリティにもある程度対策をしています。  
 
+ライブラリなどを常に最新の環境にすることを優先しているためVagrantのBOXなどは用意していません。  
+このため初回起動までに20分程度の時間がかかる事が予想されます。  
+
 ## Introduction
 
 * MovableType5.2以降対応(MTOS含む)、PSGIもしくはCGI起動
