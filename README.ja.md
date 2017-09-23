@@ -27,12 +27,13 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 * supervisord
 * Let'sEncrypt
     * SSL証明書を自動取得可能です
+    * Vagrant環境では非対応です
 
 ## Requirement
 
 playbookを実行するためにはansible2.2以降が必要です  
   
-### 対応ディストリビューション  
+### 各クラウドでのテスト結果 
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
 | Amazon Linux | OK | - | - | - | - | - |
@@ -49,7 +50,7 @@ $ git clone git@github.com:izanami-team/IZANAMI.git
 
 ## Usage
 
-* Ansibleをインストールします。2.2及び2.3で動作確認をしているので、2.2 or 2.3をインストールしてください。
+* Ansibleをインストールします。（2.2及び2.3で動作確認をしています)
     * Windows環境でのプロビジョニングは未テストです
     * 参考URL：http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-pip
 * プロビジョニング元になるサーバ（もしくはローカルPC）に本プロジェクトをcloneします
