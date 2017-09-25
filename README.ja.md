@@ -31,7 +31,10 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 
 ## Requirement
 
-playbookを実行するためにはansible2.2以降が必要です  
+* ansible2.2 or later
+* Vagrant (Optional: Only Vagrant) 
+   * vagrant-hostsupdater
+* Virtualbox (Optional: Only Vagrant) 
   
 ### 各クラウドでの対応OS 
 | OS | AWS | GCP | Azure | sakura | vagrant |
@@ -41,18 +44,23 @@ playbookを実行するためにはansible2.2以降が必要です
 | CentOS 7 | OK | OK | OK | - | OK |
 | CentOS 6 | OK | OK | OK | - | - |
 
-## Install
+## <a name="Install">Install
 
 ```bash
 $ brew install ansible
 $ git clone git@github.com:izanami-team/IZANAMI.git
+$ cd IZANAMI
 ```
 
 ## Usage
 
 * [Vagrant](https://www.vagrantup.com/ "Vagrant")をインストールします。(Vagrantを使用する場合のみ)
 * [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')をインストールします。(Vagrantを使用する場合のみ)
-* Ansibleをインストールします。（2.2及び2.3で動作確認をしています)
+* Vagrantプラグインをインストールします
+```bash
+$ vagrant plugin install vagrant-hostsupdater
+```
+* Ansibleをインストールします。[Install](#Install)
     * Windows環境でのプロビジョニングは未テストです
     * 参考URL：http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-pip
 * プロビジョニング元になるサーバ（もしくはローカルPC）に本プロジェクトをcloneします
@@ -152,7 +160,8 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
     * リモートサーバ /var/www/vhosts/fqdn/htdocs
     * Vagrant /var/www/vhosts/movabletype.local/htdocs
 * Vagrantで起動した場合のアクセス用ドメイン
-    * movabletype.local (hostsが必要です 192.168.33.99)
+    * http://movabletype.local
+    * vagrant-hostsupdater pluginをインストールしていない場合は192.168.33.99に対してhosts設定が必要です。
 * MTの再起動
     * システムメニューのPSGIリスタートで再起動してください
 
