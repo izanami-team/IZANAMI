@@ -17,12 +17,12 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 
 * MovableType5.2以降対応(MTOS含む)、PSGIもしくはCGI起動
 * Perl5.18.2
-* PHP(option)7.0
 * Nginx
     * DynamicPublishingには非対応
 * Apache
     * CentOS6は2.2系
     * CentOS7は2.4系
+* PHP(option)7.0
 * MySQL5.7
 * supervisord
 * Let'sEncrypt
@@ -125,7 +125,7 @@ vhosts: #以下の項目は複数指定可能です
     letsencrypt: Let'sencryptでSSLを取得する場合はTrueを指定します
     ssl:
       use: Trueの場合にはroles/nginx/ssl/以下もしくはroles/httpd/ssl/以下の証明書のファイルをサーバに転送します
-      only: True
+      only: 常時SSLを使用する場合はTrueを指定します。SSLを使用する場合はTrueで良いでしょう
       crt: 独自証明書の場合に証明書ファイル名を指定します
       key: 独自証明書の場合に鍵ファイル名を指定します
       ca_crt: 独自証明書の場合に中間証明書ファイル名を指定します
