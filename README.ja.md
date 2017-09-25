@@ -5,7 +5,7 @@ Use Ansible to provision a full-stack MovableType Server
 
 ## Description
 
-本プロジェクトは本番稼働に耐える高速なPSGI起動のMovable TypeをAnsibleで自動構築するものです。  
+本プロジェクトは本番稼働に耐える高速なPSGI起動のMovable TypeサーバをAnsibleで自動構築するものです。  
 リモートサーバだけではなくローカルのVagrant環境も構築可能です。  
 OSの初期セットアップからSSL証明書の取得、sshユーザの追加まで全て自動で構築されます。  
 また、セキュリティにもある程度対策をしています。  
@@ -132,7 +132,7 @@ $ vagrant up
 ```
 
 ### remote server
-
+EC2ならec-userのように各サーバの初期ユーザを指定してください  
 ```bash
 $ ansible-playbook -s -i hosts site.yml -u "サーバ構築用のSSHユーザ" --private-key="鍵認証用の秘密鍵ファイルを指定" -l "hostsファイルに設定したサーバ名を指定" --extra-vars="mysql_root_password="mysqlのrootパスワードを指定（任意の英数字及び記号、大文字小文字が必須）""
 ```
