@@ -33,7 +33,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 
 playbookを実行するためにはansible2.2以降が必要です  
   
-### 各クラウドでのテスト結果 
+### 各クラウドでの対応OS 
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
 | Amazon Linux | OK | - | - | - | - | - |
@@ -50,6 +50,8 @@ $ git clone git@github.com:izanami-team/IZANAMI.git
 
 ## Usage
 
+* [Vagrant](https://www.vagrantup.com/ "Vagrant")をインストールします。(Vagrantを使用する場合のみ)
+* [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')をインストールします。(Vagrantを使用する場合のみ)
 * Ansibleをインストールします。（2.2及び2.3で動作確認をしています)
     * Windows環境でのプロビジョニングは未テストです
     * 参考URL：http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-pip
