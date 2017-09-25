@@ -77,8 +77,7 @@ $ vagrant plugin install vagrant-hostsupdater
 * Please establish certificate below if you use SSLcertificate other than Let'sEncrypt'S certificate.
     * If you use Nginx roles/nginx/ssl/
     * If you use Apache roles/httpd/ssl/
-* c
-Create file for public key auathentication that is connected to below'S comand and establish roles/sshd/files/public_keys/（delete .pub filename extension and name file's name as same as SSH user）
+* Create file for public key auathentication that is connected to below'S comand and establish roles/sshd/files/public_keys/（delete .pub filename extension and name file's name as same as SSH user）
 ```bash
 $ ssh-keygen -t rsa -b 4096
 ```
@@ -121,7 +120,7 @@ mt:
   basic: #Please comment out 3 sentences with begining # if you don't use Basic authentication. 
     user: Choose user name if set to access to mt with Basic authentication.
     passwd: set password of Basic authentication.
-vhosts: #you can choose n\more than one below's list.
+vhosts: #you can choose more than one below's list.
   - name: set domain's name that will construct server
     letsencrypt: Please set as True if you aquire SSl at Let'sencrypt
     ssl:
@@ -146,7 +145,7 @@ $ vagrant up
 ```
 
 ### remote server
-Please set each server's initial user like ec-user if that is EC2  
+Please set each server's initial user like ec2-user if that is EC2  
 ```bash
 $ ansible-playbook -s -i hosts site.yml -u "SSH user for constructing server" --private-key="set private key file for kry authentication" -l "set server name that set hosts file" --set extra-vars="mysql_root_password="mysql's root password（need big and small leter, english numbers and letters）""
 ```
@@ -159,7 +158,7 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
 
 ### How to Use
 
-* Access toMT
+* Access to MT
     * Remote server http[s]://fqdn/mt/mt.cgi
     * Vagrant http://movabletype.local/mt/mt.cgi
 * Document root
