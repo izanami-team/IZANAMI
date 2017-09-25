@@ -55,7 +55,7 @@ $ cd IZANAMI
 ## Usage
 
 ### required only for Vagrant
-* settle to set up [homebrew](https://brew.sh/index_ja.html 'Homebrew') beforehand
+* settle to set up [homebrew](https://brew.sh/ 'Homebrew') beforehand
     * you also need Xcode to install homebrew. You can install Xcode from App Store. 
 * Install [Vagrant](https://www.vagrantup.com/ "Vagrant")
 * Install [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')
