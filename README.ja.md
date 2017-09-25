@@ -54,12 +54,17 @@ $ cd IZANAMI
 
 ## Usage
 
-* [Vagrant](https://www.vagrantup.com/ "Vagrant")をインストールします。(Vagrantを使用する場合のみ)
-* [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')をインストールします。(Vagrantを使用する場合のみ)
+### required only for Vagrant
+* 事前に[homebrew](https://brew.sh/index_ja.html 'Homebrew')のセットアップを済ませます
+    * homebrewのインストールにはXcodeも必要になります。XcodeはApp Storeからインストールできます
+* [Vagrant](https://www.vagrantup.com/ "Vagrant")をインストールします
+* [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')をインストールします
 * Vagrantプラグインをインストールします
 ```bash
 $ vagrant plugin install vagrant-hostsupdater
 ```
+
+### detailed procedure
 * Ansibleをインストールします。[Install](#Install)
     * Windows環境でのプロビジョニングは未テストです
     * 参考URL：http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-pip
