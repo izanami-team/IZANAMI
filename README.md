@@ -125,7 +125,7 @@ vhosts: #you can choose more than one below's list.
     letsencrypt: Please set as True if you aquire SSl at Let'sencrypt
     ssl:
       use: Transfer certification file to roles/nginx/ssl/ or roles/httpd/ssl/ if that is True
-      only: True
+      only: Please set as True every time you use True. It's alright to set as True when you use SSL
       crt: Choose certification file  if that is special certification
       key: Choose key file name if that is special certifivation
       ca_crt: Choose interval certification name if that is special certificcation
