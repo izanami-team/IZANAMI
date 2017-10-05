@@ -3,7 +3,7 @@
   tags: letsencrypt
 
 - name: create ssl
-  shell: sudo /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
+  command: sudo /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
   when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt

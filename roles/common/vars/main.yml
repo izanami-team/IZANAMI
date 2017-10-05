@@ -37,10 +37,11 @@ packages:
   - t1lib*
   - tcsh
   - telnet
-disable_daemon:
+disable_daemon_all:
   - blk-availability
   - kdump
   - messagebus
+disable_daemon_amazon_centos:
   - rpcbind
   - rpcgssd
 disable_daemon_amazon:
