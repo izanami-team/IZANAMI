@@ -18,11 +18,11 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 Support since MovableType 5.2, PSGI or starting CGI.
 * Perl5.18.2
 * Nginx
-    * Unsupported DynamicPublishing
+    * Unsupported php-fpm (DynamicPublishing)
 * Apache
     * CentOS6 is 2.2 series
     * CentOS7 is 2.4 series
-* PHP7.0(Optional)
+    * PHP7.0 (Optional)
 * MySQL5.7
 * supervisord
 * Let'sEncrypt
@@ -125,7 +125,7 @@ vhosts: #you can choose more than one below's list.
     letsencrypt: Please set as True if you aquire SSl at Let'sencrypt
     ssl:
       use: Transfer certification file to roles/nginx/ssl/ or roles/httpd/ssl/ if that is True
-      only: True
+      only: Please set as True every time you use True. It's alright to set as True when you use SSL
       crt: Choose certification file  if that is special certification
       key: Choose key file name if that is special certifivation
       ca_crt: Choose interval certification name if that is special certificcation
