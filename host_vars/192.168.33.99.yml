@@ -1,4 +1,5 @@
 server_hostname:  "movabletype.local"
+root_email: "root@localhost"
 letsencrypt: False
 denyhosts: False
 php: True
@@ -6,8 +7,8 @@ nginx: False
 apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 mt:
-  file: MTOS-5.2.13.zip
-  ver: MTOS-5.2.13
+  file: MT-6.3.5.zip
+  ver: MT-6.3.5
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'mt.cgi'}
