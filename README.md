@@ -18,11 +18,11 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 Support since MovableType 5.2, PSGI or starting CGI.
 * Perl5.18.2
 * Nginx
-    * Unsupported DynamicPublishing
+    * Unsupported php-fpm (DynamicPublishing)
 * Apache
     * CentOS6 is 2.2 series
     * CentOS7 is 2.4 series
-* PHP7.0(Optional)
+    * PHP7.0 (Optional)
 * MySQL5.7
 * supervisord
 * Let'sEncrypt
