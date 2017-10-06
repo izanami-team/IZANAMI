@@ -36,7 +36,7 @@ Support since MovableType 5.2, PSGI or starting CGI.
    * vagrant-hostsupdater
 * Virtualbox (Optional: Only Vagrant) 
   
-### Each cloude's correspondent OS
+### Supported OS
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
 | Amazon Linux | OK | - | - | - | - | - |
