@@ -21,6 +21,7 @@
    - DBD::mysql
    - Task::Plack
    - Test::TCP
+   - HTML::Entities
    - Env
    - File::Which
    - LWP
