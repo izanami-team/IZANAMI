@@ -15,7 +15,8 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 
 ## Introduction
 
-Support since MovableType 5.2, PSGI or starting CGI.
+* Support since MovableType 5.2, PSGI or starting CGI.
+    * Supported MT7(NEW) 
 * Perl5.18.2
 * Nginx
     * Unsupported php-fpm (DynamicPublishing)

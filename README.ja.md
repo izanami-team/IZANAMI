@@ -16,6 +16,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 ## Introduction
 
 * MovableType5.2以降対応(MTOS含む)、PSGIもしくはCGI起動
+  * MT7にも対応しています
 * Perl5.18.2
 * Nginx
     * DynamicPublishingには非対応
