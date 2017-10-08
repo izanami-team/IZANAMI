@@ -1,7 +1,7 @@
 IZANAMI
 ====
 
-Use Ansible to provision a full-stack MovableType Server
+AnsibleでVagrantやVMサーバにMovable Typeのサーバを構築します
 
 ## Description
 
@@ -16,14 +16,14 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 ## Introduction
 
 * MovableType5.2以降対応(MTOS含む)、PSGIもしくはCGI起動
-  * MT7にも対応しています
+  * MT7にも対応しています(NEW)
 * Perl5.18.2
 * Nginx
     * DynamicPublishingには非対応
 * Apache
     * CentOS6は2.2系
     * CentOS7は2.4系
-* PHP(option)7.0
+    * PHP(optional)7.0
 * MySQL5.7
 * supervisord
 * Let'sEncrypt
@@ -32,10 +32,10 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 
 ## Requirement
 
-* ansible2.2 or later
-* Vagrant (Optional: Only Vagrant) 
+* ansible2.3 以降
+* Vagrant (ローカルに構築する場合) 
    * vagrant-hostsupdater
-* Virtualbox (Optional: Only Vagrant) 
+* Virtualbox (ローカルに構築する場合) 
   
 ### 各クラウドでの対応OS 
 | OS | AWS | GCP | Azure | sakura | vagrant |
