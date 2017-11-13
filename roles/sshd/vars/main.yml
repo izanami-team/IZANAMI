@@ -5,4 +5,4 @@ sshd_sftp: |
   ChrootDirectory /var/www/vhosts
   X11Forwarding no
   AllowTcpForwarding no
-  ForceCommand internal-sftp
+  ForceCommand internal-sftp -u 002
