@@ -170,6 +170,18 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
     * vagrant-hostsupdater pluginをインストールしていない場合は192.168.33.99に対してhosts設定が必要です。
 * MTの再起動
     * システムメニューのPSGIリスタートで再起動してください
+    * 再起動コマンド
+        * $ sudo supervisorctl restart movabletype 
+* mysqlへのログイン
+    * rootへスイッチしてから以下のコマンドを実行します
+        * # mysql
+* phpパス
+    * CentOS/RedHatの場合は以下になります。
+        * /usr/bin/php70
+* vagrant upが失敗する
+    * host_vars/xxx.ymlの設定内容に誤りがあるか、roles/movabletype/files/以下にMT-xx.zipファイルを設置しない可能性があります。確認ください。
+
+
 
 ## Licence
 
