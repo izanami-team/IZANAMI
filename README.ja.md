@@ -174,7 +174,7 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
         * $ sudo supervisorctl restart movabletype 
 * mysqlへのログイン
     * rootへスイッチしてから以下のコマンドを実行します
-        * # mysql
+        * mysql
 * phpパス
     * CentOS/RedHatの場合は以下になります。
         * /usr/bin/php70
