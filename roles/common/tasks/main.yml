@@ -13,7 +13,6 @@
 - name: CentOS 6 add repository
   yum: name={{ item }} state=present 
   with_items:
-    - "http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
     - "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
   tags: package
   ignore_errors: yes
@@ -22,7 +21,6 @@
 - name: CentOS 7 add repository
   yum: name={{ item }} state=present
   with_items:
-    - "http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm"
     - "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
   tags: package
   ignore_errors: yes
@@ -32,8 +30,7 @@
 - name: install the 'epel repositry'
   yum: name="epel-release" state=present
   tags: package
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
 
 - name: install the 'Development tools' package group
   yum: name="@Development tools" state=present
