@@ -144,6 +144,10 @@ sftp_users:
 ```bash
 $ vagrant up
 ```
+失敗したらエラー内容を修正して再実行
+```bash
+$ vagrant provision
+```
 
 ### remote server
 EC2ならec-userのように各サーバの初期ユーザを指定してください  
