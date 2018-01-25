@@ -23,4 +23,19 @@
   shell: curl -L https://raw.githubusercontent.com/onagatani/cloudwatch-create-alarm/master/cloudwatch-create-alarm | bash /dev/stdin -a {{ server_hostname }} -t {{ server_hostname }} -e {{ alert.email }}
   when: aws.cloudwatch | bool 
   tags: aws
+
+- name: remove the ntpdate package
+  yum: name={{ item }}  state=absent
+  with_items: 
+    - ntp
+    - ntpdate
+  tags: aws
+
+- name: Install the chronyd
+  yum: name=chrony state=present
+  tags: aws
+
+- name: chronyd is runnning and enabled
+  service: name=chronyd state=started enabled=yes
+  tags: aws
   
