@@ -31,7 +31,7 @@
         order deny,allow
         deny from all
         {% for ip in mt.require_ip %}
-        alow from {{ ip }}
+        allow from {{ ip }}
         {% endfor %}
     </Location>
     {% endif %}
