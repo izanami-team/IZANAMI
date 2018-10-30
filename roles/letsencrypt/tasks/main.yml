@@ -9,7 +9,7 @@
   tags: letsencrypt
 
 - name: renew ssl 
-  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-auto certonly  --renew-by-default --webroot -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
+  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-auto certonly  --renew-by-default --webroot -n -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
   when: "{{ item.letsencrypt | bool }}"
   with_items: "{{ vhosts }}"
   tags: letsencrypt
