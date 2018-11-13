@@ -3,7 +3,7 @@
   tags: firewall
 
 - name: firewall is runnning and enabled
-  service: name=firewalld state=running enabled=yes
+  service: name=firewalld state=started enabled=yes
   tags: firewall
 
 - name: to open the https
