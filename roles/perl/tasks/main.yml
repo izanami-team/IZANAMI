@@ -18,8 +18,7 @@
   shell: /usr/local/perl-5.18/bin/cpm install -g {{item}} 
   with_items:
    - DBI
-   - Devel::CheckLib
-   - DBD::mysql@4.047
+   - DBD::mysql@4.046
    - Task::Plack
    - Test::TCP
    - HTML::Entities
