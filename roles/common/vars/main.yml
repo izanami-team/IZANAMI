@@ -39,13 +39,17 @@ packages:
   - telnet
 disable_daemon_all:
   - blk-availability
-  - kdump
   - messagebus
 disable_daemon_amazon_centos:
+  - kdump
   - rpcbind
   - rpcgssd
 disable_daemon_amazon:
+  - kdump
   - ip6tables
   - mdmonitor
   - rngd
   - udev-post
+disable_daemon_amazon2:
+  - mdmonitor
+  - rngd
