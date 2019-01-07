@@ -24,7 +24,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
     * CentOS6は2.2系
     * CentOS7は2.4系
     * PHP(optional)7.0
-* MySQL5.7
+* MySQL5.7, 8.0 (Amazon Linux 2)
 * supervisord
 * Let'sEncrypt
     * SSL証明書を自動取得可能です
@@ -41,6 +41,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
 | Amazon Linux | OK | - | - | - | - | - |
+| Amazon Linux 2 | OK | - | - | - | - | - |
 | RHEL 7 | OK | OK | OK | - | - | - |
 | CentOS 7 | OK | OK | OK | - | OK |
 | CentOS 6 | OK | OK | OK | - | - |

@@ -24,7 +24,7 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
     * CentOS6 is 2.2 series
     * CentOS7 is 2.4 series
     * PHP7.0 (Optional)
-* MySQL5.7
+* MySQL5.7, 8.0 (Amazon Linux 2)
 * supervisord
 * Let'sEncrypt
     * Available for obtaining SSL certificate.
@@ -41,6 +41,7 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
 | Amazon Linux | OK | - | - | - | - | - |
+| Amazon Linux 2 | OK | - | - | - | - | - |
 | RHEL 7 | OK | OK | OK | - | - | - |
 | CentOS 7 | OK | OK | OK | - | OK |
 | CentOS 6 | OK | OK | OK | - | - |
