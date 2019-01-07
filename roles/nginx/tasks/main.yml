@@ -4,6 +4,20 @@
    - nginx
    - mod_ssl
   tags: nginx
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == 'upstart')
+
+- name: install the extras repo of nginx1.12 for amazon linux 2
+  shell: "amazon-linux-extras enable nginx1.12"
+  tags: nginx
+  when: (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
+
+- name: install the latest version of nginx for amazon linux 2
+  yum: name={{ item }} state=present
+  with_items:
+    - nginx
+  tags: nginx
+  when: (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
 
 - name: replace nginx.conf
   replace: dest="/etc/nginx/nginx.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 

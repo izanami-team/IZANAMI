@@ -56,12 +56,17 @@
 - name: disable the daemon for amazon
   service: name={{ item }} enabled=no state=stopped
   with_items: "{{ disable_daemon_amazon }}"
-  when: ansible_distribution == "Amazon"
+  when: ansible_distribution == "Amazon" and ansible_service_mgr == "upstart"
+
+- name: disable the daemon for amazon2
+  service: name={{ item }} enabled=no state=stopped
+  with_items: "{{ disable_daemon_amazon2 }}"
+  when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
 
 - name: disable the daemon for amazon & centos
   service: name={{ item }} enabled=no state=stopped
   with_items: "{{ disable_daemon_amazon_centos }}"
-  when: ansible_distribution == "Amazon"
+  when: ansible_service_mgr == "upstart"
 
 - name: set locale to /etc/sysconfig/i18n
   replace:

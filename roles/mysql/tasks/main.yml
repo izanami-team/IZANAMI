@@ -1,16 +1,17 @@
 - name: add mysql-repo for centos7 
-  yum: name="https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm" 
+  yum: name="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm" 
   tags: mysql
   ignore_errors: yes
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+        (ansible_distribution_major_version == "7") or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')  ## amazon linux 2
 
 - name: add mysql-repo for centos6 and amazon linux
   yum: name="https://dev.mysql.com/get/mysql57-community-release-el6-9.noarch.rpm"
   tags: mysql
   ignore_errors: yes
   when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
-        (ansible_distribution == "Amazon")
+        (ansible_distribution == "Amazon" and ansible_service_mgr == 'upstart')
 
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
@@ -27,14 +28,14 @@
 
 - name: install the 'python-pip'
   yum: name="python2-pip" state=present
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
   tags: python
 
 - name: install the 'python-pip'
   yum: name="python-pip" state=present
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "6")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
   tags: python
 
 - name: python passlib installed
