@@ -3,9 +3,11 @@
   with_items:
    - httpd
    - httpd-devel
+   - httpd-tools
    - mod_ssl
   tags: httpd
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") 
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
 
 - name: install the latest version of Apache
   yum: name={{ item }} state=present
@@ -15,7 +17,7 @@
    - httpd24-tools
    - mod24_ssl
   tags: httpd
-  when: ansible_distribution == "Amazon"
+  when: (ansible_distribution == "Amazon" and ansible_service_mgr == 'upstart')
 
 - name: remove file from /etc/httpd/conf.d/*
   file: path=/etc/httpd/conf.d/{{ item }} owner=root group=root mode=0644 state=absent
