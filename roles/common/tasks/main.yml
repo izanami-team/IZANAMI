@@ -76,13 +76,14 @@
   tags: locale
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
         (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon")
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
 
 - name: set locale
   command: localectl set-locale LANG={{ locale }} 
   tags: locale
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
 
 - name: set zone to /etc/sysconfig/clock
   replace:
@@ -92,7 +93,7 @@
   tags: locale
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
         (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon")
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
 
 - name: set false to clock utc
   replace:
@@ -102,7 +103,7 @@
   tags: locale
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
         (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon")
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
 
 - name: set timezone to Asia/Tokyo
   file:
@@ -113,13 +114,14 @@
   tags: locale
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
         (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon")
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
 
 - name: set timezone to Asia/Tokyo
   command: timedatectl set-timezone Asia/Tokyo
   tags: locale 
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
 
 - name: confirm existence of yum-cron
   shell: rpm -qa | grep 'yum-cron'
