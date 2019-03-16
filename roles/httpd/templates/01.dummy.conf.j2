@@ -6,4 +6,9 @@
         Order deny,allow
         Deny from all
     </Location>
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} ^TRACK
+    RewriteRule .* - [R=405,L]
+
 </Virtualhost>

@@ -8,6 +8,10 @@
     Alias        /mt-static /var/www/movabletype/mt-static
     TraceEnable  Off
 
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} ^TRACK
+    RewriteRule .* - [R=405,L]
+
     {% if mt.psgi == False %}
     ScriptAlias  /mt /var/www/movabletype
     {% endif %}
@@ -69,6 +73,10 @@
     ScriptAlias  /cgi-bin /var/www/vhosts/{{ item.name }}/cgi-bin
     Alias        /mt-static /var/www/movabletype/mt-static
     TraceEnable  Off
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} ^TRACK
+    RewriteRule .* - [R=405,L]
 
     {% if mt.psgi == False %}
     ScriptAlias  /mt /var/www/movabletype
