@@ -170,7 +170,8 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
     * http://movabletype.local
     * need to host setting for 192.168.33.99 if you haven't install vagrant-hostsupdater plugin yet
 * restaring MT
-    * restart with PSGI at system menu
+    * [MT GUI] restart with PSGI at system menu
+    * [SSH] supervisorctl pid movabletype | xargs kill -HUP
 
 ## Licence
 
