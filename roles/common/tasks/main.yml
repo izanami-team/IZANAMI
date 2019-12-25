@@ -32,6 +32,11 @@
   tags: package
   when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
 
+- name: install the 'epel repositry'
+  shell: amazon-linux-extras install epel
+  tags: package
+  when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
+
 - name: install the 'Development tools' package group
   yum: name="@Development tools" state=present
   tags: package
