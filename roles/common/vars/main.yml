@@ -39,11 +39,11 @@ packages:
   - telnet
 disable_daemon_all:
   - blk-availability
-  - messagebus
+  #- messagebus
 disable_daemon_amazon_centos:
   - kdump
-  - rpcbind
-  - rpcgssd
+  #- rpcbind
+  #- rpcgssd
 disable_daemon_amazon:
   - kdump
   - ip6tables
