@@ -9,7 +9,6 @@ Vagrant.configure(2) do |config|
     #ansible.sudo = "yes"
     ansible.limit = "all"
     ansible.raw_arguments = [
-      "-tags=php"
     ]
   end
 end
