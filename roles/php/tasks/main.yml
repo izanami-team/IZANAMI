@@ -11,20 +11,17 @@
   tags: php
 
 - name: php installed
-  yum: name={{ item }} enablerepo=epel,remi,remi-php70 state=present
-  with_items: "{{ php_package }}"
+  yum: name={{ php_package }} enablerepo=epel,remi,remi-php73 state=present
   when: ansible_distribution == "CentOS"
   tags: php
 
 - name: php installed
-  yum: name={{ item }} enablerepo=epel,remi,remi-php70 state=present skip_broken=yes
-  with_items: "{{ php_package }}"
+  yum: name={{ php_package }} enablerepo=epel,remi,remi-php73 state=present skip_broken=yes
   when: ansible_distribution == 'RedHat'
   tags: php
 
 - name: php installed
-  yum: name={{ item }} state=present
-  with_items: "{{ php_package }}"
+  yum: name={{ php_package }} state=present
   when: ansible_distribution == "Amazon"
   tags: php
 

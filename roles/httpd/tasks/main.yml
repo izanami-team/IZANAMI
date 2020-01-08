@@ -97,7 +97,7 @@
 - name: replace sysconfig/httpd
   shell: echo "umask 002" >> /etc/sysconfig/httpd
   tags:  httpd
-  when: result_sysconfig_httpd|failed
+  when: result_sysconfig_httpd is failed
 
 - name: Create Apache configuration file
   template: src=00.setting.conf.j2 dest=/etc/httpd/conf.d/00.setting.conf

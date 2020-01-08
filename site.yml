@@ -1,6 +1,7 @@
 - name: Movable Type6.3, MySQL5.7, Apache2.4 or Nginx,  Starman(PSGI), PHP7(Apache only) installed 
   hosts: all
   gather_facts: True
+  become: yes
   roles:
     - role: common
       tags: common

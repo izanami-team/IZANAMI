@@ -24,6 +24,14 @@ mt:
   #basic:
   #  user: example
   #  passwd: example
+relay: False
+postfix:  
+  smtp:
+    from: example.com
+    server: email-smtp.us-east-1.amazonaws.com
+    pass: "パスワード"
+    user: "ユーザ名"
+    port: 587
 vhosts:
   - name: mt.example.com
     letsencrypt: True

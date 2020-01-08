@@ -7,8 +7,8 @@ nginx: False
 apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 mt:
-  file: MT-6.3.5.zip
-  ver: MT-6.3.5
+  file: MT7-R4603.zip
+  ver: MT7-R4603
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'mt.cgi'}
@@ -30,3 +30,11 @@ vhosts:
     ssl:
       use: False
       only: False
+relay: False
+postfix:  
+  smtp:
+    from: example.com
+    server: email-smtp.us-east-1.amazonaws.com
+    pass: sample 
+    user: sample
+    port: 587

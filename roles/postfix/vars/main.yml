@@ -1,6 +1,6 @@
 main_cf:
-   - { regexp: '^#myhostname = (?:virtual|host).domain.tld$', replace: 'myhostname = {{ server_hostname }}' }
-   - { regexp: '^#mydomain = domain.tld$', replace: 'mydomain = {{  server_hostname }}' }
+   - { regexp: '^#myhostname = (?:virtual|host).domain.tld$', replace: 'myhostname = {{ postfix.smtp.from | default(server_hostname) }}' }
+   - { regexp: '^#mydomain = domain.tld$', replace: 'mydomain = {{  postfix.smtp.from | default(server_hostname) }}' }
    - { regexp: '^#myorigin = \$mydomain$', replace: 'myorigin = $mydomain' }
    - { regexp: '^inet_protocols = all$', replace: 'inet_protocols = ipv4' }
    - { regexp: '^mydestination = \$myhostname, localhost.\$mydomain, localhost$', replace: 'mydestination = localhost' }

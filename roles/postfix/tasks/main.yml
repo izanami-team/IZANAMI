@@ -11,14 +11,17 @@
   blockinfile:
     dest: /etc/postfix/transport
     block: "{{ transport }}"
+    create: yes
+    unsafe_writes: yes
+    owner: root
   tags: postfix
 
 - name: run postmap
-  command: postmap /etc/postfix/transport
+  shell: postmap /etc/postfix/transport
   tags: postix
 
 - name: add aliases
-  command: echo "{{ root_email }}" >> /etc/aliases
+  shell: echo "{{ root_email }}" >> /etc/aliases
   tags: postix
 
 - name: Create .forward to postfix

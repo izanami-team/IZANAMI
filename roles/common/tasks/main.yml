@@ -4,24 +4,27 @@
   tags: SELinux
 
 - name: rpmforge installed
-  yum: name={{ item }}  state=present
-  with_items: 
-    - "http://ftp.riken.jp/Linux/repoforge/redhat/el7/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm"
+  yum:
+    name:
+      - "http://ftp.riken.jp/Linux/repoforge/redhat/el7/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm"
+    state: present
   when: ansible_distribution == "RedHat"
   tags: package
 
 - name: CentOS 6 add repository
-  yum: name={{ item }} state=present 
-  with_items:
-    - "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
+  yum:
+    name: 
+      - "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
+    state: present
   tags: package
   ignore_errors: yes
   when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
 
 - name: CentOS 7 add repository
-  yum: name={{ item }} state=present
-  with_items:
-    - "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
+  yum:
+    name:
+      - "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
+    state: present
   tags: package
   ignore_errors: yes
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
@@ -42,8 +45,7 @@
   tags: package
 
 - name: install the latest libraries
-  yum: name={{ item }} state=present
-  with_items: "{{ packages }}"
+  yum: name="{{ packages }}" state=present
   tags: package
 
 - name: yum update
@@ -141,7 +143,7 @@
     enabled: False
   tags: yum
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" ) and
-        result_yum_cron | success
+        result_yum_cron is success
 
 - name: disable SELinux
   selinux: state=disabled
@@ -155,14 +157,6 @@
 - name: set hostname
   hostname: name={{server_hostname}}
   tags: hostname
-
-- name: set hostname to current ansible name
-  action: command hostname {{server_hostname}}
-  tags: hostname
-
-- name: set forward
-  template: src=forward.j2 dest=/root/.forward
-  tags: forward
 
 - name: create groups
   group: name={{ item }} state=present

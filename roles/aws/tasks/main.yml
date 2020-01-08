@@ -6,11 +6,6 @@
   lineinfile: 'dest=/etc/cloud/cloud.cfg regexp="repo_upgrade\:" line="repo_upgrade: {{repo_upgrade}}"'
   tags: aws
 
-- name: crontab
-  cron: name='creates snapshot' job="curl -L https://raw.githubusercontent.com/miya0001/create-snapshot/master/create_snapshot.sh | bash" hour="3" minute="0" user="root" state=present
-  when: aws.snapshot | bool 
-  tags: aws
-
 - name: aws configure directory
   file: path=/root/.aws state=directory owner=root group=root mode=0755
   tags: aws
