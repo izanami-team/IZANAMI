@@ -1,20 +1,20 @@
-php_ini_path: /etc/opt/remi/php70/php.ini
+php_ini_path: /etc/opt/remi/php73/php.ini
 php_package:
-   - php70
-   - php70-php
-   - php70-php-mbstring
-   - php70-php-mcrypt
-   - php70-php-gd
-   - php70-php-pdo
-   - php70-php-opcache
-   - php70-php-pecl-apcu
-   - php70-php-mysqlnd
-   - php70-php-pecl-apcu
-   - php70-php-pecl-imagick
-   - php70-php-pecl-memcache
-   - php70-php-pecl-memcached
-   - php70-php-pecl-mysql
-   - php70-php-pecl-xdebug
-   - php70-php-pecl-yaml
-   - php70-php-xml
+   - php73
+   - php73-php
+   - php73-php-mbstring
+   - php73-php-mcrypt
+   - php73-php-gd
+   - php73-php-pdo
+   - php73-php-opcache
+   - php73-php-pecl-apcu
+   - php73-php-mysqlnd
+   - php73-php-pecl-apcu
+   - php73-php-pecl-imagick
+   - php73-php-pecl-memcache
+   - php73-php-pecl-memcached
+   - php73-php-pecl-mysql
+   - php73-php-pecl-xdebug
+   - php73-php-pecl-yaml
+   - php73-php-xml
 

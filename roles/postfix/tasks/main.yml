@@ -2,6 +2,15 @@
   yum: name="postfix" state=present
   tags: postfix
 
+- name: install the cyrus-sasl-plain
+  yum:
+    name: "cyrus-sasl-plain"
+    state: present
+  tags: package
+  ignore_errors: yes
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
+
 - name: replace for main.cf
   replace: dest="/etc/postfix/main.cf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
   with_items: "{{ main_cf }}"

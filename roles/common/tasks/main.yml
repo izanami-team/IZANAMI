@@ -33,10 +33,17 @@
 - name: install the 'epel repositry'
   yum: name="epel-release" state=present
   tags: package
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  when: ansible_distribution == "CentOS"
 
 - name: install the 'epel repositry'
-  shell: amazon-linux-extras install epel
+  yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+    state: present
+  tags: package
+  when: ansible_distribution == "RedHat"
+
+- name: install the 'epel repositry'
+  shell: "amazon-linux-extras install epel -y"
   tags: package
   when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
 

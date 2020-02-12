@@ -1,7 +1,10 @@
 - name: downloaded letsencrypt
   get_url: url=https://dl.eff.org/certbot-auto dest=/opt/certbot-auto force=True mode=0755
   tags: letsencrypt
-  when: ansible_distribution != "Amazon" and ansible_service_mgr != "systemd"
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
+
 
 - name: install the 
   yum: name="certbot-{{ owner }}" state=present 
@@ -12,7 +15,9 @@
   command: sudo /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
   with_items: "{{ vhosts }}"
   tags: letsencrypt
-  when: ansible_distribution != "Amazon" and ansible_service_mgr != "systemd"
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
 
 - name: create ssl
   command: sudo /bin/certbot certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
