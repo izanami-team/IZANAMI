@@ -59,6 +59,7 @@
  
 - name: run postmap
   command: postmap hash:/etc/postfix/sasl_passwd
+  when: "{{ relay | bool }}"
   tags: postix
 
 - name: change permission 
