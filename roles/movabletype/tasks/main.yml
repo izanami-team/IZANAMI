@@ -14,7 +14,7 @@
   tags: mt-plugins
 
 - name: Install the mt-static
-  copy: src="mt-static/{{ item }}" dest="/var/www/movabletype/mt-static/" owner={{ owner }} group=contents mode=0775
+  copy: src="mt-static/{{ item }}" dest="/var/www/movabletype/mt-static/plugins/" owner={{ owner }} group=contents mode=0775
   with_items:
     - "{{ mt.static | default([]) }}"
   when: mt.static is defined
