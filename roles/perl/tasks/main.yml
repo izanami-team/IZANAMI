@@ -8,17 +8,17 @@
 
 - name: perl installed
   shell: |
-    /root/xbuild-master/perl-install 5.18.2 /usr/local/perl-5.18
+    /root/xbuild-master/perl-install 5.30.3 /usr/local/perl-5.30
   tags: perl
 
 - name: cpm module installed 
-  shell: /usr/local/perl-5.18/bin/cpanm -nq App::cpm
+  shell: /usr/local/perl-5.30/bin/cpanm -nq App::cpm
 
 - name: cpan module installed 
-  shell: /usr/local/perl-5.18/bin/cpm install -g {{item}} 
+  shell: /usr/local/perl-5.30/bin/cpm install -g {{item}} 
   with_items:
    - DBI
-   - DBD::mysql@4.046
+   - DBD::mysql
    - Task::Plack
    - Test::TCP
    - HTML::Entities

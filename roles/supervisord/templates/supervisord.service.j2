@@ -1,0 +1,20 @@
+[Unit]
+Description=Supervisor daemon
+
+[Service]
+Type=forking
+{% if ansible_facts.distribution_major_version | int >= 8 %}
+ExecStart=/usr/local/bin/supervisord
+ExecStop=/usr/local/bin/supervisorctl $OPTIONS shutdown
+ExecReload=/usr/local/bin/supervisorctl $OPTIONS reload
+{% else %}
+ExecStart=/usr/bin/supervisord
+ExecStop=/usr/bin/supervisorctl $OPTIONS shutdown
+ExecReload=/usr/bin/supervisorctl $OPTIONS reload
+{% endif %}
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target

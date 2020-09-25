@@ -2,9 +2,18 @@ Timeout 300
 KeepAlive On
 KeepAliveTimeout 120
 
+{% if ansible_facts.distribution_major_version | int >= 8 %}
+StartServers 4
+MinSpareThreads 4
+MaxSpareThreads 4
+ThreadsPerChild 2
+MaxRequestWorkers 2
+MaxConnectionsPerChild 0
+{% else %}
 StartServers      20 
 MinSpareServers   20
 MaxSpareServers  256
 ServerLimit      256
 MaxClients       256
 MaxRequestsPerChild  2000
+{% endif %}

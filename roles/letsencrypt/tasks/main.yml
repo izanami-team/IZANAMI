@@ -1,30 +1,26 @@
 - name: downloaded letsencrypt
   get_url: url=https://dl.eff.org/certbot-auto dest=/opt/certbot-auto force=True mode=0755
   tags: letsencrypt
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version >= "7")
 
-
-- name: install the 
-  yum: name="certbot-{{ owner }}" state=present 
+- name: LetsEncrypt installed
+  yum: name="certbot-{{ owner }}" state=present enablerepo=epel
   tags: package
   when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
 
 - name: create ssl
-  command: sudo /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
+  command: /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
   with_items: "{{ vhosts }}"
   tags: letsencrypt
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version >= "7")
 
 - name: create ssl
-  command: sudo /bin/certbot certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
+  command: /bin/certbot certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
   with_items: "{{ vhosts }}"
   tags: letsencrypt
   when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
-
 
 - name: renew ssl 
   cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-auto certonly  --renew-by-default --webroot -n -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
@@ -34,9 +30,9 @@
 - name: httpd restart
   cron: name='ssl-renew-httpd-restart' job="service httpd restart" minute=10 hour=0 day=1 state=present
   tags: letsencrypt
-  when: "{{ apache | bool }}"
+  when: apache | bool
 
 - name: nginx restart
   cron: name='ssl-renew-nginx-restart' job="service nginx restart" minute=10 hour=0 day=1 state=present
   tags: letsencrypt
-  when: "{{ nginx | bool }}"
+  when: nginx | bool

@@ -1,18 +1,3 @@
-- name: install the denyhosts
-  yum: name=denyhosts state=present enablerepo=epel
-  tags: ssh
-  when: (denyhosts | bool) and (inventory_file != 'local')
-
-- name: replace /usr/bin/denyhosts.py
-  replace: dest=/usr/bin/denyhosts.py regexp='\#!/usr/bin/python$' replace='#!/usr/bin/python26'
-  tags: ssh
-  when: (denyhosts | bool) and (ansible_distribution == "Amazon")
-
-- name: denyhosts is runnning and enabled
-  service: name=denyhosts state=started enabled=yes
-  tags: ssh
-  when: (denyhosts | bool) and (inventory_file != 'local')
-
 - name: replace /etc/sudoers
   replace: dest=/etc/sudoers regexp='\# \%wheel\s+ALL=\(ALL\)\s+ALL' replace='%wheel        ALL=(ALL)       ALL'
   tags: ssh
@@ -40,62 +25,24 @@
    - restart sshd
   tags: ssh
 
-- name: add ssh groups
-  group: name={{ item.name }} state=present
+- name: create ssh groups
+  group:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ shared_group }}"
+    - "{{ sftponly_group }}"
+  tags: ssh
+
+- name: create ssh user
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    groups: "{{ item.group }}"
+    state: present
+    append: yes
   with_items:
     - "{{ ssh_users | default([]) }}"
-  when: ssh_users is defined
-  tags: ssh
-
-- name: add ssh groups
-  group: name={{ item.name }} state=present
-  with_items:
-    - "{{ sftp_users | default([]) }}"
-  when: sftp_users is defined
-  tags: ssh
-
-- name: users exist - wheel
-  user:
-    name: "{{item.name}}"
-    state: present
-    password: "{{item.password}}"
-    groups: wheel
-  with_items:
-    - "{{ wheel_users | default([]) }}"
-  when: wheel_users is defined
-  tags: ssh
-
-- name: users exist - ssh
-  user:
-    name: "{{item.name}}"
-    state: present
-    password: "{{item.password}}"
-    group: "{{shared_group}}"
-    groups: "{{ owner }},{{ item.name }}"
-  with_items:
-    - "{{ ssh_users | default([]) }}"
-  when: ssh_users is defined
-  tags: ssh
-
-- name: users exist - sftp
-  user:
-    name: "{{item.name}}"
-    state: present
-    password: "{{item.password}}"
-    group: "{{shared_group}}"
-    groups: "{{ item.name }},{{ owner }},{{ sftponly_group }}"
-  with_items:
-    - "{{ sftp_users | default([]) }}"
-  when: sftp_users is defined
-  tags: ssh
-
-- name: Set up authorized_keys for the deploy user 
-  authorized_key:
-    user: "{{ item.name }}"
-    key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
-  with_items:
-    - "{{ wheel_users | default([]) }}"
-  when: wheel_users is defined
   tags: ssh
 
 - name: Set up authorized_keys for the deploy user 
@@ -104,16 +51,4 @@
     key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
   with_items:
     - "{{ ssh_users | default([]) }}"
-  when: ssh_users is defined
   tags: ssh
-
-- name: Set up authorized_keys for the deploy user 
-  authorized_key:
-    user: "{{ item.name }}"
-    key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
-  with_items:
-    - "{{ sftp_users | default([]) }}"
-  when: sftp_users is defined
-  tags: ssh
-
-

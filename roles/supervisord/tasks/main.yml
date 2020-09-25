@@ -1,6 +1,13 @@
 - name: installed supervisord
   command: easy_install supervisor 
   tags: supervisord
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and ansible_distribution_major_version <= "7") or
+        (ansible_distribution == "Amazon")
+
+- name: installed supervisord
+  pip: name=supervisor 
+  tags: supervisord
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and ansible_distribution_major_version >= "8")
 
 - name: create the supervisord directory
   file: path={{ item }} state=directory owner=root group=root mode=0755
@@ -24,21 +31,14 @@
   template: src=movabletype.ini.j2 dest=/etc/supervisord.d/movabletype.ini
   tags: supervisord
 
-- name: Create Upstart configuration file
-  template: src=upstart.conf.j2 dest=/etc/init/supervisord.conf
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon" and ansible_service_mgr == 'upstart')
-  tags: supervisord
-
 - name: Create systemd configuration file
-  get_url:
-    url: https://raw.githubusercontent.com/Supervisor/initscripts/master/centos-systemd-etcs
+  template:
+    src: supervisord.service.j2
     dest: /etc/systemd/system/supervisord.service
     mode: 644
     owner: root
     group: root
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and ansible_distribution_major_version >= "7") or
         (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
   tags: supervisord
 
@@ -52,7 +52,7 @@
 
 - name: Create movabletype tmpfile.d
   template: src=movabletype.conf.j2 dest=/etc/tmpfiles.d/movabletype.conf mode=0755
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and ansible_distribution_major_version >= "7") or
         (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
   tags: supervisord
 

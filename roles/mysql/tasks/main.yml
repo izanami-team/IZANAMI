@@ -1,49 +1,88 @@
+- name: add mysql-repo for centos8 
+  yum: name="https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm" 
+  tags: mysql
+  ignore_errors: yes
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "8") 
+
 - name: add mysql-repo for centos7 
   yum: name="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm" 
   tags: mysql
   ignore_errors: yes
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
         (ansible_distribution_major_version == "7") or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')  ## amazon linux 2
-
-- name: add mysql-repo for centos6 and amazon linux
-  yum: name="https://dev.mysql.com/get/mysql57-community-release-el6-9.noarch.rpm"
-  tags: mysql
-  ignore_errors: yes
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == 'upstart')
+        (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
 
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
   tags: mysql
 
+- name: disalbe repo mysql
+  shell: 'dnf module disable -y mysql'
+  tags: mysql
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version >= "8") 
+
 - name: Install Mysql package
-  yum: name={{ item }} state=present enablerepo=mysql57-community
-  with_items:
-   - mysql-community-client
-   - mysql-community-libs
-   - mysql-community-server
-   - mysql-community-devel
+  yum:
+    name:
+      - mysql-community-client
+      - mysql-community-libs
+      - mysql-community-server
+      - mysql-community-devel
+    state: present
+    enablerepo: mysql80-community
+  tags: mysql
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version >= "8") 
+
+- name: Install Mysql package
+  yum:
+    name:
+      - mysql-community-client
+      - mysql-community-libs
+      - mysql-community-server
+      - mysql-community-devel
+    state: present
+    enablerepo: mysql57-community
+  tags: mysql
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or ansible_distribution == "Amazon"
+
+- name: install the 'python3-PyMySQL'
+  dnf:
+    name:
+      - python36
+      - python36-devel
+      - python3-pip
+      - python3-passlib
+      - python3-PyMySQL
+    state: latest
+    enablerepo: epel
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version >= "8") 
+
+- name: install the 'python-pip'
+  yum: name="python2-pip" state=present enablerepo=epel
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
   tags: mysql
 
-- name: install the 'python-pip'
-  yum: name="python2-pip" state=present
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" and ansible_distribution_major_version == "7") or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
-  tags: python
-
-- name: install the 'python-pip'
-  yum: name="python-pip" state=present
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" and ansible_distribution_major_version == "6") or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
-  tags: python
+- name: install the 'python-devel'
+  yum: name="python-devel" state=present
+  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")
+  tags: mysql
 
 - name: python passlib installed
-  command: pip install {{ item }}
-  with_items:
-    - passlib
-    - MySQL-python
-  tags: python
+  pip:
+    name:
+      - passlib
+      - MySQL-python
+  tags: mysql
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version == "7")) or ansible_distribution == "Amazon"
 
 - name: create mysql configuration file
   template: src=my.cnf.j2 dest=/etc/my.cnf
@@ -65,7 +104,7 @@
   when: not res.stat.exists
 
 - name: set mysql root password
-  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' -e "set password for root@'localhost' = PASSWORD('{{ mysql_root_password }}')"
+  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
   tags: mysql
   when: not res.stat.exists
 

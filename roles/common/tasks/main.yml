@@ -1,173 +1,113 @@
+#- name: Install libselinux-python
+#  dnf:
+#    name: "libselinux-python:2.8/common"
+#    state: present
+#  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+#        (ansible_distribution_major_version == "8")
+#  tags: SELinux
+
 - name: Install libselinux-python
   yum: name=libselinux-python state=present
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
-  tags: SELinux
-
-- name: rpmforge installed
-  yum:
-    name:
-      - "http://ftp.riken.jp/Linux/repoforge/redhat/el7/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm"
-    state: present
-  when: ansible_distribution == "RedHat"
-  tags: package
-
-- name: CentOS 6 add repository
-  yum:
-    name: 
-      - "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
-    state: present
-  tags: package
-  ignore_errors: yes
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
-
-- name: CentOS 7 add repository
-  yum:
-    name:
-      - "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
-    state: present
-  tags: package
-  ignore_errors: yes
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+        (ansible_distribution_major_version != "8")
+  tags: common
 
-- name: install the 'epel repositry'
-  yum: name="epel-release" state=present
-  tags: package
-  when: ansible_distribution == "CentOS"
-
-- name: install the 'epel repositry'
+- name: install the epel repositry
   yum:
-    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
     state: present
-  tags: package
-  when: ansible_distribution == "RedHat"
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  tags: common
+
+- name: install the remi repositry
+  yum:
+    name:
+      - "http://rpms.famillecollet.com/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+    state: present
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  tags: common
 
 - name: install the 'epel repositry'
   shell: "amazon-linux-extras install epel -y"
-  tags: package
   when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
+  tags: common
+
+- name: disable repo the epel
+  replace: dest=/etc/yum.repos.d/epel.repo regexp="enabled *= *1" replace="enabled=0"
+  tags: common
+
+- name: disable repo the remi
+  replace: dest=/etc/yum.repos.d/remi.repo regexp="enabled *= *1" replace="enabled=0"
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  tags: common
+
+- name: disable repo the remi-safe
+  replace: dest=/etc/yum.repos.d/remi-safe.repo regexp="enabled *= *1" replace="enabled=0"
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  tags: common
 
 - name: install the 'Development tools' package group
   yum: name="@Development tools" state=present
-  tags: package
+  tags: common
+
+- name: Install the python-devel
+  yum: name=libselinux-python state=present
+  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
+        (ansible_distribution_major_version != "8")) or ansible_distribution == "Amazon"
+  tags: common
 
 - name: install the latest libraries
   yum: name="{{ packages }}" state=present
-  tags: package
+  tags: common
 
 - name: yum update
   yum: state=latest name=*
-  tags: yumupdate
+  tags: common
 
 - name: remove the sendmail package
   yum: name=sendmail state=absent
-  tags: sendmail
-
-- name: disable the daemon for all
-  service: name={{ item }} enabled=no state=stopped
-  with_items: "{{ disable_daemon_all }}"
-
-- name: disable the daemon for amazon
-  service: name={{ item }} enabled=no state=stopped
-  with_items: "{{ disable_daemon_amazon }}"
-  when: ansible_distribution == "Amazon" and ansible_service_mgr == "upstart"
+  tags: common
 
 - name: disable the daemon for amazon2
   service: name={{ item }} enabled=no state=stopped
   with_items: "{{ disable_daemon_amazon2 }}"
   when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
-
-- name: disable the daemon for amazon & centos
-  service: name={{ item }} enabled=no state=stopped
-  with_items: "{{ disable_daemon_amazon_centos }}"
-  when: ansible_service_mgr == "upstart"
-
-- name: set locale to /etc/sysconfig/i18n
-  replace:
-    dest: /etc/sysconfig/i18n
-    regexp: '^LANG=en_US\.UTF-8'
-    replace: 'LANG={{locale}}'
-  tags: locale
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
+  tags: common
 
 - name: set locale
   command: localectl set-locale LANG={{ locale }} 
-  tags: locale
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution_major_version >= "7")) or
         (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
-
-- name: set zone to /etc/sysconfig/clock
-  replace:
-    dest: /etc/sysconfig/clock
-    regexp: '^ZONE=\"UTC\"'
-    replace: 'ZONE="{{zone}}"'
-  tags: locale
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
-
-- name: set false to clock utc
-  replace:
-    dest: /etc/sysconfig/clock
-    regexp: '^UTC=true'
-    replace: 'UTC=false'
-  tags: locale
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
-
-- name: set timezone to Asia/Tokyo
-  file:
-    src: "{{ zoneinfo_path }}"
-    dest: /etc/localtime
-    state: link
-    force: yes
-  tags: locale
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "6")) or 
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "upstart")
+  tags: common
 
 - name: set timezone to Asia/Tokyo
   command: timedatectl set-timezone Asia/Tokyo
-  tags: locale 
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or
+        (ansible_distribution_major_version >= "7")) or
         (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
+  tags: common
 
-- name: confirm existence of yum-cron
-  shell: rpm -qa | grep 'yum-cron'
-  ignore_errors: True
-  register: result_yum_cron
-  tags: yum
-
-- name: stopped cron.service
-  service:
-    name: yum-cron
-    state: stopped
-    enabled: False
-  tags: yum
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" ) and
-        result_yum_cron is success
+- name: remove yum-cron
+  yum: name='yum-cron' state=absent
+  tags: common
 
 - name: disable SELinux
   selinux: state=disabled
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS")
-  tags: SELinux
+  tags: common
 
 - name: set path to ldconfig
   template: src=usr_local.conf.j2 dest=/etc/ld.so.conf.d/usr_local.conf
-  tags: ldconfig
+  tags: common
 
 - name: set hostname
   hostname: name={{server_hostname}}
-  tags: hostname
+  tags: common
 
 - name: create groups
   group: name={{ item }} state=present
   with_items:
     - "{{shared_group}}"
     - "{{sftponly_group}}"
-  tags: ssh
+  tags: common

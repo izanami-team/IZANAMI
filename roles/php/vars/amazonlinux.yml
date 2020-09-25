@@ -1,18 +1,16 @@
 php_ini_path: /etc/php.ini
 php_package:
-   - php70
-   - php70
-   - php70-mbstring
-   - php70-mcrypt
-   - php70-gd
-   - php70-pdo
-   - php70-opcache
-   - php70-apcu
-   - php70-mysqlnd
-   - php70-pecl-apcu
-   - php70-pecl-imagick
-   - php70-pecl-memcache
-   - php70-pecl-memcached
-   - php70-pecl-yaml
-   - php70-xml
-
+   - php
+   - php-bcmath
+   - php-cli
+   - php-xml
+   - php-common
+   - php-devel
+   - php-gd
+   - php-json
+   - php-mbstring
+   - php-mysqlnd
+   - php-opcache
+   - php-pdo
+   - php-pecl-mcrypt
+   - php-pecl-memcached

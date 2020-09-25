@@ -1,18 +1,75 @@
----
-# ImageMagick
 - name: ImageMagick is installed
-  yum: name={{ item }} state=present
-  with_items:
-   - ImageMagick
-   - ImageMagick-devel
-   - ImageMagick-perl
-  ignore_errors: True
+  yum:
+    name:
+      - ImageMagick
+      - ImageMagick-devel
+    state: present 
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version < "8") or
+        ansible_distribution == "Amazon"
   tags: ImageMagick
 
-# https://access.redhat.com/security/cve/cve-2016-3714
-#- name: insert "Policymap" configuation block in /etc/ImageMagick/policy.xml
-#  blockinfile:
-#    dest: /etc/ImageMagick/policy.xml
-#    block: "{{ policymap }}"
-#  tags: ImageMagick
+- name: ImageMagick is installed
+  yum:
+    name:
+      - ImageMagick
+      - ImageMagick-devel
+    state: present 
+    enablerepo: rhel-7-server-rhui-optional-rpms
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version < "8"
+  tags: ImageMagick
+
+- name: ImageMagick is installed
+  yum:
+    name:
+      - ImageMagick
+      - ImageMagick-devel
+    state: present
+    enablerepo: remi,epel,codeready-builder-for-rhel-8-rhui-rpms
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= "8"
+  tags: ImageMagick
+
+- name: ImageMagick is installed
+  yum:
+    name:
+      - ImageMagick
+      - ImageMagick-devel
+    state: present
+    enablerepo: remi,epel,PowerTools
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version >= "8"
+  tags: ImageMagick
+
+# installed php-imagick
+- name: php imagick installed
+  yum: name=php-pecl-imagick state=present enablerepo=amzn2extra-php7.3
+  when: ansible_distribution == "Amazon" and php
+  tags: php
+
+- name: php imagick installed
+  yum: name=php-imagick state=present enablerepo=epel,epel-modular,remi-safe,remi-modular,remi
+  when: ((ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version >= '8')) and php
+  tags: php
+
+- name: php imagick installed
+  yum: name=php-imagick enablerepo=epel,epel-modular,remi-safe,remi,remi-php74 state=present
+  when: ((ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version < '8')) and php
+  tags: php
+
+
+# security
+- name: insert "Policymap" configuation block in /etc/ImageMagick/policy.xml
+  blockinfile:
+    dest: /etc/ImageMagick-6/policy.xml
+    block: "{{ policymap }}"
+  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  tags: ImageMagick
+
+- name: insert "Policymap" configuation block in /etc/ImageMagick/policy.xml
+  blockinfile:
+    dest: /etc/ImageMagick/policy.xml
+    block: "{{ policymap }}"
+  when: ansible_distribution == "Amazon"
+  tags: ImageMagick
+
 

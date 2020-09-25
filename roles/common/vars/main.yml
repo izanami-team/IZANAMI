@@ -1,5 +1,4 @@
 packages:
-  - python-devel
   - apr-devel
   - apr-util-devel
   - bzip2-devel
@@ -34,11 +33,9 @@ packages:
   - readline-devel
   - rpm-build
   - sysstat
-  - t1lib*
   - tcsh
   - telnet
-disable_daemon_all:
-  - blk-availability
+  - vim-enhanced
 disable_daemon_amazon_centos:
   - kdump
 disable_daemon_amazon:

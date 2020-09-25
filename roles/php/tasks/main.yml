@@ -2,7 +2,14 @@
 
 - name: vars for centos & redhat
   include_vars: centos_redhat.yml
-  when: ansible_distribution == "CentOS" or ansible_distribution == 'RedHat'
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version < '8')
+  tags: php
+
+- name: vars for centos & redhat
+  include_vars: centos8_redhat8.yml
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version >= '8')
   tags: php
 
 - name: vars for amazonlinux
@@ -10,19 +17,44 @@
   when: ansible_distribution == "Amazon"
   tags: php
 
-- name: php installed
-  yum: name={{ php_package }} enablerepo=epel,remi,remi-php73 state=present
-  when: ansible_distribution == "CentOS"
-  tags: php
-
-- name: php installed
-  yum: name={{ php_package }} enablerepo=epel,remi,remi-php73 state=present skip_broken=yes
-  when: ansible_distribution == 'RedHat'
-  tags: php
-
-- name: php installed
-  yum: name={{ php_package }} state=present
+- name: enable amazon-linux-extras php73
+  shell: 'amazon-linux-extras enable php7.3'
   when: ansible_distribution == "Amazon"
+  tags: php
+
+- name: php installed
+  yum: name={{ php_package }} state=present enablerepo=amzn2extra-php7.3
+  when: ansible_distribution == "Amazon"
+  tags: php
+
+- name: php installed
+  shell: dnf --enablerepo=epel,epel-modular,remi-safe,remi-modular,remi module install -y php:remi-7.4
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version >= '8')
+  tags: php
+
+- name: php installed
+  yum: name={{ php_package }} state=present enablerepo=epel,epel-modular,remi-safe,remi-modular,remi
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version >= '8')
+  tags: php
+
+- name: php installed
+  yum: name={{ php_package }} enablerepo=epel,epel-modular,remi-safe,remi,remi-php74 state=present
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version < '8')
+  tags: php
+
+- name: change php-fpm settings
+  lineinfile:
+    dest: "{{ php_fpm_path }}"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backrefs: yes
+  with_items: "{{ php_fpm }}"
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
+        (ansible_distribution_major_version >= '8')
   tags: php
 
 - name: phpini configured
@@ -35,4 +67,4 @@
     line: "{{ item.line }}"
     backrefs: yes
   with_items: "{{ php_ini }}"
-  tags: phpini
+  tags: php

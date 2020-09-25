@@ -1,23 +1,14 @@
 - name: install the latest version of Apache
-  yum: name={{ item }} state=present
-  with_items:
-   - httpd
-   - httpd-devel
-   - httpd-tools
-   - mod_ssl
+  yum:
+    name:
+      - httpd
+      - httpd-devel
+      - httpd-tools
+      - mod_ssl
+    state: present
   tags: httpd
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") or
         (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
-
-- name: install the latest version of Apache
-  yum: name={{ item }} state=present
-  with_items:
-   - httpd24
-   - httpd24-devel
-   - httpd24-tools
-   - mod24_ssl
-  tags: httpd
-  when: (ansible_distribution == "Amazon" and ansible_service_mgr == 'upstart')
 
 - name: remove file from /etc/httpd/conf.d/*
   file: path=/etc/httpd/conf.d/{{ item }} owner=root group=root mode=0644 state=absent
@@ -46,7 +37,7 @@
     - 00-lua.conf
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
 
 - name: touch file from /etc/httpd/conf.modules.d/*
@@ -56,7 +47,7 @@
     - 00-lua.conf
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
 
 - name: replace httpd.conf for httpd2.4
@@ -64,15 +55,8 @@
   with_items: "{{ httpd_conf24 }}"
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
-
-- name: replace httpd.conf for httpd2.2
-  replace: dest="/etc/httpd/conf/httpd.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
-  with_items: "{{ httpd_conf22 }}"
-  tags: httpd
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "6"))
 
 - name: insert 'mt-static' configuation block in httpd.conf
   blockinfile:
@@ -85,19 +69,8 @@
   with_items: "{{ disalbe_module }}"
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
-
-- name: check sysconfig/httpd
-  shell: grep 'umask 002' /etc/sysconfig/httpd
-  ignore_errors: True
-  register: result_sysconfig_httpd
-  tags: httpd
-
-- name: replace sysconfig/httpd
-  shell: echo "umask 002" >> /etc/sysconfig/httpd
-  tags:  httpd
-  when: result_sysconfig_httpd is failed
 
 - name: Create Apache configuration file
   template: src=00.setting.conf.j2 dest=/etc/httpd/conf.d/00.setting.conf
@@ -111,20 +84,14 @@
   template: src=02.ssl2.4.conf.j2 dest=/etc/httpd/conf.d/02.ssl.conf
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
-
-- name: Create ssl configuration file
-  template: src=02.ssl2.2.conf.j2 dest=/etc/httpd/conf.d/02.ssl.conf
-  tags: httpd
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "6"))
 
 - name: Create mpm configuration file
   template: src=03.mpm.conf.j2 dest=/etc/httpd/conf.d/03.mpm.conf
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
 
 - name: Create Apache2.4 configuration file vhosts
@@ -132,14 +99,8 @@
   with_items: "{{ vhosts }}"
   tags: httpd
   when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-         (ansible_distribution_major_version == "7")) or
+         (ansible_distribution_major_version >= '7')) or
          (ansible_distribution == "Amazon")
-
-- name: Create Apache2.2 configuration file vhosts
-  template: src=vhosts2.2.conf.j2 dest=/etc/httpd/conf.d/{{ item.name }}.conf
-  with_items: "{{ vhosts }}"
-  tags: httpd
-  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
 
 - name: httpd vhosts directory
   file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=apache group={{ shared_group }} mode=0775
@@ -190,9 +151,9 @@
 
 # pip passlibに依存
 - name: create htpasswd
-  htpasswd: path=/var/www/htpasswd name={{  mt.basic.user }} password={{ mt.basic.passwd }} owner=apache group={{shared_group}} mode=0644
+  htpasswd: path=/var/www/htpasswd name={{ basic.user }} password={{ basic.passwd }} owner=apache group={{shared_group}} mode=0644
   tags: httpd
-  when: "{{ mt.basic is defined }}"
+  when: basic.auth | bool
 
 - name: httpd is runnning and enabled
   service: name=httpd state=started enabled=yes

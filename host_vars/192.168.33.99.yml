@@ -1,14 +1,13 @@
 server_hostname:  "movabletype.local"
 root_email: "root@localhost"
 letsencrypt: False
-denyhosts: False
-php: True
+php: False
 nginx: False
 apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 mt:
-  file: MT7-R4603.zip
-  ver: MT7-R4603
+  file: MT7-R4701.zip
+  ver: MT7-R4701
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'mt.cgi'}
@@ -30,11 +29,7 @@ vhosts:
     ssl:
       use: False
       only: False
-relay: False
 postfix:  
+  relay: False
   smtp:
     from: example.com
-    server: email-smtp.us-east-1.amazonaws.com
-    pass: sample 
-    user: sample
-    port: 587

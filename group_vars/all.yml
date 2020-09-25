@@ -1,5 +1,12 @@
 locale: ja_JP.UTF-8
 zone: Asia/Tokyo
 zoneinfo_path: /usr/share/zoneinfo/Asia/Tokyo
-movabletype: yes
+movabletype: True
+mysql: True
+basic:
+  auth: False
+postfix:
+  relay: False
+ImageMagick: False
+php: False
 

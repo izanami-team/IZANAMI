@@ -1,48 +1,46 @@
-server_hostname:  "mt.examaple.com"
-root_email: "alert@mt.example.com"
+server_hostname: "cms.example.com"
+root_email: "root@cms.example.com"
 letsencrypt: True
-denyhosts: True
-php: False
-nginx: True
-apache: False
+php: True
+nginx: False
+apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
+basic:
+  auth: True
+  path: /
+  user: user
+  passwd: pass
 mt:
-  file: MT-6.3.4.zip
-  ver: MT-6.3.4
+  require_ip:
+    - 127.0.0.1
   psgi: True
+  file: MT7-R4701.zip
+  ver: MT7-R4701
   config:
-    - {name: 'AdminScript', value: 'mt.cgi'}
+    - {name: 'AdminScript', value: 'admin'}
     - {name: 'ImageDriver', value: 'Imager'}
-  plugins:
-    - PageBute
-    - PSGIRestart
   db:
     name: movabletype
     user: movabletype
-    passwd: 'ABC@123456example'
+    passwd: 'passwdABC123$'
     server: localhost
-  #basic:
-  #  user: example
-  #  passwd: example
-relay: False
-postfix:  
-  smtp:
-    from: example.com
-    server: email-smtp.us-east-1.amazonaws.com
-    pass: "パスワード"
-    user: "ユーザ名"
-    port: 587
 vhosts:
-  - name: mt.example.com
+  - name: cms.example.com
     letsencrypt: True
     ssl:
-      use: True
+      use:  True
       only: True
-    email: "alert@mt.example.com"
-wheel_users:
-  - { name: admin_user, password: "openssl passwd -1 'passwd'でhash化したものを記載" }
+      file: False
+    email: "alert@cms.example.com"
+postfix:
+  relay: True
+  smtp:
+    from: cms.example.com
+    user: ACCESSKEY
+    pass: ACCESS_SECRET
+    server: SMTP_SERVER
+    port: 587
 ssh_users:
-  - { name: ssh_user,   password: "openssl passwd -1 'passwd'でhash化したものを記載" }
-sftp_users:
-  - { name: sftp_user,  password: "openssl passwd -1 'passwd'でhash化したものを記載" }
-
+  - { name: wheel_user1,    group: "wheel",                password: "hash" }
+  - { name: ssh_user1,      group: "{{ shared_group }}",   password: "hash" }
+  - { name: sftponly_user1, group: "{{ sftponly_group }}", password: "hash" }

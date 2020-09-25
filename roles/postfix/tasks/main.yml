@@ -9,7 +9,7 @@
   tags: package
   ignore_errors: yes
   when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+        (ansible_distribution_major_version >= "7")
 
 - name: replace for main.cf
   replace: dest="/etc/postfix/main.cf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
@@ -30,7 +30,11 @@
   tags: postix
 
 - name: add aliases
-  shell: echo "{{ root_email }}" >> /etc/aliases
+  lineinfile:
+    path: /etc/aliases
+    line: "root: {{ root_email }}"
+    state: present
+    insertafter: EOF
   tags: postix
 
 - name: Create .forward to postfix
@@ -49,23 +53,23 @@
   blockinfile:
     dest: /etc/postfix/main.cf
     block: "{{ postconf }}"
-  when: "{{ relay | bool }}"
+  when: postfix.relay | bool
   tags: postfix
 
 - name: Create sasl_passwd to postfix
   template: src=sasl_passwd.j2 dest=/etc/postfix/sasl_passwd
-  when: "{{ relay | bool }}"
+  when: postfix.relay | bool
   tags: postfix
  
 - name: run postmap
   command: postmap hash:/etc/postfix/sasl_passwd
-  when: "{{ relay | bool }}"
+  when: postfix.relay | bool
   tags: postix
 
 - name: change permission 
   file: path="{{ item }}" owner=root group=root mode=0600
   with_items: "{{ files }}"
-  when: "{{ relay | bool }}"
+  when: postfix.relay | bool
   tags: postix
 
 - name: postifx is runnning and enabled

@@ -1,4 +1,4 @@
-- name: Movable Type6.3, MySQL5.7, Apache2.4 or Nginx,  Starman(PSGI), PHP7(Apache only) installed 
+- name: Movable Type (optional), MySQL5.7 or later, Apache2.4 or Nginx, Starman(PSGI), PHP7 installed 
   hosts: all
   gather_facts: True
   become: yes
@@ -7,19 +7,17 @@
       tags: common
     - role: postfix
       tags: postfix
-    - role: iptables
-      tags: iptables
-      when: (ansible_distribution == "CentOS" ) and ( ansible_distribution_major_version == "6")
     - role: firewall
       tags: firewall
-      when: ((ansible_distribution == "CentOS" ) or (ansible_distribution == 'RedHat' )) and ( ansible_distribution_major_version == "7")
+      when: ((ansible_distribution == "CentOS" ) or (ansible_distribution == 'RedHat' )) and ( ansible_distribution_major_version >= "7")
     - role: swap
       tags: swap
     - role: aws
       tags: aws
       when: ansible_distribution == "Amazon"
     - role: mysql
-      tags: mysql 
+      tags: mysql
+      when: mysql | bool
     - role: letsencrypt
       tags: letsencrypt
       when: letsencrypt | bool
@@ -31,17 +29,19 @@
       when: apache | bool
     - role: sshd
       tags: sshd
-    - role: ImageMagick
-      tags: ImageMagick
     - role: php
       tags: php 
       when: php | bool
+    - role: ImageMagick
+      tags: ImageMagick
+      when: ImageMagick | bool
     - role: perl
-      tags: perl 
-      when: movabletype 
+      tags: perl
+      when: movabletype | bool 
     - role: movabletype
       tags: movabletype
-      when: movabletype 
+      when: movabletype | bool 
     - role: supervisord
       tags: supervisord
+      when: movabletype | bool 
   

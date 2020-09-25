@@ -42,6 +42,7 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 |:---------|:----:|:----:|:----:|:----:|:----:|
 | Amazon Linux | OK | - | - | - | - | - |
 | Amazon Linux 2 | OK | - | - | - | - | - |
+| RHEL 8 | OK | TBD | TBD | - | - | - |
 | RHEL 7 | OK | OK | OK | - | - | - |
 | CentOS 7 | OK | OK | OK | - | OK |
 | CentOS 6 | OK | OK | OK | - | - |

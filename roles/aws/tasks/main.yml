@@ -14,16 +14,12 @@
   template: src=.aws_config.j2 dest=/root/.aws/config owner=root mode=0600
   tags: aws
 
-- name: cloudwatch
-  shell: curl -L https://raw.githubusercontent.com/onagatani/cloudwatch-create-alarm/master/cloudwatch-create-alarm | bash /dev/stdin -a {{ server_hostname }} -t {{ server_hostname }} -e {{ alert.email }}
-  when: aws.cloudwatch | bool 
-  tags: aws
-
-- name: remove the ntpdate package
-  yum: name={{ item }}  state=absent
-  with_items: 
-    - ntp
-    - ntpdate
+- name: remove ntpdate
+  yum:
+    name: 
+      - ntp
+      - ntpdate
+    state: absent
   tags: aws
 
 - name: Install the chronyd

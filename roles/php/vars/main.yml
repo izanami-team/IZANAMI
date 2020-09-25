@@ -6,5 +6,9 @@ php_ini:
    - { regexp: '^session.hash_function = 0', line: 'session.hash_function = sha256'} 
    - { regexp: '^max_execution_time = 30', line: 'max_execution_time = 300'} 
    - { regexp: '^; max_input_vars = 1000', line: 'max_input_vars = 10000'} 
-   - { regexp: '^memory_limit = 128M', line: 'memory_limit = 1024M'} 
-   - { regexp: '^upload_max_filesize = 2M', line: 'upload_max_filesize = 32M'} 
+   - { regexp: '^memory_limit = 128M', line: 'memory_limit = 256M'} 
+   - { regexp: '^upload_max_filesize = 2M', line: 'upload_max_filesize = 32M'}
+php_fpm:
+   - { regexp: '^\;pm.max_requests = 500', line: 'pm.max_requests = 500' }
+   - { regexp: '^pm.max_children = 50', line: 'pm.max_children = 30' }
+   - { regexp: '^pm.max_spare_servers = 35', line: 'pm.max_spare_servers = 20' }

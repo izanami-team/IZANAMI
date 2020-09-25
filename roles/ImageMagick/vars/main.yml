@@ -1,8 +1,7 @@
 policymap: |
   <policymap>
-    <policy domain="coder" rights="none" pattern="EPHEMERAL" />
-    <policy domain="coder" rights="none" pattern="URL" />
-    <policy domain="coder" rights="none" pattern="HTTPS" />
-    <policy domain="coder" rights="none" pattern="MVG" />
-    <policy domain="coder" rights="none" pattern="MSL" />
+    <policy domain="delegate" rights="none" pattern="*" />
+    <policy domain="filter" rights="none" pattern="*" />
+    <policy domain="coder" rights="none" pattern="*" />
+    <policy domain="coder" rights="read|write" pattern="{PNG,JPEG,JPG,GIF,WEBP}" />
   </policymap>

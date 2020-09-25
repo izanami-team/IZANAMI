@@ -22,10 +22,10 @@
         Require all granted
     </Directory>
 
-    {% if (mt.basic is defined) and (inventory_file != 'local') %}
-    <Location "/mt/">
+    {% if (basic.auth == True) and (inventory_file != 'local') %}
+    <Location "{{ basic.path }}">
         AuthType Basic
-        AuthName "MovableType"
+        AuthName "Basic Auth"
         AuthUserFile /var/www/htpasswd
         Require valid-user
     </Location>

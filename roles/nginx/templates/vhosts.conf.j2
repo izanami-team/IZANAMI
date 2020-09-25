@@ -23,11 +23,21 @@ server {
         allow all;
     }
 
-    location /mt {
-      {% if (mt.basic is defined) and (inventory_file != 'local') %}
+    {% if (basic.auth == True) and (inventory_file != 'local') %}
+    location {{ basic.path }} {
         auth_basic "auth";
-        auth_basic_user_file /var/www/htpasswd; 
+        auth_basic_user_file /var/www/htpasswd;
+    }
+    {% endif %}
+
+    location /mt {
+      {% if mt.require_ip is defined %}
+        {% for ip in mt.require_ip %}
+        allow {{ ip }};
+        {% endfor %}
+        deny all;
       {% endif %}
+
         client_max_body_size 300M;
         proxy_redirect off;
         proxy_read_timeout  600;

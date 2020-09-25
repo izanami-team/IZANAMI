@@ -2,29 +2,27 @@ IZANAMI
 ====
 
 AnsibleでVagrantやVMサーバにMovable Typeのサーバを構築します
+（MovableTypeをOFFにすることでWEBサーバやPHP用のサーバを構築する事も可能です）
 
 ## Description
 
 本プロジェクトは本番稼働に耐える高速なPSGI起動のMovable TypeサーバをAnsibleで自動構築するものです。  
-リモートサーバだけではなくローカルのVagrant環境も構築可能です。  
+リモートサーバだけではなくローカルに本番同等のVagrant環境も構築出来ます。  
 OSの初期セットアップからSSL証明書の取得、sshユーザの追加まで全て自動で構築されます。  
-また、セキュリティにもある程度対策をしています。  
-
-ライブラリなどを常に最新の環境にすることを優先しているためVagrantのBOXなどは用意していません。  
-このため初回起動までに20分程度の時間がかかる事が予想されます。  
+また、セキュリティにもある程度対策をしています。
 
 ## Introduction
 
 * MovableType5.2以降対応(MTOS含む)、PSGIもしくはCGI起動
-  * MT7にも対応しています(NEW)
-* Perl5.18.2
+  * MT7で動作確認しています
+* Perl5.30
 * Nginx
     * DynamicPublishingには非対応
-* Apache
-    * CentOS6は2.2系
-    * CentOS7は2.4系
-    * PHP(optional)7.0
-* MySQL5.7, 8.0 (Amazon Linux 2)
+* Apache2.4
+* ImageMagick (optional)
+    * MTの画像ライブラリはImagerを利用します。またダイナミックパブリッシングはGDで動作するため通常は不要ですが、PHPから利用する場合を想定しplaybookではサポートしています 
+* PHP(optional)7.3 or 7.4
+* MySQL5.7 or 8.0
 * supervisord
 * Let'sEncrypt
     * SSL証明書を自動取得可能です
@@ -40,11 +38,15 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 ### 各クラウドでの対応OS 
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
-| Amazon Linux | OK | - | - | - | - | - |
-| Amazon Linux 2 | OK | - | - | - | - | - |
-| RHEL 7 | OK | OK | OK | - | - | - |
-| CentOS 7 | OK | OK | OK | - | OK |
-| CentOS 6 | OK | OK | OK | - | - |
+| Amazon Linux 2 | OK | TBD | TBD | TBD | OK |
+| RHEL 8 | OK | TBD | TBD | TBD | - |
+| RHEL 7 | OK | TBD | TBD | TBD | - |
+| CentOS 8 | OK | TBD | TBD | TBD | OK |
+| CentOS 7 | OK | TBD | TBD | TBD | OK |
+
+* AMI
+   * RHEL : アカウント文字列「309956199498 」の7,8を利用
+   * CentOS : https://wiki.centos.org/Cloud/AWS 公式のwikiから7,8を利用
 
 ## <a name="Install">Install
 
@@ -72,7 +74,7 @@ $ vagrant plugin install vagrant-hostsupdater
     * 参考URL：http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-pip
 * プロビジョニング元になるサーバ（もしくはローカルPC）に本プロジェクトをcloneします
 * IZANAMIディレクトリにカレントディレクトリを移動します
-* Movable Type(MTOS)の本体ファイルをroles/movabletype/files/以下に設置します
+* Movable Typeの本体ファイルをroles/movabletype/files/以下に設置します
 * プラグインを使用する場合は以下のように設置してください
     * roles/movabletype/files/mt-plugins/以下にプラグイン本体のファイルを設置
     * roles/movabletype/files/mt-static/以下に静的ファイルを設置
@@ -101,12 +103,19 @@ $ openssl passwd -1 '上記で入力したパスフレーズを指定'
 server_hostname:  "サーバのhostnameになります。通常はドメイン名を設定するとよいでしょう"
 root_email: "ここに設定されたメールアドレスに対してlogwatchなどのメールが配信されます"
 letsencrypt: letsencryptをインストールするのかTrue/Falseで設定します。無料でSSLを利用したい場合はTrueにしてください
-denyhosts: サーバへのSSHアクセスに対して接続元IPアドレス制限が掛けられない場合にセキュリティを向上させます。通常はTrueで問題ありません。
-php: サーバをapacheにした場合にmod_phpをインスト―ルします。DynamicPublishingなどを利用する場合はTrueにしてください。サーバをセキュアにする場合はFalseが良いでしょう
+php: サーバをapacheにした場合にmod_php/php-fpmをインスト―ルします。DynamicPublishingなどを利用する場合はTrueにしてください。サーバをセキュアにする場合はFalseが良いでしょう
+ImageMagick: PHPアプリケーションから利用する場合はTrueにして下さい。通常必要ありません。
 nginx: httpサーバをnginxにする場合はTrueにします。apacheを利用する場合はFalseを指定してください。なお.htaccessは利用できません。
 apache: httpサーバapacheにする場合はTrueにします。nginxを利用する場合はFalseを指定してください。どちらかのみ有効です。
 owner: "修正の必要はありません"
+basic:
+  auth: Basic認証を利用する場合はTrueにします
+  path: 認証を必要とするパスを設定します。「/」を設定するとサイト全てを認証下にします
+  user: ユーザ名
+  passwd: パスワード
 mt:
+  require_ip:
+    - MTをIP制限します。利用する場合はIPを記載します。(- で複数指定可能です）
   file: MovableTypeの本体ファイル名を記載します
   ver: MovableTypeの本体ファイル名の解凍後のディレクトリ名を設定します
   psgi: サーバをPSGIで起動する場合はTrueにします。通常はTrueにします
@@ -119,9 +128,6 @@ mt:
     user: MySQLのユーザ名を指定します。事前にユーザを作成する必要はありません
     passwd: 'MySQLのパスワードを指定します。大文字小文字と記号の入った英数字を指定してください。最低8文字以上です'
     server: MySQLサーバのIPアドレスを指定してください。通常はlocalhostで問題ありません
-  basic: #Basic認証を使用しない場合はここから３行を#でコメントアウトしてください 
-    user: mtへのアクセスにBasic認証をかける場合にユーザ名を指定します
-    passwd: Basic認証のパスワードを指定します
 vhosts: #以下の項目は複数指定可能です
   - name: 構築するサーバのドメイン名を指定します
     letsencrypt: Let'sencryptでSSLを取得する場合はTrueを指定します
@@ -132,12 +138,18 @@ vhosts: #以下の項目は複数指定可能です
       key: 独自証明書の場合に鍵ファイル名を指定します
       ca_crt: 独自証明書の場合に中間証明書ファイル名を指定します
     email: "Let'sEncryptを使用する場合に有効期限の通知を行うメールアドレスを指定します"
-wheel_users: #以下の項目は複数指定可能です
-  - { name: sudo可能なSSHユーザ名, password: "パスフレーズをハッシュ化したものを記載" }
-ssh_users:
-  - { name: SSHユーザ名, password: "パスフレーズをハッシュ化したものを記載" }
-sftp_users:
-  - { name: SFTPのみ可能なユーザ名, password: "パスフレーズをハッシュ化したものを記載" }
+postfix:
+  relay: SESやSendFridを利用してメールをリレーする場合にTrueを設定します
+  smtp:
+    from: メールのFromドメインを指定します
+    user: リレーするアカウントのACCESSKEYを指定します
+    pass: リレーするアカウントのACCESS_SECRETを指定します
+    server:リレーするアカウントのSMTP_SERVERを指定します
+    port: リレーするサーバのポートを指定します 例：587
+ssh_users: 追加するSSHユーザを以下のように記載します
+  - { name: wheel_user1,    group: "wheel",                password: "hash" }
+  - { name: ssh_user1,      group: "{{ shared_group }}",   password: "hash" }  # sshを許可するユーザ
+  - { name: sftponly_user1, group: "{{ sftponly_group }}", password: "hash" }  #  SFTPのみ許可するユーザー
 ```
 
 ### Vagrant
@@ -165,7 +177,7 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
 ### How to Use
 
 * MTへのアクセス
-    * リモートサーバ http[s]://fqdn/mt/mt.cgi
+    * リモートサーバ http[s]://fqdn/mt/admin
     * Vagrant http://movabletype.local/mt/mt.cgi
 * ドキュメントルート
     * リモートサーバ /var/www/vhosts/fqdn/htdocs
@@ -180,13 +192,8 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
 * mysqlへのログイン
     * rootへスイッチしてから以下のコマンドを実行します
         * mysql
-* phpパス
-    * CentOS/RedHatの場合は以下になります。
-        * /usr/bin/php70
 * vagrant upが失敗する
     * host_vars/xxx.ymlの設定内容に誤りがあるか、roles/movabletype/files/以下にMT-xx.zipファイルを設置しない可能性があります。確認ください。
-
-
 
 ## Licence
 

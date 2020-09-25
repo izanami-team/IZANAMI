@@ -25,13 +25,13 @@
   tags: movabletype
 
 - name: replace mt-config
-  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.18/bin/perl}g'
+  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.30/bin/perl}g'
   args:
     chdir: /var/www/movabletype
   tags: movabletype
 
 - name: replace for tools scripts
-  shell: find . -type f | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.18/bin/perl}g'
+  shell: find . -type f | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.30/bin/perl}g'
   args:
     chdir: /var/www/movabletype/tools
   tags: movabletype
