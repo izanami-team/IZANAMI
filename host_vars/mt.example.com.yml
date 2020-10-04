@@ -2,8 +2,7 @@ server_hostname: "cms.example.com"
 root_email: "root@cms.example.com"
 letsencrypt: True
 php: True
-nginx: False
-apache: True
+nginx: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 basic:
   auth: True
@@ -30,9 +29,9 @@ vhosts:
     ssl:
       use:  True
       only: True
-      crt: example.crt
-      key: example.key
-      ca_crt: example.ca.crt
+      #crt: example.crt
+      #key: example.key
+      #ca_crt: example.ca.crt
     email: "alert@cms.example.com"
 postfix:
   relay: True

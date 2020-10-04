@@ -1,6 +1,6 @@
 [vagrant]
-192.168.33.99 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/centos7/virtualbox/private_key ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-192.168.33.100 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/centos8/virtualbox/private_key ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+#192.168.33.99 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/centos7/virtualbox/private_key ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+#192.168.33.100 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/centos8/virtualbox/private_key ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 192.168.33.101 ansible_ssh_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/amzn2/virtualbox/private_key ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 [vagrant:vars]
 mysql_root_password="@Movabletype6"

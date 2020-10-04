@@ -1,19 +1,8 @@
 server_hostname:  "centos8.local"
 root_email: "root@localhost"
-letsencrypt: False
-php: False
-ImageMagick: False
-nginx: True
-apache: False
+apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
-basic:
-  auth: False
-  path: /
-  user: user
-  passwd: pass
 mt:
-  #require_ip:
-  #  - 127.0.0.1
   file: MT7-R4701.zip
   ver: MT7-R4701
   psgi: True
@@ -21,7 +10,6 @@ mt:
     - {name: 'AdminScript', value: 'admin'}
     - {name: 'ImageDriver', value: 'Imager'}
   plugins:
-    - PageBute
     - PSGIRestart
   db:
     name: movabletype
