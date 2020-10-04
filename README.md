@@ -150,10 +150,6 @@ ssh_users:
 
 ### Vagrant
 
-```
-
-### Vagrant
-
 ```bash
 $ vagrant up
 ```
