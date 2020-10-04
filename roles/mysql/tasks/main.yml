@@ -2,16 +2,13 @@
   yum: name="https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm" 
   tags: mysql
   ignore_errors: yes
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "8") 
+  when: centos8 or rhel8
 
 - name: add mysql-repo for centos7 
   yum: name="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm" 
   tags: mysql
   ignore_errors: yes
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7") or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == 'systemd')
+  when: centos7 or rhel7 or amzn2
 
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
@@ -20,8 +17,7 @@
 - name: disalbe repo mysql
   shell: 'dnf module disable -y mysql'
   tags: mysql
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version >= "8") 
+  when: centos8 or rhel8
 
 - name: Install Mysql package
   yum:
@@ -33,8 +29,7 @@
     state: present
     enablerepo: mysql80-community
   tags: mysql
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version >= "8") 
+  when: centos8 or rhel8
 
 - name: Install Mysql package
   yum:
@@ -46,8 +41,7 @@
     state: present
     enablerepo: mysql57-community
   tags: mysql
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or ansible_distribution == "Amazon"
+  when: centos7 or rhel7 or amzn2
 
 - name: install the 'python3-PyMySQL'
   dnf:
@@ -59,20 +53,16 @@
       - python3-PyMySQL
     state: latest
     enablerepo: epel
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version >= "8") 
+  when: centos8 or rhel8
 
 - name: install the 'python-pip'
   yum: name="python2-pip" state=present enablerepo=epel
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
+  when: centos7 or rhel7 or amzn2
   tags: mysql
 
 - name: install the 'python-devel'
   yum: name="python-devel" state=present
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")
+  when: centos7 or rhel7
   tags: mysql
 
 - name: python passlib installed
@@ -81,8 +71,7 @@
       - passlib
       - MySQL-python
   tags: mysql
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version == "7")) or ansible_distribution == "Amazon"
+  when: centos7 or rhel7 or amzn2
 
 - name: create mysql configuration file
   template: src=my.cnf.j2 dest=/etc/my.cnf

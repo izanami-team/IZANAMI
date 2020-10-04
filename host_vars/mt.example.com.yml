@@ -30,7 +30,9 @@ vhosts:
     ssl:
       use:  True
       only: True
-      file: False
+      crt: example.crt
+      key: example.key
+      ca_crt: example.ca.crt
     email: "alert@cms.example.com"
 postfix:
   relay: True

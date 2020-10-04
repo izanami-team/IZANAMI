@@ -1,0 +1,24 @@
+- name: httpd is runnning and enabled
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: apache
+  tags: restart
+
+- name: nginx is runnning and enabled
+  service: 
+    name: nginx
+    state: started
+    enabled: yes
+  when: nginx
+  tags: restart
+
+- name: php-fpm is runnning and enabled
+  service:
+    name: php-fpm
+    state: started
+    enabled: yes
+  when: ((centos8 or rhel8 ) or nginx ) and php
+  tags: restart
+

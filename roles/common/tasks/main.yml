@@ -8,15 +8,14 @@
 
 - name: Install libselinux-python
   yum: name=libselinux-python state=present
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version != "8")
+  when: centos7 or rhel7
   tags: common
 
 - name: install the epel repositry
   yum:
     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
     state: present
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  when: centos_rhel
   tags: common
 
 - name: install the remi repositry
@@ -24,12 +23,12 @@
     name:
       - "http://rpms.famillecollet.com/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
     state: present
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  when: centos_rhel
   tags: common
 
 - name: install the 'epel repositry'
   shell: "amazon-linux-extras install epel -y"
-  when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
+  when: amzn2
   tags: common
 
 - name: disable repo the epel
@@ -38,12 +37,12 @@
 
 - name: disable repo the remi
   replace: dest=/etc/yum.repos.d/remi.repo regexp="enabled *= *1" replace="enabled=0"
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  when: centos_rhel
   tags: common
 
 - name: disable repo the remi-safe
   replace: dest=/etc/yum.repos.d/remi-safe.repo regexp="enabled *= *1" replace="enabled=0"
-  when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+  when: centos_rhel
   tags: common
 
 - name: install the 'Development tools' package group
@@ -52,8 +51,7 @@
 
 - name: Install the python-devel
   yum: name=libselinux-python state=present
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version != "8")) or ansible_distribution == "Amazon"
+  when: centos7 or rhel7 or amzn2
   tags: common
 
 - name: install the latest libraries
@@ -71,21 +69,15 @@
 - name: disable the daemon for amazon2
   service: name={{ item }} enabled=no state=stopped
   with_items: "{{ disable_daemon_amazon2 }}"
-  when: ansible_distribution == "Amazon" and ansible_service_mgr == "systemd"
+  when: amzn2
   tags: common
 
 - name: set locale
   command: localectl set-locale LANG={{ locale }} 
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version >= "7")) or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
   tags: common
 
 - name: set timezone to Asia/Tokyo
-  command: timedatectl set-timezone Asia/Tokyo
-  when: ((ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-        (ansible_distribution_major_version >= "7")) or
-        (ansible_distribution == "Amazon" and ansible_service_mgr == "systemd")
+  command: timedatectl set-timezone {{ zone }}
   tags: common
 
 - name: remove yum-cron
@@ -94,7 +86,7 @@
 
 - name: disable SELinux
   selinux: state=disabled
-  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS")
+  when: centos_rhel
   tags: common
 
 - name: set path to ldconfig

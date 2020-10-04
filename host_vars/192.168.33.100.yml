@@ -1,10 +1,10 @@
-server_hostname:  "centos7.local"
+server_hostname:  "centos8.local"
 root_email: "root@localhost"
 letsencrypt: False
 php: False
 ImageMagick: False
-nginx: False
-apache: True
+nginx: True
+apache: False
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 basic:
   auth: False
@@ -18,7 +18,7 @@ mt:
   ver: MT7-R4701
   psgi: True
   config: 
-    - {name: 'AdminScript', value: 'mt.cgi'}
+    - {name: 'AdminScript', value: 'admin'}
     - {name: 'ImageDriver', value: 'Imager'}
   plugins:
     - PageBute
@@ -29,7 +29,7 @@ mt:
     passwd: '@Mt6password'
     server: localhost
 vhosts:
-  - name: centos7.local
+  - name: centos8.local
     letsencrypt: False
     ssl:
       use: False

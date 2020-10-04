@@ -27,8 +27,6 @@ packages:
   - nmap
   - openssl
   - openssl-devel
-  - perl-ExtUtils-MakeMaker
-  - perl-devel
   - postfix
   - readline-devel
   - rpm-build

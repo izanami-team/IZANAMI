@@ -16,3 +16,5 @@ php_package:
    - php-mbstring
    - php-mcrypt
    - php-memcache
+   - php-pecl-apcu
+

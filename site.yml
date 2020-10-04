@@ -9,39 +9,41 @@
       tags: postfix
     - role: firewall
       tags: firewall
-      when: ((ansible_distribution == "CentOS" ) or (ansible_distribution == 'RedHat' )) and ( ansible_distribution_major_version >= "7")
+      when: centos_rhel
     - role: swap
       tags: swap
     - role: aws
       tags: aws
-      when: ansible_distribution == "Amazon"
+      when: amzn2
     - role: mysql
       tags: mysql
-      when: mysql | bool
+      when: mysql
     - role: letsencrypt
       tags: letsencrypt
-      when: letsencrypt | bool
+      when: letsencrypt
     - role: nginx
       tags: nginx
-      when: nginx | bool
+      when: nginx
     - role: httpd
       tags: httpd
-      when: apache | bool
+      when: apache
     - role: sshd
       tags: sshd
     - role: php
       tags: php 
-      when: php | bool
+      when: php
     - role: ImageMagick
       tags: ImageMagick
-      when: ImageMagick | bool
+      when: ImageMagick
     - role: perl
       tags: perl
-      when: movabletype | bool 
+      when: movabletype
     - role: movabletype
       tags: movabletype
-      when: movabletype | bool 
+      when: movabletype
     - role: supervisord
       tags: supervisord
-      when: movabletype | bool 
-  
+      when: movabletype
+    - role: restart
+      tags: restart
+      when: apache or nginx

@@ -2,13 +2,18 @@ php_ini:
    - { regexp: '^\;date.timezone =$', line: 'date.timezone = Asia/Tokyo'} 
    - { regexp: '^expose_php = On$', line: 'expose_php = Off'} 
    - { regexp: '^\;error_log = php_errors.log$', line: 'error_log = /var/log/php_errors.log'} 
-   - { regexp: '^post_max_size = 8M', line: 'post_max_size = 32M'} 
-   - { regexp: '^session.hash_function = 0', line: 'session.hash_function = sha256'} 
-   - { regexp: '^max_execution_time = 30', line: 'max_execution_time = 300'} 
-   - { regexp: '^; max_input_vars = 1000', line: 'max_input_vars = 10000'} 
-   - { regexp: '^memory_limit = 128M', line: 'memory_limit = 256M'} 
-   - { regexp: '^upload_max_filesize = 2M', line: 'upload_max_filesize = 32M'}
+   - { regexp: '^post_max_size\s?=\s?\d+M', line: 'post_max_size = 32M'} 
+   - { regexp: '^max_execution_time\s?=\s?\d+', line: 'max_execution_time = 300'} 
+   - { regexp: '^;max_input_vars\s?=\s?\d+', line: 'max_input_vars = 10000'} 
+   - { regexp: '^memory_limit\s?=\s?\d+M', line: 'memory_limit = 256M'} 
+   - { regexp: '^upload_max_filesize\s?=\s?\d+M', line: 'upload_max_filesize = 32M'}
 php_fpm:
-   - { regexp: '^\;pm.max_requests = 500', line: 'pm.max_requests = 500' }
-   - { regexp: '^pm.max_children = 50', line: 'pm.max_children = 30' }
-   - { regexp: '^pm.max_spare_servers = 35', line: 'pm.max_spare_servers = 20' }
+   - { regexp: '^\;pm.max_requests\s?=\s?\d+', line: 'pm.max_requests = 500' }
+   - { regexp: '^pm.start_servers\s?=\s?\d+', line: 'pm.start_servers = 2' }
+   - { regexp: '^pm.max_children\s?=\s?\d+', line: 'pm.max_children = 8' }
+   - { regexp: '^pm.min_spare_servers\s?=\s?\d+', line: 'pm.min_spare_servers = 2' }
+   - { regexp: '^pm.max_spare_servers\s?=\s?\d+', line: 'pm.max_spare_servers = 4' }
+   - { regexp: '^user\s?=\s?\w+', line: 'user = {{ owner }}'}
+   - { regexp: '^group\s?=\s?\w+', line: 'group = {{ shared_group }}'}
+   - { regexp: '^\;listen.owner\s?=\s?\w+', line: 'listen.owner = {{ owner }}'}
+   - { regexp: '^\;listen.group\s?=\s?\w+', line: 'listen.group = {{ shared_group }}'}

@@ -2,47 +2,52 @@
 
 - name: vars for centos & redhat
   include_vars: centos_redhat.yml
-  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
-        (ansible_distribution_major_version < '8')
+  when: centos7 or rhel7
   tags: php
 
 - name: vars for centos & redhat
   include_vars: centos8_redhat8.yml
-  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
-        (ansible_distribution_major_version >= '8')
+  when: centos8 or rhel8
   tags: php
 
 - name: vars for amazonlinux
   include_vars: amazonlinux.yml
-  when: ansible_distribution == "Amazon"
+  when: amzn2
   tags: php
 
 - name: enable amazon-linux-extras php73
   shell: 'amazon-linux-extras enable php7.3'
-  when: ansible_distribution == "Amazon"
+  when: amzn2
   tags: php
 
 - name: php installed
   yum: name={{ php_package }} state=present enablerepo=amzn2extra-php7.3
-  when: ansible_distribution == "Amazon"
+  when: amzn2
+  tags: php
+
+- name: php installed
+  yum: name=php-fpm state=present enablerepo=amzn2extra-php7.3
+  when: amzn2 and nginx
   tags: php
 
 - name: php installed
   shell: dnf --enablerepo=epel,epel-modular,remi-safe,remi-modular,remi module install -y php:remi-7.4
-  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
-        (ansible_distribution_major_version >= '8')
+  when: centos8 or rhel8
   tags: php
 
 - name: php installed
   yum: name={{ php_package }} state=present enablerepo=epel,epel-modular,remi-safe,remi-modular,remi
-  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
-        (ansible_distribution_major_version >= '8')
+  when: centos8 or rhel8
   tags: php
 
 - name: php installed
-  yum: name={{ php_package }} enablerepo=epel,epel-modular,remi-safe,remi,remi-php74 state=present
-  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
-        (ansible_distribution_major_version < '8')
+  yum: name={{ php_package }} enablerepo=epel,remi-safe,remi,remi-php74 state=present
+  when: centos7 or rhel7
+  tags: php
+
+- name: php-fpm installed
+  yum: name=php-fpm enablerepo=remi-php74 state=present
+  when: centos7 or rhel7
   tags: php
 
 - name: change php-fpm settings
@@ -53,13 +58,10 @@
     line: "{{ item.line }}"
     backrefs: yes
   with_items: "{{ php_fpm }}"
-  when: (ansible_distribution == "CentOS" or ansible_distribution == 'RedHat') and
-        (ansible_distribution_major_version >= '8')
+  when: (centos8 or rhel8 ) or nginx
   tags: php
 
 - name: phpini configured
-  notify:
-    - restart httpd
   lineinfile:
     dest: "{{ php_ini_path }}"
     state: present
@@ -68,3 +70,4 @@
     backrefs: yes
   with_items: "{{ php_ini }}"
   tags: php
+

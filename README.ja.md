@@ -1,8 +1,8 @@
 IZANAMI
 ====
 
-AnsibleでVagrantやVMサーバにMovable Typeのサーバを構築します
-（MovableTypeをOFFにすることでWEBサーバやPHP用のサーバを構築する事も可能です）
+AnsibleでVagrantやVMサーバにMovable Typeのサーバを構築します  
+※  MovableTypeをOFFにすることでWEBサーバやPHP用のサーバを構築する事も可能です
 
 ## Description
 
@@ -21,11 +21,16 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 * Apache2.4
 * ImageMagick (optional)
     * MTの画像ライブラリはImagerを利用します。またダイナミックパブリッシングはGDで動作するため通常は不要ですが、PHPから利用する場合を想定しplaybookではサポートしています 
-* PHP(optional)7.3 or 7.4
-* MySQL5.7 or 8.0
+* PHP(optional)
+   * AmazonLinux2 : 7.3
+   * RHEL/CentOS 7,8 : 7.4 (Remi) 
+* MySQL
+   * AmazonLinux2/RHEL7/CentOS7 : 5.7
+   * RHEL8/CentOS8 : 8
 * supervisord
+   * MTの死活監視を行います
 * Let'sEncrypt
-    * SSL証明書を自動取得可能です
+    * SSL証明書を自動取得します
     * Vagrant環境では非対応です
 
 ## Requirement
@@ -33,6 +38,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 * ansible2.3 以降
 * Vagrant (ローカルに構築する場合) 
    * vagrant-hostsupdater
+   * vagrant-vbguest
 * Virtualbox (ローカルに構築する場合) 
   
 ### 各クラウドでの対応OS 
@@ -45,7 +51,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 | CentOS 7 | OK | TBD | TBD | TBD | OK |
 
 * AMI
-   * RHEL : アカウント文字列「309956199498 」の7,8を利用
+   * RHEL : 公式アカウント文字列「309956199498 」の7,8を利用
    * CentOS : https://wiki.centos.org/Cloud/AWS 公式のwikiから7,8を利用
 
 ## <a name="Install">Install
@@ -66,6 +72,7 @@ $ cd IZANAMI
 * Vagrantプラグインをインストールします
 ```bash
 $ vagrant plugin install vagrant-hostsupdater
+$ vagrant plugin install vagrant-vbguest
 ```
 
 ### detailed procedure
@@ -185,6 +192,7 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
 * Vagrantで起動した場合のアクセス用ドメイン
     * http://movabletype.local
     * vagrant-hostsupdater pluginをインストールしていない場合は192.168.33.99に対してhosts設定が必要です。
+    * VagrantではIZANAMIカレントディレクトリ内のsharedディレクトリが Vagrant環境の/var/www/にマウントされています
 * MTの再起動
     * システムメニューのPSGIリスタートで再起動してください
     * 再起動コマンド

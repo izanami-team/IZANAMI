@@ -1,8 +1,10 @@
 - name: Show Swap and RAM
   debug: msg="ram={{ ansible_memtotal_mb }}, swap={{ ansible_swaptotal_mb }}"
 
+# swapは1Gに固定。基本SWAPしない方針で
 - name: crete swap
-  command: dd if=/dev/zero of=/mnt/swapfile bs=1M count={{ ansible_memtotal_mb }}
+  #command: dd if=/dev/zero of=/mnt/swapfile bs=1M count={{ ansible_memtotal_mb }}
+  command: dd if=/dev/zero of=/mnt/swapfile bs=1M count=1024
   when: "ansible_swaptotal_mb == 0" 
   tags: swap
 
