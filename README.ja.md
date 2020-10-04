@@ -23,7 +23,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
     * MTの画像ライブラリはImagerを利用します。またダイナミックパブリッシングはGDで動作するため通常は不要ですが、PHPから利用する場合を想定しplaybookではサポートしています 
 * PHP(optional)
    * AmazonLinux2 : 7.3
-   * RHEL/CentOS 7,8 : 7.4 (Remi) 
+   * RHEL7-8/CentOS7-8 : 7.4 (Remi) 
 * MySQL
    * AmazonLinux2/RHEL7/CentOS7 : 5.7
    * RHEL8/CentOS8 : 8
@@ -36,6 +36,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 ## Requirement
 
 * ansible2.3 以降
+   * Mac Ansible2.9で確認しています
 * Vagrant (ローカルに構築する場合) 
    * vagrant-hostmanager
    * vagrant-vbguest
@@ -97,7 +98,7 @@ $ ssh-keygen -t rsa -b 4096
 $ openssl passwd -1 '上記で入力したパスフレーズを指定'
 ```
 * host_varsの中にあるサンプルの設定ファイルをコピーし、今回作成するサーバのホスト名.ymlとして保存します
-    * vagrantの場合は192.168.33.99.ymlを直接修正します
+    * vagrantの場合は192.168.33.101.ymlを直接修正します
 * ymlファイルの中身を必要に応じて変更します。
 * hostsファイルのdevelopment,staging,productionのいずれかのグループに今回作成するサーバのホスト名を設定します。（vagrantの場合は必要ありません）
 
@@ -112,8 +113,8 @@ root_email: "ここに設定されたメールアドレスに対してlogwatch�
 letsencrypt: letsencryptをインストールするのかTrue/Falseで設定します。無料でSSLを利用したい場合はTrueにしてください
 php: サーバをapacheにした場合にmod_php/php-fpmをインスト―ルします。DynamicPublishingなどを利用する場合はTrueにしてください。サーバをセキュアにする場合はFalseが良いでしょう
 ImageMagick: PHPアプリケーションから利用する場合はTrueにして下さい。通常必要ありません。
-nginx: httpサーバをnginxにする場合はTrueにします。apacheを利用する場合はFalseを指定してください。なお.htaccessは利用できません。
-apache: httpサーバapacheにする場合はTrueにします。nginxを利用する場合はFalseを指定してください。どちらかのみ有効です。
+nginx: httpサーバをnginxにする場合はTrueにします。なお.htaccessは利用できません。
+apache: httpサーバapacheにする場合はTrueにします。どちらかのみ有効です。
 owner: "修正の必要はありません"
 basic:
   auth: Basic認証を利用する場合はTrueにします
@@ -172,7 +173,7 @@ $ vagrant provision
 ### remote server
 EC2ならec-userのように各サーバの初期ユーザを指定してください  
 ```bash
-$ ansible-playbook -s -i hosts site.yml -u "サーバ構築用のSSHユーザ" --private-key="鍵認証用の秘密鍵ファイルを指定" -l "hostsファイルに設定したサーバ名を指定" --extra-vars="mysql_root_password="mysqlのrootパスワードを指定（任意の英数字及び記号、大文字小文字が必須）""
+$ ansible-playbook -s -i hosts site.yml -u "サーバ構築用のSSHユーザ" --private-key="鍵認証用の秘密鍵ファイルを指定" -l "hostsファイルに設定したサーバ名またはstagingなどのグループを指定" --extra-vars="mysql_root_password="mysqlのrootパスワードを指定（任意の英数字及び記号、大文字小文字が必須）""
 ```
 
 ### example
@@ -185,10 +186,10 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
 
 * MTへのアクセス
     * リモートサーバ http[s]://fqdn/mt/admin
-    * Vagrant http://movabletype.local/mt/mt.cgi
+    * Vagrant http://amzn2.local/mt/admin (ドメインは変更できます）
 * ドキュメントルート
     * リモートサーバ /var/www/vhosts/fqdn/htdocs
-    * Vagrant /var/www/vhosts/movabletype.local/htdocs
+    * Vagrant /var/www/vhosts/amzn2.local/htdocs
 * Vagrantで起動した場合のアクセス用ドメイン
     * http://amzn2.local
     * vagrant-hostmanager pluginをインストールしていない場合は192.168.33.101に対してhosts設定が必要です。

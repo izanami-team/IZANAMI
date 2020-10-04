@@ -16,36 +16,42 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 ## Introduction
 
 * Support since MovableType 5.2, PSGI or starting CGI.
-    * Supported MT7(NEW) 
-* Perl5.18.2
+* Perl5.30
 * Nginx
-    * Unsupported php-fpm (DynamicPublishing)
-* Apache
-    * CentOS6 is 2.2 series
-    * CentOS7 is 2.4 series
-    * PHP7.0 (Optional)
-* MySQL5.7, 8.0 (Amazon Linux 2)
+    * Unsupported DynamicPublishing
+* Apache2.4
+* ImageMagick (optional)
+* PHP(optional)
+   * AmazonLinux2 : 7.3
+   * RHEL7-8/CentOS7-8 : 7.4 (Remi) 
+* MySQL
+   * AmazonLinux2/RHEL7/CentOS7 : 5.7
+   * RHEL8/CentOS8 : 8
 * supervisord
 * Let'sEncrypt
-    * Available for obtaining SSL certificate.
-    * Unsupported Vagrant enviornment
+    * Unsupported Vagrant
 
 ## Requirement
 
 * ansible2.2 or later
 * Vagrant (Optional: Only Vagrant) 
-   * vagrant-hostsupdater
+   * vagrant-hostmanager
+   * vagrant-vbguest
 * Virtualbox (Optional: Only Vagrant) 
   
 ### Supported OS
+
 | OS | AWS | GCP | Azure | sakura | vagrant |
 |:---------|:----:|:----:|:----:|:----:|:----:|
-| Amazon Linux | OK | - | - | - | - | - |
-| Amazon Linux 2 | OK | - | - | - | - | - |
-| RHEL 8 | OK | TBD | TBD | - | - | - |
-| RHEL 7 | OK | OK | OK | - | - | - |
-| CentOS 7 | OK | OK | OK | - | OK |
-| CentOS 6 | OK | OK | OK | - | - |
+| Amazon Linux 2 | OK | TBD | TBD | TBD | OK |
+| RHEL 8 | OK | TBD | TBD | TBD | - |
+| RHEL 7 | OK | TBD | TBD | TBD | - |
+| CentOS 8 | OK | TBD | TBD | TBD | OK |
+| CentOS 7 | OK | TBD | TBD | TBD | OK |
+
+* AMI
+   * RHEL : 309956199498
+   * CentOS : https://wiki.centos.org/Cloud/AWS
 
 ## <a name="Install">Install
 
@@ -64,7 +70,7 @@ $ cd IZANAMI
 * Install [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')
 * Install Vagrant Plugin
 ```bash
-$ vagrant plugin install vagrant-hostsupdater
+$ vagrant plugin install vagrant-hostmanager
 ```
 
 ### detailed procedure
@@ -89,7 +95,7 @@ $ ssh-keygen -t rsa -b 4096
 $ Openssl passwd -1 'assign pass phrase that input'
 ```
 * Copy sample's setting file that is in host_vars and preserve as host's name "yml" that create this time.
-    * revise 192.168.33.99.yml directly if that is vagrant
+    * revise 192.168.33.101.yml directly if that is vagrant
 * Change yml file's content as necessary.
 * Set up host's name that creates this time to any groups of development,staging,production at host file. (doesn't need if that is vagrant）
 
@@ -102,7 +108,6 @@ you can comment out as # if you don't use.
 server_hostname:  "to be server's hostname. You should set dmain name normally"
 root_email: "mail suh as logwatch is delivered to email address that you set"
 letsencrypt: set at True/False whether you instal letsencrypt or not. Please set as True if you want to use SSL for free.
-denyhosts: improve security if you can't limit IP address to SSH access to server. Normally, there is no problem to set as True.
 php: install mod_php if you set server as apache. Please set as True if ou use DynamicPublishing. You should set as False if you set server as Cure.
 nginx: Please set as True if you set httpserver as nginx. Please set as False if you use apache. You can't us htaccess.
 apache: Please set as True if you set http server as apache. Please set as False if you use nginx. Only available either one.
@@ -120,7 +125,7 @@ mt:
     user: Choose MySQL's user name. Don't need to create user beforehand.
     passwd: 'set MySQL password.Use alphanumeric character with small and big letter. More than 8 letters.'
     server: Set MySQL server's IP adress. Normally, ther is no problem to set as localhost.
-  basic: #Please comment out 3 sentences with begining # if you don't use Basic authentication. 
+  upportedasic: #Please comment out 3 sentences with begining # if you don't use Basic authentication. 
     user: Choose user name if set to access to mt with Basic authentication.
     passwd: set password of Basic authentication.
 vhosts: #you can choose more than one below's list.
@@ -133,12 +138,18 @@ vhosts: #you can choose more than one below's list.
       key: Choose key file name if that is special certifivation
       ca_crt: Choose interval certification name if that is special certificcation
     email: Set mail address that send information about expiration date if you use "Let'sEncrypt"
-wheel_users: #you can choose more than one below's list
-  - { name: sudo available SSH user name, password: "write hashed pass phrase" }
+postfix:
+  relay: True or False
+  smtp:
+    from: from domain
 ssh_users:
-  - { name: SSH user name, password: "write hashed pass phrase" }
-sftp_users:
-  - { name: SFTP only available user name, password: "write hashed pass phrase" }
+  - { name: wheel_user1,    group: "wheel",                password: "hash" }
+  - { name: ssh_user1,      group: "{{ shared_group }}",   password: "hash" }  # ssh only user
+  - { name: sftponly_user1, group: "{{ sftponly_group }}", password: "hash" }  # not wheel user
+```
+
+### Vagrant
+
 ```
 
 ### Vagrant
@@ -163,13 +174,13 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
 
 * Access to MT
     * Remote server http[s]://fqdn/mt/mt.cgi
-    * Vagrant http://movabletype.local/mt/mt.cgi
+    * Vagrant http://amzn2.local/mt/admin
 * Document root
     * remote server /var/www/vhosts/fqdn/htdocs
-    * Vagrant /var/www/vhosts/movabletype.local/htdocs
+    * Vagrant /var/www/vhosts/amzn2.local/htdocs
 * access domain for starting with Vagrant
-    * http://movabletype.local
-    * need to host setting for 192.168.33.99 if you haven't install vagrant-hostsupdater plugin yet
+    * http://amzn2.local
+    * need to host setting for 192.168.33.101 if you haven't install vagrant-hostmanager plugin yet
 * restaring MT
     * [MT GUI] restart with PSGI at system menu
     * [SSH] supervisorctl pid movabletype | xargs kill -HUP
