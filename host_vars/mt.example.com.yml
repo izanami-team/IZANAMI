@@ -1,20 +1,22 @@
 server_hostname: "cms.example.com"
 root_email: "root@cms.example.com"
 letsencrypt: True
-php: True
-nginx: True
+#php: True
+apache: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
-basic:
-  auth: True
-  path: /
-  user: user
-  passwd: pass
+#basic:
+#  auth: True
+#  path: /
+#  user: user
+#  passwd: pass
 mt:
-  require_ip:
-    - 127.0.0.1
+  #require_ip:
+  #  - 127.0.0.1
   psgi: True
   file: MT7-R4701.zip
   ver: MT7-R4701
+  plugins:
+    - PSGIRestart
   config:
     - {name: 'AdminScript', value: 'admin'}
     - {name: 'ImageDriver', value: 'Imager'}

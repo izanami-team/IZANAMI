@@ -37,7 +37,7 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 
 * ansible2.3 以降
 * Vagrant (ローカルに構築する場合) 
-   * vagrant-hostsupdater
+   * vagrant-hostmanager
    * vagrant-vbguest
 * Virtualbox (ローカルに構築する場合) 
   
@@ -71,7 +71,7 @@ $ cd IZANAMI
 * [Virtualbox](https://www.virtualbox.org/ 'Virtualbox')をインストールします
 * Vagrantプラグインをインストールします
 ```bash
-$ vagrant plugin install vagrant-hostsupdater
+$ vagrant plugin install vagrant-hostmanager
 $ vagrant plugin install vagrant-vbguest
 ```
 
@@ -190,8 +190,8 @@ $ ansible-playbook -s -i hosts site.yml -u ec2-user --private-key=~/.ssh/id_rsa 
     * リモートサーバ /var/www/vhosts/fqdn/htdocs
     * Vagrant /var/www/vhosts/movabletype.local/htdocs
 * Vagrantで起動した場合のアクセス用ドメイン
-    * http://movabletype.local
-    * vagrant-hostsupdater pluginをインストールしていない場合は192.168.33.99に対してhosts設定が必要です。
+    * http://amzn2.local
+    * vagrant-hostmanager pluginをインストールしていない場合は192.168.33.101に対してhosts設定が必要です。
     * VagrantではIZANAMIカレントディレクトリ内のsharedディレクトリが Vagrant環境の/var/www/にマウントされています
 * MTの再起動
     * システムメニューのPSGIリスタートで再起動してください
