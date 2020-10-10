@@ -72,6 +72,11 @@
   when: amzn2
   tags: common
 
+- name: installed langpack
+  yum: name="{{ langpack }}" state=present
+  when: centos8 or rhel8
+  tags: common
+
 - name: set locale
   command: localectl set-locale LANG={{ locale }} 
   tags: common
