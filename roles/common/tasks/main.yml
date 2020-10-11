@@ -73,12 +73,11 @@
   tags: common
 
 - name: reinstalled glibc-common
-  yum: name=glibc-common state=reinstalled
-  when: centos7 or rhel7
+  shell: yum reinstall -y glibc-common
   tags: common
 
 - name: installed langpack
-  yum: name=glibc-langpack-"{{ locale_code }}" state=present
+  yum: name="glibc-langpack-{{ locale_code }}" state=present
   when: centos8 or rhel8
   tags: common
 
