@@ -34,8 +34,6 @@ packages:
   - tcsh
   - telnet
   - vim-enhanced
-langpack:
-  - glibc-langpack-ja
 disable_daemon_amazon_centos:
   - kdump
 disable_daemon_amazon:
