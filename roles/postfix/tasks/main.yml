@@ -37,7 +37,7 @@
   tags: postix
 
 - name: Create .forward to postfix
-  template: src=forward.j2 dest=/root/.forward
+  template: src=forward.j2 dest=/root/.forward force=no
   tags: postfix
 
 - name: run postalias
@@ -56,7 +56,7 @@
   tags: postfix
 
 - name: Create sasl_passwd to postfix
-  template: src=sasl_passwd.j2 dest=/etc/postfix/sasl_passwd
+  template: src=sasl_passwd.j2 dest=/etc/postfix/sasl_passwd force=no
   when: postfix.relay | bool
   tags: postfix
  

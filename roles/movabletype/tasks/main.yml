@@ -21,7 +21,7 @@
   tags: mt-plugins
 
 - name: replace mt-config
-  template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group=contents mode=0775
+  template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group=contents mode=0775 force=no
   tags: movabletype
 
 - name: replace mt-config
@@ -37,6 +37,6 @@
   tags: movabletype
 
 - name: logrotate
-  template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0664
+  template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0664 force=no
   tags: logrotate
 
