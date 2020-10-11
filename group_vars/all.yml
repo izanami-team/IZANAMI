@@ -1,4 +1,5 @@
 locale: ja_JP.UTF-8
+locale_code: ja 
 zone: Asia/Tokyo
 zoneinfo_path: /usr/share/zoneinfo/Asia/Tokyo
 movabletype: True
