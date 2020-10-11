@@ -72,8 +72,13 @@
   when: amzn2
   tags: common
 
+- name: reinstalled glibc-common
+  yum: name=glibc-common state=reinstalled
+  when: centos7 or rhel7
+  tags: common
+
 - name: installed langpack
-  yum: name="{{ langpack }}" state=present
+  yum: name=glibc-langpack-"{{ locale_code }}" state=present
   when: centos8 or rhel8
   tags: common
 
@@ -81,7 +86,7 @@
   command: localectl set-locale LANG={{ locale }} 
   tags: common
 
-- name: set timezone to Asia/Tokyo
+- name: set timezone
   command: timedatectl set-timezone {{ zone }}
   tags: common
 
