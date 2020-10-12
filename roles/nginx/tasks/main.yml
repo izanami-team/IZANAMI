@@ -9,7 +9,7 @@
   tags: nginx
 
 - name: add nginx.repo
-  template: src="nginx.repo.j2" dest=/etc/yum.repos.d/nginx.repo owner=root group=root mode=0644
+  template: src="nginx.repo.j2" dest=/etc/yum.repos.d/nginx.repo owner=root group=root mode=0644 force=no
   when: centos_rhel
   tags: nginx
 
@@ -24,16 +24,16 @@
   tags: nginx
 
 - name: copy a new ssl files
-  copy: src="{{ item }}" dest=/etc/nginx/ssl/ owner=root group=root mode=0644
+  copy: src="{{ item }}" dest=/etc/nginx/ssl/ owner=root group=root mode=0644 force=no
   with_fileglob: "ssl/*"
   tags: nginx
 
 - name: revers proxy
-  template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf
+  template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf force=no
   tags: nginx
 
 - name: Create nginx configuration file vhosts
-  template: src=vhosts.conf.j2 dest=/etc/nginx/conf.d/{{ item.name }}.conf
+  template: src=vhosts.conf.j2 dest=/etc/nginx/conf.d/{{ item.name }}.conf force=no
   with_items: "{{ vhosts }}"
   tags: nginx
 

@@ -7,21 +7,21 @@
   tags: movabletype
 
 - name: Install the mt-plugins
-  copy: src="mt-plugins/{{ item }}" dest="/var/www/movabletype/plugins/" owner={{ owner }} group=contents mode=0775
+  copy: src="mt-plugins/{{ item }}" dest="/var/www/movabletype/plugins/" owner={{ owner }} group=contents mode=0775 force=no
   with_items:
     - "{{ mt.plugins | default([]) }}"
   when: mt.plugins is defined
   tags: mt-plugins
 
 - name: Install the mt-static
-  copy: src="mt-static/{{ item }}" dest="/var/www/movabletype/mt-static/plugins/" owner={{ owner }} group=contents mode=0775
+  copy: src="mt-static/{{ item }}" dest="/var/www/movabletype/mt-static/plugins/" owner={{ owner }} group=contents mode=0775 force=no
   with_items:
     - "{{ mt.static | default([]) }}"
   when: mt.static is defined
   tags: mt-plugins
 
 - name: replace mt-config
-  template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group=contents mode=0775
+  template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group=contents mode=0775 force=no
   tags: movabletype
 
 - name: replace mt-config
@@ -37,6 +37,6 @@
   tags: movabletype
 
 - name: logrotate
-  template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0664
+  template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0664 force=no
   tags: logrotate
 

@@ -23,11 +23,11 @@
   tags: supervisord
 
 - name: Create Supervisord configuration file
-  template: src=supervisord.conf.j2 dest=/etc/supervisord.conf
+  template: src=supervisord.conf.j2 dest=/etc/supervisord.conf force=no
   tags: supervisord
 
 - name: Create movabletype configuration file
-  template: src=movabletype.ini.j2 dest=/etc/supervisord.d/movabletype.ini
+  template: src=movabletype.ini.j2 dest=/etc/supervisord.d/movabletype.ini force=no
   tags: supervisord
 
 - name: Create systemd configuration file
@@ -37,18 +37,19 @@
     mode: 644
     owner: root
     group: root
+    force: no
   tags: supervisord
 
 - name: Create movabletype run file
-  template: src=run.sh.j2 dest=/var/www/mt_run.sh mode=0755
+  template: src=run.sh.j2 dest=/var/www/mt_run.sh mode=0755 force=no
   tags: supervisord
 
 - name: Create run-periodic-tasks run file
-  template: src=rpt.sh.j2 dest=/var/www/mt_rpt.sh mode=0755
+  template: src=rpt.sh.j2 dest=/var/www/mt_rpt.sh mode=0755 force=no
   tags: supervisord
 
 - name: Create movabletype tmpfile.d
-  template: src=movabletype.conf.j2 dest=/etc/tmpfiles.d/movabletype.conf mode=0755
+  template: src=movabletype.conf.j2 dest=/etc/tmpfiles.d/movabletype.conf mode=0755 force=no
   tags: supervisord
 
 - name: start supervisord

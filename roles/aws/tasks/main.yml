@@ -11,7 +11,7 @@
   tags: aws
 
 - name: copy aws configure file with default region
-  template: src=.aws_config.j2 dest=/root/.aws/config owner=root mode=0600
+  template: src=.aws_config.j2 dest=/root/.aws/config owner=root mode=0600 force=no
   tags: aws
 
 - name: remove ntpdate

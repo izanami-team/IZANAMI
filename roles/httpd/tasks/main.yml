@@ -59,23 +59,23 @@
   tags: httpd
 
 - name: Create Apache configuration file
-  template: src=00.setting.conf.j2 dest=/etc/httpd/conf.d/00.setting.conf
+  template: src=00.setting.conf.j2 dest=/etc/httpd/conf.d/00.setting.conf force=no
   tags: httpd
 
 - name: Create vhost.dummy configuration file
-  template: src=01.dummy.conf.j2 dest=/etc/httpd/conf.d/01.dummy.conf
+  template: src=01.dummy.conf.j2 dest=/etc/httpd/conf.d/01.dummy.conf force=no
   tags: httpd
 
 - name: Create ssl configuration file
-  template: src=02.ssl2.4.conf.j2 dest=/etc/httpd/conf.d/02.ssl.conf
+  template: src=02.ssl2.4.conf.j2 dest=/etc/httpd/conf.d/02.ssl.conf force=no
   tags: httpd
 
 - name: Create mpm configuration file
-  template: src=03.mpm.conf.j2 dest=/etc/httpd/conf.d/03.mpm.conf
+  template: src=03.mpm.conf.j2 dest=/etc/httpd/conf.d/03.mpm.conf force=no
   tags: httpd
 
 - name: Create Apache2.4 configuration file vhosts
-  template: src=vhosts2.4.conf.j2 dest=/etc/httpd/conf.d/{{ item.name }}.conf
+  template: src=vhosts2.4.conf.j2 dest=/etc/httpd/conf.d/{{ item.name }}.conf force=no
   with_items: "{{ vhosts }}"
   tags: httpd
 
