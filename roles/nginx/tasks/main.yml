@@ -24,7 +24,7 @@
   tags: nginx
 
 - name: copy a new ssl files
-  copy: src="{{ item }}" dest=/etc/nginx/ssl/ owner=root group=root mode=0644
+  copy: src="{{ item }}" dest=/etc/nginx/ssl/ owner=root group=root mode=0644 force=no
   with_fileglob: "ssl/*"
   tags: nginx
 
