@@ -2,7 +2,6 @@
   yum: name="https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm" 
   tags: mysql
   ignore_errors: yes
-  when: centos8 or rhel8
 
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
