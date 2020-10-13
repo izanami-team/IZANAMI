@@ -54,6 +54,9 @@ OSの初期セットアップからSSL証明書の取得、sshユーザの追加
 * AMI
    * RHEL : 公式アカウント文字列「309956199498 」の7,8を利用
    * CentOS : https://wiki.centos.org/Cloud/AWS 公式のwikiから7,8を利用
+* CPUアーキテクチャ
+   * サポート：x86_64
+   * 未定：ARM64 (AWS Gravitonでは動作致しません)
 
 ## <a name="Install">Install
 

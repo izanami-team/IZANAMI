@@ -52,6 +52,9 @@ Therefore, it is expected that it takes about 20 minutes to initial set up.
 * AMI
    * RHEL : 309956199498
    * CentOS : https://wiki.centos.org/Cloud/AWS
+* CPU Architecture
+   * support x86_64
+   * TBD ARM64
 
 ## <a name="Install">Install
 
