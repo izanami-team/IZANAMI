@@ -4,6 +4,12 @@
   ignore_errors: yes
   when: centos8 or rhel8
 
+- name: add mysql-repo for centos7 
+  yum: name="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm" 
+  tags: mysql
+  ignore_errors: yes
+  when: centos7 or rhel7 or amzn2
+
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
   tags: mysql
@@ -23,6 +29,19 @@
     state: present
     enablerepo: mysql80-community
   tags: mysql
+  when: centos8 or rhel8
+
+- name: Install Mysql package
+  yum:
+    name:
+      - mysql-community-client
+      - mysql-community-libs
+      - mysql-community-server
+      - mysql-community-devel
+    state: present
+    enablerepo: mysql57-community
+  tags: mysql
+  when: centos7 or rhel7 or amzn2
 
 - name: install the 'python3-PyMySQL'
   dnf:
