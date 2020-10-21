@@ -5,7 +5,7 @@ zoneinfo_path: /usr/share/zoneinfo/Asia/Tokyo
 movabletype: True
 ImageMagick: False
 letsencrypt: False
-mysql: True
+mysqld: True
 basic:
   auth: False
 postfix:
