@@ -1,6 +1,4 @@
 [development]
 mt.example.com
 [staging]
-stg-mt.example.com
 [production]
-prod-mt.example.com

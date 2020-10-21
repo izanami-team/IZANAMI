@@ -15,9 +15,9 @@
     - role: aws
       tags: aws
       when: amzn2
-    - role: mysql
-      tags: mysql
-      when: mysql
+    - role: mysqld
+      tags: mysqld
+      when: mysqld
     - role: letsencrypt
       tags: letsencrypt
       when: letsencrypt

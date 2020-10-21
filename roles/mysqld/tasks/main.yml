@@ -21,11 +21,7 @@
 
 - name: Install Mysql package
   yum:
-    name:
-      - mysql-community-client
-      - mysql-community-libs
-      - mysql-community-server
-      - mysql-community-devel
+    name: "{{ packages }}"
     state: present
     enablerepo: mysql80-community
   tags: mysql
@@ -33,11 +29,7 @@
 
 - name: Install Mysql package
   yum:
-    name:
-      - mysql-community-client
-      - mysql-community-libs
-      - mysql-community-server
-      - mysql-community-devel
+    name: "{{ packages }}"
     state: present
     enablerepo: mysql57-community
   tags: mysql
@@ -93,7 +85,7 @@
   when: not res.stat.exists
 
 - name: set mysql root password
-  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
+  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql.root.password }}';"
   tags: mysql
   when: not res.stat.exists
 
@@ -103,28 +95,30 @@
   when: not res.stat.exists
 
 - name: update mysql root password for all root accounts
-  mysql_user: name=root host={{ item }} password="{{ mysql_root_password }}"
-  with_items:
-   - "{{ ansible_hostname }}"
-   - 127.0.0.1
-   - ::1
-   - localhost
+  mysql_user:
+    name: root
+    host_all: yes
+    password: "{{ mysql.root.password }}"
   tags: mysql
 
-- name: delete anonymous MySQL server user 
-  action: mysql_user user="" host="{{ ansible_hostname }}" state="absent" 
-  tags: mysql
-
-- name: delete anonymous MySQL server user for localhost
-  action: mysql_user user="" host="localhost" state="absent"
+- name: delete anonymous MySQL user
+  mysql_user:
+    name: ""
+    host_all: yes
+    state: absent
   tags: mysql
 
 - name: remove the MySQL test database
-  action: mysql_db db=test state=absent 
+  mysql_db:
+    db: test
+    state: absent 
   tags: mysql
 
 - name: create database for mt
-  mysql_db: db={{ mt.db.name }} state=present encoding=utf8 
+  mysql_db:
+    db: "{{ mt.db.name }}"
+    state: present
+    encoding: utf8mb4
   tags: mysql
 
 - name: create database user

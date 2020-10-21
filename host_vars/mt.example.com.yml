@@ -1,8 +1,10 @@
 server_hostname: "cms.example.com"
 root_email: "root@cms.example.com"
 letsencrypt: True
-#php: True
 apache: True
+nginx: False
+#php: True
+#ImageMagick: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 #basic:
 #  auth: True
@@ -21,29 +23,30 @@ mt:
     - {name: 'AdminScript', value: 'admin'}
     - {name: 'ImageDriver', value: 'Imager'}
   db:
-    name: movabletype
-    user: movabletype
-    passwd: 'passwdABC123$'
+    name: movabletype 
+    user: "{{ vault.mt.db.user }}"
+    passwd: "{{  vault.mt.db.passwd }}"
     server: localhost
 vhosts:
   - name: cms.example.com
     letsencrypt: True
+    email: "alert+ssl@cms.example.com"
     ssl:
       use:  True
       only: True
       #crt: example.crt
       #key: example.key
       #ca_crt: example.ca.crt
-    email: "alert@cms.example.com"
 postfix:
   relay: True
   smtp:
-    from: cms.example.com
-    user: ACCESSKEY
-    pass: ACCESS_SECRET
-    server: SMTP_SERVER
-    port: 587
-ssh_users:
-  - { name: wheel_user1,    group: "wheel",                password: "hash" }
-  - { name: ssh_user1,      group: "{{ shared_group }}",   password: "hash" }
-  - { name: sftponly_user1, group: "{{ sftponly_group }}", password: "hash" }
+    from: "{{ vault.postfix.smtp.from }}"
+    user: "{{ vault.postfix.smtp.user }}"
+    pass: "{{ vault.postfix.smtp.pass }}"
+    server: "{{ vault.postfix.smtp.server }}"
+    port: "{{ vault.postfix.smtp.port }}"
+ssh:
+  users: "{{ vault.ssh.users }}"
+mysql:
+  root:
+    password: "{{ vault.mysql.root.password }}"

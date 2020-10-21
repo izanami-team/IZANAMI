@@ -1,0 +1,6 @@
+packages:
+  - mysql-community-client
+  - mysql-community-libs
+  - mysql-community-server
+  - mysql-community-devel
+

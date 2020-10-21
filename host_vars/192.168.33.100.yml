@@ -1,28 +1,7 @@
 server_hostname:  "centos8.local"
-root_email: "root@localhost"
-apache: True
-owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
-mt:
-  file: MT7-R4701.zip
-  ver: MT7-R4701
-  psgi: True
-  config: 
-    - {name: 'AdminScript', value: 'admin'}
-    - {name: 'ImageDriver', value: 'Imager'}
-  plugins:
-    - PSGIRestart
-  db:
-    name: movabletype
-    user: movabletype
-    passwd: '@Mt6password'
-    server: localhost
 vhosts:
   - name: centos8.local
     letsencrypt: False
     ssl:
       use: False
       only: False
-postfix:  
-  relay: False
-  smtp:
-    from: example.com
