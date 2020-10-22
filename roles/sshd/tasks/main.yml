@@ -11,9 +11,11 @@
 - name: replace sshd_config
   replace: dest="/etc/ssh/sshd_config" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
   with_items:
-   - { regexp: '^#PermitRootLogin yes$', replace: 'PermitRootLogin no' }
-   - { regexp: '^#Protocol 2$', replace: 'Protocol 2' }
-   - { regexp: '^#PermitEmptyPasswords no$', replace: 'PermitEmptyPasswords no' }
+   - { regexp: '^#?PermitRootLogin\s+yes$', replace: 'PermitRootLogin no' }
+   - { regexp: '^#Protocol\s+2$', replace: 'Protocol 2' }
+   - { regexp: '^#PermitEmptyPasswords\s+no$', replace: 'PermitEmptyPasswords no' }
+   - { regexp: '^#?PasswordAuthentication\s+yes$', replace: 'PasswordAuthentication no' }
+   - { regexp: '^#?PubkeyAuthentication\s+yes$', replace: 'PubkeyAuthentication yes' }
   tags: ssh
   when: centos_rhel
 
