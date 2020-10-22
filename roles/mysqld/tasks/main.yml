@@ -1,46 +1,38 @@
 - name: add mysql-repo for centos8 
   yum: name="https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm" 
-  tags: mysql
+  tags: mysqld
   ignore_errors: yes
   when: centos8 or rhel8
 
 - name: add mysql-repo for centos7 
   yum: name="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm" 
-  tags: mysql
+  tags: mysqld
   ignore_errors: yes
   when: centos7 or rhel7 or amzn2
 
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
-  tags: mysql
+  tags: mysqld
 
 - name: disalbe repo mysql
   shell: 'dnf module disable -y mysql'
-  tags: mysql
+  tags: mysqld
   when: centos8 or rhel8
 
 - name: Install Mysql package
   yum:
-    name:
-      - mysql-community-client
-      - mysql-community-libs
-      - mysql-community-server
-      - mysql-community-devel
+    name: "{{ packages }}"
     state: present
     enablerepo: mysql80-community
-  tags: mysql
+  tags: mysqld
   when: centos8 or rhel8
 
 - name: Install Mysql package
   yum:
-    name:
-      - mysql-community-client
-      - mysql-community-libs
-      - mysql-community-server
-      - mysql-community-devel
+    name: "{{ packages }}"
     state: present
     enablerepo: mysql57-community
-  tags: mysql
+  tags: mysqld
   when: centos7 or rhel7 or amzn2
 
 - name: install the 'python3-PyMySQL'
@@ -54,78 +46,81 @@
     state: latest
     enablerepo: epel
   when: centos8 or rhel8
+  tags: mysqld
 
 - name: install the 'python-pip'
   yum: name="python2-pip" state=present enablerepo=epel
   when: centos7 or rhel7 or amzn2
-  tags: mysql
+  tags: mysqld
 
 - name: install the 'python-devel'
   yum: name="python-devel" state=present
   when: centos7 or rhel7
-  tags: mysql
+  tags: mysqld
 
 - name: python passlib installed
   pip:
     name:
       - passlib
       - MySQL-python
-  tags: mysql
+  tags: mysqld
   when: centos7 or rhel7 or amzn2
 
 - name: create mysql configuration file
   template: src=my.cnf.j2 dest=/etc/my.cnf
-  tags: mycnf
+  tags: mysqld
 
 - name: start mysql service
   service: name=mysqld state=started enabled=yes
-  tags: mysql
+  tags: mysqld
 
 - name: exists for /root/.my.cnf
   stat: path=/root/.my.cnf
   register: res
-  tags: mysql
+  tags: mysqld
 
 - name: copy first root password
   shell: cat /var/log/mysqld.log | grep password | awk '{ print $NF }' | head -n 1
   register: mysql_passwd
-  tags: mysql
+  tags: mysqld
   when: not res.stat.exists
 
 - name: set mysql root password
-  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';"
-  tags: mysql
+  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql.root.password }}';"
+  tags: mysqld
   when: not res.stat.exists
 
 - name: copy .my.cnf file with root password credentials
   template: src=.my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600 force=no
-  tags: mysql
+  tags: mysqld
   when: not res.stat.exists
 
 - name: update mysql root password for all root accounts
-  mysql_user: name=root host={{ item }} password="{{ mysql_root_password }}"
-  with_items:
-   - "{{ ansible_hostname }}"
-   - 127.0.0.1
-   - ::1
-   - localhost
-  tags: mysql
+  mysql_user:
+    name: root
+    host_all: yes
+    password: "{{ mysql.root.password }}"
+  tags: mysqld
 
-- name: delete anonymous MySQL server user 
-  action: mysql_user user="" host="{{ ansible_hostname }}" state="absent" 
-  tags: mysql
-
-- name: delete anonymous MySQL server user for localhost
-  action: mysql_user user="" host="localhost" state="absent"
-  tags: mysql
+- name: delete anonymous MySQL user
+  mysql_user:
+    name: ""
+    host_all: yes
+    state: absent
+  tags: mysqld
 
 - name: remove the MySQL test database
-  action: mysql_db db=test state=absent 
-  tags: mysql
+  mysql_db:
+    db: test
+    state: absent 
+  tags: mysqld
 
 - name: create database for mt
-  mysql_db: db={{ mt.db.name }} state=present encoding=utf8 
-  tags: mysql
+  mysql_db:
+    db: "{{ mt.db.name }}"
+    state: present
+    encoding: utf8mb4
+  tags: mysqld
 
 - name: create database user
   mysql_user:
@@ -139,5 +134,5 @@
    - 127.0.0.1
    - ::1
    - localhost
-  tags: mysql
+  tags: mysqld
 

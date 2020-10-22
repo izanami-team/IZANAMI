@@ -1,0 +1,25 @@
+root_email: "root@localhost"
+apache: True
+owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
+mt:
+  file: MT7-R4701.zip
+  ver: MT7-R4701
+  psgi: True
+  config: 
+    - {name: 'AdminScript', value: 'admin'}
+    - {name: 'ImageDriver', value: 'Imager'}
+  plugins:
+    - PSGIRestart
+  db:
+    name: movabletype
+    user: "{{ vault.mt.db.user }}"
+    passwd: "{{  vault.mt.db.passwd }}"
+    server: localhost
+postfix:  
+  relay: False
+  smtp:
+    from: example.com 
+mysql:
+  root:
+    password: "{{ vault.mysql.root.password }}"
+

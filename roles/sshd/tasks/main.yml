@@ -37,12 +37,12 @@
 - name: create ssh user
   user:
     name: "{{ item.name }}"
-    password: "{{ item.password }}"
+    password: "{{ item.password | password_hash('sha256') }}"
     groups: "{{ item.group }}"
     state: present
     append: yes
   with_items:
-    - "{{ ssh_users | default([]) }}"
+    - "{{ ssh.users | default([]) }}"
   tags: ssh
 
 - name: Set up authorized_keys for the deploy user 
@@ -50,5 +50,5 @@
     user: "{{ item.name }}"
     key: "{{ lookup('file', 'roles/sshd/files/public_keys/' + item.name) }}"
   with_items:
-    - "{{ ssh_users | default([]) }}"
+    - "{{ ssh.users | default([]) }}"
   tags: ssh

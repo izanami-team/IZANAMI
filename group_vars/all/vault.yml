@@ -1,0 +1,20 @@
+vault:
+  mysql:
+    root:
+      password: 1234@Password456
+  ssh:
+    users:
+      - { name: user1,  group: "wheel",                password: "vault@passwd" }
+      - { name: user2,  group: "{{ shared_group }}",   password: "vault@passwd" }
+      - { name: user3,  group: "{{ sftponly_group }}", password: "vault@passwd" }
+  postfix:
+    smtp:
+      from: example.com
+      #user: 
+      #pass: 
+      #server:
+      #port: 587
+  mt:
+    db:
+      user: movabletype
+      passwd: 1234@Password456

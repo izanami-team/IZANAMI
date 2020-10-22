@@ -1,0 +1,8 @@
+vault:
+  mysql:
+    root:
+      password: 1234@Password456
+  mt:
+    db:
+      user: movabletype
+      passwd: 1234@Password456
