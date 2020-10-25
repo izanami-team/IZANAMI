@@ -122,6 +122,7 @@
     {% endif %}
 
     {% if item.ssl.only == True -%}
+    Protocols h2 h2c http/1.1
     Header set Strict-Transport-Security "max-age=31536000"
     {% endif %}
 
