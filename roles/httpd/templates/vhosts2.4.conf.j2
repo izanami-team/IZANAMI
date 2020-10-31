@@ -1,18 +1,20 @@
 <Virtualhost *:80>
     ServerName   {{ item.name }}
     DocumentRoot /var/www/vhosts/{{ item.name }}/htdocs
-{% if item.ssl.only == False %}
+{% if not item.ssl.only %}
     ErrorLog      "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/error_log.%Y%m%d 86400 540"
     CustomLog     "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/access_log.%Y%m%d 86400 540" combined
     ScriptAlias  /cgi-bin /var/www/vhosts/{{ item.name }}/cgi-bin
+    {% if movabletype %}
     Alias        /mt-static /var/www/movabletype/mt-static
+    {% endif %}
     TraceEnable  Off
 
     RewriteEngine on
     RewriteCond %{REQUEST_METHOD} ^TRACK
     RewriteRule .* - [R=405,L]
 
-    {% if mt.psgi == False %}
+    {% if movabletype and not mt.psgi %}
     ScriptAlias  /mt /var/www/movabletype
     {% endif %}
 
@@ -22,7 +24,7 @@
         Require all granted
     </Directory>
 
-    {% if (basic.auth == True) and (inventory_file != 'local') %}
+    {% if basic.auth and (inventory_file != 'local') %}
     <Location "{{ basic.path }}">
         AuthType Basic
         AuthName "Basic Auth"
@@ -31,7 +33,7 @@
     </Location>
     {% endif %}
 
-    {% if mt.require_ip is defined %}
+    {% if movabletype and mt.require_ip is defined %}
     <Location "/mt/">
         Require all denied
         {% for ip in mt.require_ip %}
@@ -40,7 +42,7 @@
     </Location>
     {% endif %}
 
-    {% if mt.psgi == True -%}
+    {% if movabletype and mt.psgi -%}
     ProxyRequests    Off
     ProxyPreserveHost On
     RequestHeader set X-Forwarded-Proto "http"
@@ -54,7 +56,7 @@
     RewriteRule     ^(/.*)$ https://%{HTTP_HOST}$1  [R,L]
 {% endif %}
 
-{% if item.letsencrypt == True %}
+{% if item.letsencrypt %}
     Alias /.well-known /var/www/vhosts/{{ item.name }}/htdocs/.well-known
     <Location /.well-known>
         Require all granted
@@ -63,7 +65,7 @@
 
 </Virtualhost>
 
-{% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
+{% if item.letsencrypt or item.ssl.use %}
 
 <VirtualHost *:443>
     ServerName   {{ item.name }}
@@ -71,14 +73,16 @@
     ErrorLog      "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/error_log.%Y%m%d 86400 540"
     CustomLog     "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/access_log.%Y%m%d 86400 540" combined
     ScriptAlias  /cgi-bin /var/www/vhosts/{{ item.name }}/cgi-bin
+    {% if movabletype -%}
     Alias        /mt-static /var/www/movabletype/mt-static
+    {% endif -%}
     TraceEnable  Off
 
     RewriteEngine on
     RewriteCond %{REQUEST_METHOD} ^TRACK
     RewriteRule .* - [R=405,L]
 
-    {% if mt.psgi == False %}
+    {% if movabletype and not mt.psgi %}
     ScriptAlias  /mt /var/www/movabletype
     {% endif %}
 
@@ -88,14 +92,14 @@
         Require all granted
     </Directory>
 
-    {% if item.letsencrypt == True %}
+    {% if item.letsencrypt -%}
     Alias /.well-known /var/www/vhosts/{{ item.name }}/htdocs/.well-known
     <Location /.well-known>
         Require all granted
     </Location>
     {% endif %}
 
-    {% if (basic.auth == True) and (inventory_file != 'local') %}
+    {% if basic.auth and (inventory_file != 'local') -%}
     <Location "{{ basic.path }}">
         AuthType Basic
         AuthName "Basic Auth"
@@ -104,16 +108,16 @@
     </Location>
     {% endif %}
 
-    {% if mt.require_ip is defined %}
+    {% if movabletype and mt.require_ip is defined -%}
     <Location "/mt/">
         Require all denied
-        {% for ip in mt.require_ip %}
+        {% for ip in mt.require_ip -%}
         Require ip {{ ip }}
-        {% endfor %}
+        {% endfor -%}
     </Location>
     {% endif %}
 
-    {% if mt.psgi == True %}
+    {% if movabletype and mt.psgi -%}
     ProxyRequests    Off
     ProxyPreserveHost On
     RequestHeader set X-Forwarded-Proto "https"
@@ -121,7 +125,7 @@
     ProxyPassReverse /mt/ http://localhost:8080/mt/
     {% endif %}
 
-    {% if item.ssl.only == True -%}
+    {% if item.ssl.only -%}
     Protocols h2 h2c http/1.1
     Header set Strict-Transport-Security "max-age=31536000"
     {% endif %}
@@ -130,7 +134,7 @@
     SSLProtocol +TLSv1.2
     SSLCompression off
     SSLCipherSuite "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA TLS_RSA_WITH_AES_256_CBC_SHA TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 TLS_RSA_WITH_3DES_EDE_CBC_SHA TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA TLS_RSA_WITH_AES_128_CBC_SHA TLS_RSA_WITH_AES_128_CBC_SHA256 TLS_RSA_WITH_AES_256_CBC_SHA256 !RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS"
-    {% if item.letsencrypt is defined %}
+    {% if item.letsencrypt -%}
     SSLCertificateFile /etc/letsencrypt/live/{{ item.name }}/cert.pem
     SSLCertificateKeyFile /etc/letsencrypt/live/{{ item.name }}/privkey.pem
     SSLCertificateChainFile /etc/letsencrypt/live/{{ item.name }}/chain.pem
@@ -138,9 +142,9 @@
     SSLCertificateFile /etc/httpd/ssl/{{ item.ssl.crt }}
     SSLCertificateKeyFile /etc/httpd/ssl/{{ item.ssl.key }}
     SSLCertificateChainFile /etc/httpd/ssl/{{ item.ssl.ca_crt }}
-    {% endif -%}
+    {% endif %}
 
 </VirtualHost>
 
-{% endif %}
+{%- endif -%}
 

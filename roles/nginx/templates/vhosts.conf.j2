@@ -3,22 +3,22 @@ upstream app-servers {
 }
 
 server {
-    {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
+    {% if item.letsencrypt or item.ssl.use -%}
     listen 443 ssl;
-    {% endif %}
+    {% endif -%}
     listen 80;
     server_name {{ item.name }};
     root /var/www/vhosts/{{ item.name }}/htdocs;
     access_log  /var/www/vhosts/{{ item.name }}/logs/access.log  main;
     error_log   /var/www/vhosts/{{ item.name }}/logs/error.log warn;
 
-    {% if item.ssl.only | bool %}
+    {% if item.ssl.only -%}
     if ( $scheme = "http" ) {
         return 301 https://$host$request_uri;
     }
-    {% endif %}
+    {% endif -%}
 
-    {%- if (php == True) and ( centos7 or rhel7 ) -%}
+    {% if php and (centos7 or rhel7 ) -%}
     index index.html index.php;
     
     location ~ \.php$ {
@@ -29,38 +29,38 @@ server {
         fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         include        fastcgi_params;
     }
-    {%- endif -%}
+    {% endif -%}
 
-    {%- if (php == True) and ( centos8 or rhel8 or amzn2) -%}
+    {% if php and ( centos8 or rhel8 or amzn2) -%}
     include /etc/nginx/default.d/php.conf;
-    {%- endif -%}
+    {% endif %}
 
     location /.well-known {
         satisfy any;
         allow all;
     }
 
-    {% if (basic.auth == True) and (inventory_file != 'local') %}
+    {% if basic.auth and (inventory_file != 'local') -%}
     location {{ basic.path }} {
         auth_basic "auth";
         auth_basic_user_file /var/www/htpasswd;
     }
-    {% endif %}
+    {% endif -%}
 
     location /mt {
-      {% if mt.require_ip is defined %}
-        {% for ip in mt.require_ip %}
+        {% if mt.require_ip is defined %}
+        {%- for ip in mt.require_ip -%}
         allow {{ ip }};
-        {% endfor %}
+        {% endfor -%}
         deny all;
-      {% endif %}
+        {%- endif %}
 
         client_max_body_size 300M;
         proxy_redirect off;
         proxy_read_timeout  600;
-      {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
+        {% if item.letsencrypt or item.ssl.use -%}
         proxy_set_header    X-Forwarded-HTTPS on;
-      {% endif %}
+        {% endif -%}
         proxy_set_header    X-Forwarded-Proto $scheme;
         # proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto; #ELBの場合は$http_x_forwarded_protoを渡す
         proxy_set_header    X-Forwarded-Host  $host;
@@ -70,14 +70,15 @@ server {
         proxy_pass http://app-servers;
     }
 
-    {% if ( item.letsencrypt == True ) or ( item.ssl.use == True ) %}
-    {% if item.letsencrypt == True %}
+    {% if item.ssl.use -%}
+    {% if item.letsencrypt -%}
     ssl_certificate /etc/letsencrypt/live/{{ item.name }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ item.name }}/privkey.pem;
     {% else %}
     ssl_certificate /etc/nginx/ssl/{{ item.ssl.crt }};
     ssl_certificate_key /etc/nginx/ssl/{{ item.ssl.key }}
-    {% endif -%}
-    {% endif -%}
+    {%- endif -%}
+    {%- endif %}
+
 }
 

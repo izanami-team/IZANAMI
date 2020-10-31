@@ -35,33 +35,18 @@
   tags: mysqld
   when: centos7 or rhel7 or amzn2
 
-- name: install the 'python3-PyMySQL'
+- name: python3-PyMySQL installed
   dnf:
     name:
-      - python36
-      - python36-devel
-      - python3-pip
-      - python3-passlib
       - python3-PyMySQL
     state: latest
     enablerepo: epel
   when: centos8 or rhel8
   tags: mysqld
 
-- name: install the 'python-pip'
-  yum: name="python2-pip" state=present enablerepo=epel
-  when: centos7 or rhel7 or amzn2
-  tags: mysqld
-
-- name: install the 'python-devel'
-  yum: name="python-devel" state=present
-  when: centos7 or rhel7
-  tags: mysqld
-
-- name: python passlib installed
+- name: MySQL-Python installed
   pip:
     name:
-      - passlib
       - MySQL-python
   tags: mysqld
   when: centos7 or rhel7 or amzn2
@@ -120,7 +105,7 @@
     db: "{{ mt.db.name }}"
     state: present
     encoding: utf8mb4
-  tags: mysqld
+  tags: movabletype
 
 - name: create database user
   mysql_user:
@@ -134,5 +119,5 @@
    - 127.0.0.1
    - ::1
    - localhost
-  tags: mysqld
+  tags: movabletype
 

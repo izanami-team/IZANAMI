@@ -49,8 +49,37 @@
   yum: name="@Development tools" state=present
   tags: common
 
-- name: Install the python-devel
+- name: libselinux-python installed
   yum: name=libselinux-python state=present
+  when: centos7 or rhel7 or amzn2
+  tags: common
+
+- name: python36 installed
+  dnf:
+    name:
+      - python36
+      - python36-devel
+      - python3-pip
+      - python3-passlib
+    state: latest
+    enablerepo: epel
+  when: centos8 or rhel8
+  tags: common
+
+- name: install the 'python-pip'
+  yum: name="python2-pip" state=present enablerepo=epel
+  when: centos7 or rhel7 or amzn2
+  tags: common
+
+- name: install the 'python-devel'
+  yum: name="python-devel" state=present
+  when: centos7 or rhel7
+  tags: common
+
+- name: python passlib installed
+  pip:
+    name:
+      - passlib
   when: centos7 or rhel7 or amzn2
   tags: common
 
