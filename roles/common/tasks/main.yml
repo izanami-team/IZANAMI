@@ -138,6 +138,6 @@
 - name: create groups
   group: name={{ item }} state=present
   with_items:
-    - "{{shared_group}}"
-    - "{{sftponly_group}}"
+    - "{{group.shared}}"
+    - "{{group.sftponly}}"
   tags: common

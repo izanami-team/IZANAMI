@@ -31,8 +31,8 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - "{{ shared_group }}"
-    - "{{ sftponly_group }}"
+    - "{{ group.shared }}"
+    - "{{ group.sftponly }}"
   tags: ssh
 
 - name: create ssh user

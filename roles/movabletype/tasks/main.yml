@@ -1,14 +1,14 @@
 - name: copy MT.zip
-  unarchive: src="{{mt.file}}" dest=/var/www/ owner="{{ owner }}" group=contents mode=0775 creates=/var/www/movabletype/
+  unarchive: src={{ mt.file }} dest=/var/www/ owner={{ owner }} group={{ group.shared }} mode=0775 creates=/var/www/movabletype/
   tags: movabletype
 
 - name: Move movabletype to mt
-  command: mv /var/www/{{mt.ver}} /var/www/movabletype creates=/var/www/movabletype/
+  command: mv /var/www/{{ mt.ver }} /var/www/movabletype creates=/var/www/movabletype/
   tags: movabletype
 
 - name: Install the mt-plugins
   synchronize: 
-    src: "mt-plugins/{{ item }}" 
+    src: "mt-plugins/{{ item }}"
     dest: "/var/www/movabletype/plugins/" 
     compress: no
   with_items:
@@ -30,7 +30,7 @@
   file:
     path: "/var/www/movabletype/plugins"
     owner: "{{ owner }}"
-    group: contents
+    group: "{{ group.shared }}"
     recurse: yes
     mode: 0755
   when: mt.plugins is defined
@@ -40,14 +40,14 @@
   file:
     path: "/var/www/movabletype/mt-static/plugins"
     owner: "{{ owner }}"
-    group: contents
+    group: "{{ group.shared }}"
     recurse: yes
     mode: 0755
   when: mt.static is defined
   tags: mt-plugins
 
 - name: replace mt-config
-  template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group=contents mode=0775 force=no
+  template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group={{ group.shared }} mode=0775 force=no
   tags: movabletype
 
 - name: replace mt-config
@@ -63,5 +63,5 @@
   tags: movabletype
 
 - name: logrotate
-  template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0664 force=no
+  template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0644 force=no
   tags: movabletype

@@ -2,13 +2,12 @@
     daily
     dateext
     rotate 7
-    dateext
     compress
     missingok
     notifempty
     sharedscripts
     postrotate
-{% if ansible_distribution == 'Amazon' %}
+{% if centos_rhel %}
         /usr/local/bin/supervisorctl pid movabletype | xargs kill -HUP > /dev/null 2>/dev/null || true
 {% else %}
         /usr/bin/supervisorctl pid movabletype | xargs kill -HUP > /dev/null 2>/dev/null || true

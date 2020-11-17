@@ -38,7 +38,7 @@
   tags: nginx
 
 - name: nginx vhosts directory
-  file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=nginx group={{ shared_group }} mode=0775
+  file: path=/var/www/vhosts/{{ item.name }}/ state=directory owner=nginx group={{ group.shared }} mode=0775
   with_items: "{{ vhosts }}"
   tags: nginx
 
@@ -47,27 +47,27 @@
   tags: nginx
 
 - name: nginx vhosts cgi-bin
-  file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner=nginx group={{ shared_group }} mode=2775
+  file: path=/var/www/vhosts/{{ item.name }}/cgi-bin/ state=directory owner=nginx group={{ group.shared }} mode=2775
   with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: nginx vhosts htdocs
-  file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner=nginx group={{ shared_group }} mode=2775
+  file: path=/var/www/vhosts/{{ item.name }}/htdocs/ state=directory owner=nginx group={{ group.shared }} mode=2775
   with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: nginx vhosts logs
-  file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner=nginx group={{ shared_group }} mode=2775
+  file: path=/var/www/vhosts/{{ item.name }}/logs/ state=directory owner=nginx group={{ group.shared }} mode=2775
   with_items: "{{ vhosts }}"
   tags: nginx
 
 - name: create htpasswd
-  htpasswd: path=/var/www/htpasswd name={{  basic.user }} password={{ basic.passwd }} owner=nginx group={{shared_group}} mode=0644
+  htpasswd: path=/var/www/htpasswd name={{  basic.user }} password={{ basic.passwd }} owner=nginx group={{group.shared}} mode=0644
   when: basic.auth
   tags: nginx
 
 - name: modify nginx users
-  user: name=nginx group={{shared_group}} groups=nginx append=yes
+  user: name=nginx group={{group.shared}} groups=nginx append=yes
   tags: nginx
 
 - name: logrotate.d for nginx

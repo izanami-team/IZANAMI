@@ -1,6 +1,6 @@
 httpd_conf24:
    - { regexp: '^#ServerName www.example.com:80$', replace: 'ServerName {{ vhosts[0].name  }}:80' }
-   - { regexp: '^Group apache$', replace: 'Group {{ shared_group }}' }
+   - { regexp: '^Group apache$', replace: 'Group {{ group.shared }}' }
    - { regexp: '^ServerTokens OS$', replace: 'ServerTokens Prod' }
    - { regexp: '^\s+Options Indexes FollowSymLinks$', replace: '#Options Indexes FollowSymLinks' }
    - { regexp: '^\s+Require all granted$', replace: 'Require all denied' }

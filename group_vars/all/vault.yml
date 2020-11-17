@@ -5,8 +5,8 @@ vault:
   ssh:
     users:
       - { name: user1,  group: "wheel",                password: "vault@passwd" }
-      - { name: user2,  group: "{{ shared_group }}",   password: "vault@passwd" }
-      - { name: user3,  group: "{{ sftponly_group }}", password: "vault@passwd" }
+      - { name: user2,  group: "{{ group.shared }}",   password: "vault@passwd" }
+      - { name: user3,  group: "{{ group.sftponly }}", password: "vault@passwd" }
   postfix:
     smtp:
       from: example.com

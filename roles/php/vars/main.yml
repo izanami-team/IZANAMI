@@ -14,6 +14,6 @@ php_fpm:
    - { regexp: '^pm.min_spare_servers\s?=\s?\d+', line: 'pm.min_spare_servers = 2' }
    - { regexp: '^pm.max_spare_servers\s?=\s?\d+', line: 'pm.max_spare_servers = 4' }
    - { regexp: '^user\s?=\s?\w+', line: 'user = {{ owner }}'}
-   - { regexp: '^group\s?=\s?\w+', line: 'group = {{ shared_group }}'}
+   - { regexp: '^group\s?=\s?\w+', line: 'group = {{ group.shared }}'}
    - { regexp: '^\;listen.owner\s?=\s?\w+', line: 'listen.owner = {{ owner }}'}
-   - { regexp: '^\;listen.group\s?=\s?\w+', line: 'listen.group = {{ shared_group }}'}
+   - { regexp: '^\;listen.group\s?=\s?\w+', line: 'listen.group = {{ group.shared }}'}
