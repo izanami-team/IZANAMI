@@ -2,31 +2,53 @@
   unarchive: src={{ mt.file }} dest=/var/www/ owner={{ owner }} group={{ group.shared }} mode=0775 creates=/var/www/movabletype/
   tags: movabletype
 
-- name: Move movabletype to mt
+- name: setup movabletype files
   command: mv /var/www/{{ mt.ver }} /var/www/movabletype creates=/var/www/movabletype/
   tags: movabletype
 
-- name: Install the mt-plugins
-  synchronize: 
-    src: "mt-plugins/{{ item }}"
-    dest: "/var/www/movabletype/plugins/" 
-    compress: no
+- name: ensure no plugin files exist
+  file: 
+    path: "/var/www/movabletype/plugins/{{ item }}"
+    state: absent
   with_items:
     - "{{ mt.plugins | default([]) }}"
   when: mt.plugins is defined
   tags: mt-plugins
 
-- name: Install the mt-static
-  synchronize: 
-    src: "mt-static/{{ item }}" 
-    dest: "/var/www/movabletype/mt-static/plugins/"
-    compress: no
+- name: copy plugin files
+  copy: 
+    src: "mt-plugins/{{ item }}"
+    dest: "/var/www/movabletype/plugins/"
+    owner: "{{ owner }}"
+    group: "{{ group.shared }}"
+    mode: 0755
+  with_items:
+    - "{{ mt.plugins | default([]) }}"
+  when: mt.plugins is defined
+  tags: mt-plugins
+
+- name: ensure no plugin static files exist
+  file: 
+    path: "/var/www/movabletype/mt-static/plugins/{{ item }}"
+    state: absent
   with_items:
     - "{{ mt.static | default([]) }}"
   when: mt.static is defined
   tags: mt-plugins
 
-- name: Change permission to mt-plugins
+- name: copy plugin static files
+  copy: 
+    src: "mt-static/{{ item }}" 
+    dest: "/var/www/movabletype/mt-static/plugins/"
+    owner: "{{ owner }}"
+    group: "{{ group.shared }}"
+    mode: 0755
+  with_items:
+    - "{{ mt.static | default([]) }}"
+  when: mt.static is defined
+  tags: mt-plugins
+
+- name: set permission to mt-plugins
   file:
     path: "/var/www/movabletype/plugins"
     owner: "{{ owner }}"
@@ -36,7 +58,7 @@
   when: mt.plugins is defined
   tags: mt-plugins
 
-- name: Change permission to mt-static
+- name: set permission to mt-static
   file:
     path: "/var/www/movabletype/mt-static/plugins"
     owner: "{{ owner }}"
@@ -50,14 +72,14 @@
   template: src=mt-config.cgi.j2 dest=/var/www/movabletype/mt-config.cgi owner={{ owner }} group={{ group.shared }} mode=0775 force=no
   tags: movabletype
 
-- name: replace mt-config
-  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.30/bin/perl}g'
+- name: replace shebangs of cgi files
+  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/env perl\E}{\#!/usr/local/perl-{{ perl.version }}/bin/perl}g'
   args:
     chdir: /var/www/movabletype
   tags: movabletype
 
-- name: replace for tools scripts
-  shell: find . -type f | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-5.30/bin/perl}g'
+- name: replace shebang of tools scripts
+  shell: find . -type f | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-{{ perl.version }}/bin/perl}g'
   args:
     chdir: /var/www/movabletype/tools
   tags: movabletype
@@ -65,3 +87,58 @@
 - name: logrotate
   template: src=logrotate.d.mt.j2 dest=/etc/logrotate.d/movabletype owner=root group=root mode=0644 force=no
   tags: movabletype
+
+- name: create directory
+  file: path={{ item }} state=directory owner={{ owner }} group={{ owner }}  mode=0755
+  with_items:
+    - /var/log/movabletype
+    - /run/movabletype
+  tags: movabletype
+
+- name: create tmpfile.d configuration
+  template: src=tmpfile.d.mt.j2 dest=/etc/tmpfiles.d/movabletype.conf mode=0755
+  tags: movabletype
+
+- name: create configuration file
+  template: src=movabletype.conf.j2 dest=/var/www/movabletype.conf
+  tags: movabletype
+
+- name: create systemd configuration file
+  template: src=movabletype.service.j2 dest=/etc/systemd/system/movabletype.service mode=0644
+  tags: movabletype
+
+- name: create systemd configuration file(RPT)
+  template: src=run-periodic-tasks.service.j2 dest=/etc/systemd/system/run-periodic-tasks.service mode=0644
+  tags: movabletype
+
+- name: create database for mt
+  mysql_db:
+    db: "{{ mt.db.name }}"
+    state: present
+    encoding: utf8mb4
+  tags: movabletype
+
+- name: create database user
+  mysql_user:
+    name: "{{ mt.db.user }}"
+    host: "{{ item }}"
+    password: "{{ mt.db.password }}"
+    priv: "{{ mt.db.name }}.*:ALL"
+    state: present
+  with_items:
+   - "{{ ansible_hostname }}"
+   - 127.0.0.1
+   - ::1
+   - localhost
+  tags: movabletype
+
+- name: initial installation
+  shell: ./tools/upgrade --username=admin --password=password --nickname=admin --email="{{ mt.email }}" --preferred_language=ja
+  args:
+    chdir: /var/www/movabletype/
+
+- name: reload systemd
+  systemd:
+    daemon_reload: True
+  tags: movabletype
+

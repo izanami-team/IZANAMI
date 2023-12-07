@@ -1,62 +1,40 @@
-- name: add mysql-repo for centos8 
-  yum: name="https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm" 
+- name: Install RPM-GPG-KEY-mysql
+  rpm_key:
+    state: present
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
   tags: mysqld
-  ignore_errors: yes
-  when: centos8 or rhel8
 
-- name: add mysql-repo for centos7 
-  yum: name="https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm" 
+- name: Install mysql-repo 
+  dnf:
+    name: "https://repo.mysql.com/mysql80-community-release-el9-1.noarch.rpm" 
+    state: present
+    disable_gpg_check: yes
   tags: mysqld
   ignore_errors: yes
-  when: centos7 or rhel7 or amzn2
 
 - name: disable repo
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
   tags: mysqld
 
-- name: disalbe repo mysql
-  shell: 'dnf module disable -y mysql'
-  tags: mysqld
-  when: centos8 or rhel8
-
 - name: Install Mysql package
-  yum:
+  dnf:
     name: "{{ packages }}"
     state: present
     enablerepo: mysql80-community
-  tags: mysqld
-  when: centos8 or rhel8
-
-- name: Install Mysql package
-  yum:
-    name: "{{ packages }}"
-    state: present
-    enablerepo: mysql57-community
-  tags: mysqld
-  when: centos7 or rhel7 or amzn2
-
-- name: python3-PyMySQL installed
-  dnf:
-    name:
-      - python3-PyMySQL
-    state: latest
-    enablerepo: epel
-  when: centos8 or rhel8
   tags: mysqld
 
 - name: MySQL-Python installed
   pip:
     name:
-      - MySQL-python
+      - PyMySQL
   tags: mysqld
-  when: centos7 or rhel7 or amzn2
+
+- name: include my.cnf.d
+  lineinfile: dest=/etc/my.cnf line="!includedir /etc/my.cnf.d"
+  tags: mysqld
 
 - name: create mysql configuration file
-  template: src=my.cnf.j2 dest=/etc/my.cnf
-  tags: mysqld
-
-- name: start mysql service
-  service: name=mysqld state=started enabled=yes
+  template: src=my.cnf.j2 dest=/etc/my.cnf.d/customize.cnf
   tags: mysqld
 
 - name: exists for /root/.my.cnf
@@ -64,14 +42,17 @@
   register: res
   tags: mysqld
 
-- name: copy first root password
-  shell: cat /var/log/mysqld.log | grep password | awk '{ print $NF }' | head -n 1
-  register: mysql_passwd
+- name: clear passwd
+  shell: mysqld --initialize-insecure
   tags: mysqld
   when: not res.stat.exists
 
+- name: start mysql service
+  service: name=mysqld state=started enabled=yes
+  tags: mysqld
+
 - name: set mysql root password
-  shell: mysql --connect-expired-password -uroot -p'{{ mysql_passwd.stdout }}' --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql.root.password }}';"
+  shell: mysql --connect-expired-password -uroot --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql.root.password }}';"
   tags: mysqld
   when: not res.stat.exists
 
@@ -99,25 +80,4 @@
     db: test
     state: absent 
   tags: mysqld
-
-- name: create database for mt
-  mysql_db:
-    db: "{{ mt.db.name }}"
-    state: present
-    encoding: utf8mb4
-  tags: movabletype
-
-- name: create database user
-  mysql_user:
-    name: "{{ mt.db.user }}"
-    host: "{{ item }}"
-    password: "{{ mt.db.passwd }}"
-    priv: "{{ mt.db.name }}.*:ALL"
-    state: present
-  with_items:
-   - "{{ ansible_hostname }}"
-   - 127.0.0.1
-   - ::1
-   - localhost
-  tags: movabletype
 

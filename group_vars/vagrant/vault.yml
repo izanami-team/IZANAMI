@@ -5,4 +5,4 @@ vault:
   mt:
     db:
       user: movabletype
-      passwd: 1234@Password456
+      password: 1234@Password456

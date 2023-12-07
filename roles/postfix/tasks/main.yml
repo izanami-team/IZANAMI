@@ -1,14 +1,13 @@
 - name: install the postfix
-  yum: name="postfix" state=present
+  dnf: name="postfix" state=present
   tags: postfix
 
 - name: install the cyrus-sasl-plain
-  yum:
+  dnf:
     name: "cyrus-sasl-plain"
     state: present
   tags: package
   ignore_errors: yes
-  when: centos_rhel
 
 - name: replace for main.cf
   replace: dest="/etc/postfix/main.cf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 

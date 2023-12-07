@@ -1,4 +1,4 @@
-- name: Movable Type (optional), MySQL5.7 or later, Apache2.4 or Nginx, Starman(PSGI), PHP7 installed 
+- name: Movable Type 8, MySQL8, Apache2.4 or Nginx, Perl5.36, Starman(PSGI), PHP8 installed 
   hosts: all
   gather_facts: True
   become: yes
@@ -9,12 +9,11 @@
       tags: postfix
     - role: firewall
       tags: firewall
-      when: centos_rhel
     - role: swap
       tags: swap
     - role: aws
       tags: aws
-      when: amzn2
+      when: al2023
     - role: mysqld
       tags: mysqld
       when: mysqld
@@ -32,17 +31,11 @@
     - role: php
       tags: php 
       when: php
-    - role: ImageMagick
-      tags: ImageMagick
-      when: ImageMagick
     - role: perl
       tags: perl
       when: movabletype
     - role: movabletype
       tags: movabletype
-      when: movabletype
-    - role: supervisord
-      tags: supervisord
       when: movabletype
     - role: restart
       tags: restart

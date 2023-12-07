@@ -5,7 +5,7 @@
     ErrorLog      "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/error_log.%Y%m%d 86400 540"
     CustomLog     "|/usr/sbin/rotatelogs /var/www/vhosts/{{ item.name }}/logs/access_log.%Y%m%d 86400 540" combined
     ScriptAlias  /cgi-bin /var/www/vhosts/{{ item.name }}/cgi-bin
-    {% if movabletype %}
+    {% if movabletype -%}
     Alias        /mt-static /var/www/movabletype/mt-static
     {% endif %}
     TraceEnable  Off
@@ -27,13 +27,13 @@
     {% if basic.auth and (inventory_file != 'local') %}
     <Location "{{ basic.path }}">
         AuthType Basic
-        AuthName "Basic Auth"
+        AuthName "{{ basic.title | default('Basic Auth') }}"
         AuthUserFile /var/www/htpasswd
         Require valid-user
     </Location>
     {% endif %}
 
-    {% if movabletype and mt.require_ip is defined %}
+    {% if movabletype and mt.require_ip is defined -%}
     <Location "/mt/">
         Require all denied
         {% for ip in mt.require_ip %}
@@ -42,10 +42,10 @@
     </Location>
     {% endif %}
 
-    {% if movabletype and mt.psgi -%}
     ProxyRequests    Off
     ProxyPreserveHost On
     RequestHeader set X-Forwarded-Proto "http"
+    {% if movabletype and mt.psgi -%}
     ProxyPass        /mt/ http://localhost:8080/mt/
     ProxyPassReverse /mt/ http://localhost:8080/mt/
     {% endif %}
@@ -75,7 +75,7 @@
     ScriptAlias  /cgi-bin /var/www/vhosts/{{ item.name }}/cgi-bin
     {% if movabletype -%}
     Alias        /mt-static /var/www/movabletype/mt-static
-    {% endif -%}
+    {% endif %}
     TraceEnable  Off
 
     RewriteEngine on
@@ -99,10 +99,10 @@
     </Location>
     {% endif %}
 
-    {% if basic.auth and (inventory_file != 'local') -%}
+    {% if basic.auth and (inventory_file != 'local') %}
     <Location "{{ basic.path }}">
         AuthType Basic
-        AuthName "Basic Auth"
+        AuthName "{{ basic.title | default('Basic Auth') }}"
         AuthUserFile /var/www/htpasswd
         Require valid-user
     </Location>
@@ -111,16 +111,16 @@
     {% if movabletype and mt.require_ip is defined -%}
     <Location "/mt/">
         Require all denied
-        {% for ip in mt.require_ip -%}
+        {% for ip in mt.require_ip %}
         Require ip {{ ip }}
-        {% endfor -%}
+        {% endfor %}
     </Location>
     {% endif %}
 
-    {% if movabletype and mt.psgi -%}
     ProxyRequests    Off
     ProxyPreserveHost On
     RequestHeader set X-Forwarded-Proto "https"
+    {% if movabletype and mt.psgi -%}
     ProxyPass        /mt/ http://localhost:8080/mt/
     ProxyPassReverse /mt/ http://localhost:8080/mt/
     {% endif %}
@@ -146,5 +146,4 @@
 
 </VirtualHost>
 
-{%- endif -%}
-
+{% endif -%}

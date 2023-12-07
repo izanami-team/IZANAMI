@@ -6,16 +6,26 @@
   unarchive: src=/tmp/xbuild.zip dest=/root/ copy=no
   tags: perl
 
+- name: perl essentials installed
+  dnf:
+    name:
+      - perl-ExtUtils-MakeMaker
+      - perl-Safe
+      - perl-deprecate
+      - perl-devel
+    state: present
+  tags: perl
+
 - name: perl installed
   shell: |
-    /root/xbuild-master/perl-install 5.30.3 /usr/local/perl-5.30
+    /root/xbuild-master/perl-install {{perl.version_full}} /usr/local/perl-{{ perl.version }}
   tags: perl
 
 - name: cpm module installed 
-  shell: /usr/local/perl-5.30/bin/cpanm -nq App::cpm
+  shell: /usr/local/perl-{{ perl.version }}/bin/cpanm -nq App::cpm
 
 - name: cpan module installed 
-  shell: /usr/local/perl-5.30/bin/cpm install -g {{item}} 
+  shell: /usr/local/perl-{{ perl.version }}/bin/cpm install -g {{item}} 
   with_items:
    - DBI
    - DBD::mysql
@@ -28,7 +38,6 @@
    - LWP::Protocol::https
    - Crypt::SSLeay
    - Crypt::DSA
-   - Cache::File
    - YAML
    - Time::HiRes
    - IO::Socket::SSL
@@ -44,7 +53,6 @@
    - Net::Server::SS::PreFork
    - Net::SSLeay
    - Net::OAuth
-   - Cache::Memcached
    - YAML::Syck
    - Fatal
    - XML::SAX::Expat

@@ -1,49 +1,31 @@
 packages:
+  - cronie
+  - rsyslog
   - apr-devel
   - apr-util-devel
   - bzip2-devel
   - curl-devel
-  - dstat
   - expect
-  - giflib
   - libX11-devel
   - libXext-devel
   - libXt-devel
   - libedit
   - libevent
-  - libicu-devel
-  - libjpeg-devel
-  - libpng-devel
-  - libtiff-devel
-  - libtool-ltdl-devel
-  - libwmf
-  - libxml2
-  - libxml2-devel
-  - libxslt-devel
-  - logwatch
   - mlocate
-  - ncurses-devel
-  - net-snmp-devel
-  - nmap
-  - openssl
   - openssl-devel
-  - postfix
   - readline-devel
   - rpm-build
   - sysstat
-  - tcsh
-  - telnet
+  - libwebp
+  - libwebp-devel
+  - giflib
+  - giflib-devel
+  - libpng
+  - libpng-devel
+  - libjpeg
+  - libjpeg-devel
+  - libtiff
+  - libtiff-devel
   - vim-enhanced
 langpack:
   - glibc-langpack-ja
-disable_daemon_amazon_centos:
-  - kdump
-disable_daemon_amazon:
-  - kdump
-  - ip6tables
-  - mdmonitor
-  - rngd
-  - udev-post
-disable_daemon_amazon2:
-  - mdmonitor
-  - rngd

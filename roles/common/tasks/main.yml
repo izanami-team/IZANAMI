@@ -1,113 +1,75 @@
-#- name: Install libselinux-python
-#  dnf:
-#    name: "libselinux-python:2.8/common"
-#    state: present
-#  when: (ansible_distribution == "RedHat" or ansible_distribution == "CentOS") and
-#        (ansible_distribution_major_version == "8")
-#  tags: SELinux
-
-- name: Install libselinux-python
-  yum: name=libselinux-python state=present
-  when: centos7 or rhel7
-  tags: common
-
-- name: install the epel repositry
-  yum:
-    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
-    state: present
-  when: centos_rhel
-  tags: common
-
-- name: install the remi repositry
-  yum:
-    name:
-      - "http://rpms.famillecollet.com/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
-    state: present
-  when: centos_rhel
-  tags: common
-
-- name: install the 'epel repositry'
-  shell: "amazon-linux-extras install epel -y"
-  when: amzn2
-  tags: common
-
-- name: disable repo the epel
-  replace: dest=/etc/yum.repos.d/epel.repo regexp="enabled *= *1" replace="enabled=0"
-  tags: common
-
-- name: disable repo the remi
-  replace: dest=/etc/yum.repos.d/remi.repo regexp="enabled *= *1" replace="enabled=0"
-  when: centos_rhel
-  tags: common
-
-- name: disable repo the remi-safe
-  replace: dest=/etc/yum.repos.d/remi-safe.repo regexp="enabled *= *1" replace="enabled=0"
-  when: centos_rhel
-  tags: common
-
-- name: install the 'Development tools' package group
-  yum: name="@Development tools" state=present
-  tags: common
-
-- name: libselinux-python installed
-  yum: name=libselinux-python state=present
-  when: centos7 or rhel7 or amzn2
-  tags: common
-
-- name: python36 installed
+- name: installed 'python'
   dnf:
-    name:
-      - python36
-      - python36-devel
+    name: 
+      - python-unversioned-command
       - python3-pip
-      - python3-passlib
-    state: latest
-    enablerepo: epel
-  when: centos8 or rhel8
-  tags: common
-
-- name: install the 'python-pip'
-  yum: name="python2-pip" state=present enablerepo=epel
-  when: centos7 or rhel7 or amzn2
-  tags: common
-
-- name: install the 'python-devel'
-  yum: name="python-devel" state=present
-  when: centos7 or rhel7
+      - python3-cryptography 
+      - python3-devel
+      - augeas-libs
+    state: present
   tags: common
 
 - name: python passlib installed
   pip:
     name:
       - passlib
-  when: centos7 or rhel7 or amzn2
+  tags: common
+
+- name: enable CodeReady Builder(rhel9-CRB) repository
+  command: subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
+  tags: common
+  when: rhel9
+
+- name: enable CodeReady Builder(rhel9-CRB) repository
+  command: dnf config-manager --set-enabled codeready-builder-for-rhel-9-rhui-rpms
+  tags: common
+  when: rhel9
+
+- name: enable CodeReady Builder(rhel9-CRB) repository
+  command: dnf config-manager --set-enabled crb
+  tags: common
+  when: alma9 or rocky9
+
+- name: install the 'epel repositry'
+  dnf:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+    state: present
+    disable_gpg_check: yes
+  tags: common
+  when: not al2023
+
+- name: ensure epel enabled
+  command: dnf config-manager --set-enabled epel
+  tags: common
+  when: not al2023
+
+- name: epel 9.x workaround
+  replace: dest="/etc/yum.repos.d/epel.repo" regexp="\$releasever" replace="9"
+  when: not al2023
+  tags: common
+
+- name: install the 'Development tools' package group
+  dnf:
+    name: "@Development Tools"
+    state: present
   tags: common
 
 - name: install the latest libraries
-  yum: name="{{ packages }}" state=present
+  dnf: name="{{ packages }}" state=present
   tags: common
 
-- name: yum update
-  yum: state=latest name=*
-  tags: common
-
-- name: remove the sendmail package
-  yum: name=sendmail state=absent
-  tags: common
-
-- name: disable the daemon for amazon2
-  service: name={{ item }} enabled=no state=stopped
-  with_items: "{{ disable_daemon_amazon2 }}"
-  when: amzn2
+- name: dnf update
+  dnf:
+    name: "*"
+    state: latest
   tags: common
 
 - name: reinstalled glibc-common
-  shell: yum reinstall -y glibc-common
+  shell: dnf reinstall -y glibc-common
   tags: common
 
 - name: installed langpack
-  yum: name="glibc-langpack-{{ locale_code }}" state=present
-  when: centos8 or rhel8
+  dnf: name="glibc-langpack-{{ locale_code }}" state=present
   tags: common
 
 - name: set locale
@@ -118,23 +80,18 @@
   command: timedatectl set-timezone {{ zone }}
   tags: common
 
-- name: remove yum-cron
-  yum: name='yum-cron' state=absent
-  tags: common
-
-- name: disable SELinux
-  selinux: state=disabled
-  when: centos_rhel
-  tags: common
-
 - name: set path to ldconfig
   template: src=usr_local.conf.j2 dest=/etc/ld.so.conf.d/usr_local.conf
   tags: common
 
 - name: set hostname
-  hostname: name={{server_hostname}}
+  hostname: name={{ server_hostname }}
   tags: common
 
+- name: rsyslog is runnning and enabled
+  service: name=rsyslog state=started enabled=yes
+  tags: common
+  
 - name: create groups
   group: name={{ item }} state=present
   with_items:

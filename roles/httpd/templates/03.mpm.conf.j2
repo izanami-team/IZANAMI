@@ -2,18 +2,19 @@ Timeout 300
 KeepAlive On
 KeepAliveTimeout 120
 
-{% if ansible_facts.distribution_major_version | int >= 8 %}
-StartServers 3
-MinSpareThreads 64
-MaxSpareThreads 256
-ThreadsPerChild 32
+<IfModule !mpm_prefork_module>
+StartServers        3
+MinSpareThreads    64
+MaxSpareThreads   256
+ThreadsPerChild    32
 MaxRequestWorkers 256
 MaxConnectionsPerChild 0
-{% else %}
+</IfModule>
+<IfModule mpm_prefork_module>
 StartServers      20 
 MinSpareServers   20
 MaxSpareServers  256
 ServerLimit      256
 MaxClients       256
 MaxRequestsPerChild  2000
-{% endif %}
+</IfModule>

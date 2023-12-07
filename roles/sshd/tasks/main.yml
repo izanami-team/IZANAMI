@@ -39,7 +39,7 @@
   user:
     name: "{{ item.name }}"
     password: "{{ item.password | password_hash('sha256') }}"
-    groups: "{{ item.group }}"
+    groups: "{{ item.group | default(omit) }}"
     state: present
     append: yes
   with_items:

@@ -1,10 +1,5 @@
 [mysqld]
-socket                          = /var/lib/mysql/mysql.sock
 user                            = mysql
-datadir                         = /var/lib/mysql
-symbolic-links                  = 0
-pid-file                        = /var/run/mysqld/mysqld.pid
-log_error                       = /var/log/mysqld.log
 slow_query_log                  = 1
 slow_query_log_file             = /var/lib/mysql/slow-query.log
 character-set-server            = utf8mb4
@@ -35,14 +30,14 @@ server-id                       = 1
 sync_binlog                     = 1
 log-bin                         = mysql-bin
 log-bin-index                   = mysql-bin
-expire_logs_days                = 14
+binlog_expire_logs_seconds      = 1209600
 default_password_lifetime       = 0
 log_timestamps                  = SYSTEM
 sql_mode                        = ""
 log_bin_trust_function_creators = 1
 explicit_defaults_for_timestamp
-skip-character-set-client-handshake
-default_authentication_plugin= mysql_native_password
+;skip-character-set-client-handshake
+;default_authentication_plugin   = mysql_native_password
 
 [mysqldump]
 quick

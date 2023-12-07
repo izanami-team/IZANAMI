@@ -7,10 +7,6 @@
     notifempty
     sharedscripts
     postrotate
-{% if centos_rhel %}
-        /usr/local/bin/supervisorctl pid movabletype | xargs kill -HUP > /dev/null 2>/dev/null || true
-{% else %}
-        /usr/bin/supervisorctl pid movabletype | xargs kill -HUP > /dev/null 2>/dev/null || true
-{% endif %}
+        /bin/systemctl reload movabletype.service > /dev/null 2>/dev/null || true
     endscript
 }

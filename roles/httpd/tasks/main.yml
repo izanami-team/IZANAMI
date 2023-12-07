@@ -1,5 +1,5 @@
 - name: install the latest version of Apache
-  yum:
+  dnf:
     name:
       - httpd
       - httpd-devel
@@ -33,6 +33,8 @@
   with_items:
     - 00-dav.conf
     - 00-lua.conf
+    - 10-h2.conf
+    - 10-proxy_h2.conf
   tags: httpd
 
 - name: touch file from /etc/httpd/conf.modules.d/*
@@ -40,6 +42,8 @@
   with_items:
     - 00-dav.conf
     - 00-lua.conf
+    - 10-h2.conf
+    - 10-proxy_h2.conf
   tags: httpd
 
 - name: replace httpd.conf for httpd2.4
@@ -55,7 +59,17 @@
 
 - name: replace 00-base.conf
   replace: dest="/etc/httpd/conf.modules.d/00-base.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
-  with_items: "{{ disalbe_module }}"
+  with_items: "{{ disable_base_module }}"
+  tags: httpd
+
+- name: replace 00-proxy.conf
+  replace: dest="/etc/httpd/conf.modules.d/00-proxy.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items: "{{ disable_proxy_module }}"
+  tags: httpd
+
+- name: replace 00-mpm.conf
+  replace: dest="/etc/httpd/conf.modules.d/00-mpm.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  with_items: "{{ replace_mpm_module }}"
   tags: httpd
 
 - name: Create Apache configuration file
@@ -128,6 +142,6 @@
 
 # pip passlibに依存
 - name: create htpasswd
-  htpasswd: path=/var/www/htpasswd name={{ basic.user }} password={{ basic.passwd }} owner=apache group={{group.shared}} mode=0644
+  htpasswd: path=/var/www/htpasswd name={{ item.user }} password={{ item.password }} owner=apache group={{ group.shared }} mode=0644
+  with_items: "{{ basic.users | default([]) }}"
   tags: httpd
-  when: basic.auth | bool

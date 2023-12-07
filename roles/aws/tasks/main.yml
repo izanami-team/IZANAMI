@@ -1,9 +1,5 @@
-- name: set locale to /etc/cloud/cloud.cfg
-  lineinfile: 'dest=/etc/cloud/cloud.cfg line="locale: {{locale}}"'
-  tags: aws
-
 - name: set repo_upgrade to /etc/cloud/cloud.cfg
-  lineinfile: 'dest=/etc/cloud/cloud.cfg regexp="repo_upgrade\:" line="repo_upgrade: {{repo_upgrade}}"'
+  lineinfile: 'dest=/etc/cloud/cloud.cfg regexp="package-update-upgrade-install" line="#package-update-upgrade-install"'
   tags: aws
 
 - name: aws configure directory
@@ -15,7 +11,7 @@
   tags: aws
 
 - name: remove ntpdate
-  yum:
+  dnf:
     name: 
       - ntp
       - ntpdate
@@ -23,7 +19,7 @@
   tags: aws
 
 - name: Install the chronyd
-  yum: name=chrony state=present
+  dnf: name=chrony state=present
   tags: aws
 
 - name: chronyd is runnning and enabled

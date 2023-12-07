@@ -4,7 +4,7 @@ main_cf:
    - { regexp: '^#myorigin = \$mydomain$', replace: 'myorigin = $mydomain' }
    - { regexp: '^inet_protocols = all$', replace: 'inet_protocols = ipv4' }
    - { regexp: '^mydestination = \$myhostname, localhost.\$mydomain, localhost$', replace: 'mydestination = localhost' }
-   - { regexp: '^#mynetworks = 168.100.189.0/28, 127.0.0.0/8$', replace: 'mynetworks = 127.0.0.1' }
+   - { regexp: '^#mynetworks = 168.100.3.0/28, 127.0.0.0/8$', replace: 'mynetworks = 127.0.0.1' }
    - { regexp: '^smtp_tls_CAfile', replace: '#smtp_tls_CAfile' }
    - { regexp: '^smtp_tls_security_level', replace: '#smtp_tls_security_level' }
 postconf: |

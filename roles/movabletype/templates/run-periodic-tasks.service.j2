@@ -1,0 +1,24 @@
+[Unit]
+Description=run-periodic-tasks
+After=network.target
+After=syslog.target
+{% if mysqld %}
+After=mariadb.service
+{% endif %}
+
+[Service]
+Type=simple
+User={{ owner }}
+Group={{ owner }}
+UMask=0000
+EnvironmentFile=/var/www/movabletype.conf
+Environment=PERL5LIB=/var/www/movabletype/lib
+Environment=MT_HOME=/var/www/movabletype
+ExecStart=/usr/local/perl-{{ perl.version }}/bin/perl tools/run-periodic-tasks --daemon
+ExecStop=/usr/bin/pkill -f 'run-periodic-tasks'
+Restart=on-failure
+RestartPreventExitStatus=1
+WorkingDirectory=/var/www/movabletype
+
+[Install]
+WantedBy=multi-user.target

@@ -1,9 +1,11 @@
 root_email: "root@localhost"
-apache: True
+apache: False
+nginx: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
+php: True
 mt:
-  file: MT7-R4701.zip
-  ver: MT7-R4701
+  file: MT-8.0.2.zip
+  ver: MT-8.0.2
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'admin'}
@@ -13,8 +15,9 @@ mt:
   db:
     name: movabletype
     user: "{{ vault.mt.db.user }}"
-    passwd: "{{  vault.mt.db.passwd }}"
+    password: "{{  vault.mt.db.password }}"
     server: localhost
+  email: noreply@example.com
 postfix:  
   relay: False
   smtp:

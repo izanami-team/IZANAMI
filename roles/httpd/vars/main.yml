@@ -1,14 +1,48 @@
 httpd_conf24:
    - { regexp: '^#ServerName www.example.com:80$', replace: 'ServerName {{ vhosts[0].name  }}:80' }
-   - { regexp: '^Group apache$', replace: 'Group {{ group.shared }}' }
+   - { regexp: '^Group apache$', replace: 'Group apache' }
    - { regexp: '^ServerTokens OS$', replace: 'ServerTokens Prod' }
    - { regexp: '^\s+Options Indexes FollowSymLinks$', replace: '#Options Indexes FollowSymLinks' }
    - { regexp: '^\s+Require all granted$', replace: 'Require all denied' }
    - { regexp: '^ScriptAlias /cgi-bin/ \"/var/www/cgi-bin/\"$', replace: '#ScriptAlias /cgi-bin/ "/var/www/cgi-bin/"' }
    - { regexp: '^\#NameVirtualHost \*:80$', replace: 'NameVirtualHost *:80' }
-disalbe_module: 
+disable_base_module: 
    - { regexp: '^LoadModule suexec_module modules/mod_suexec.so$', replace: '#LoadModule suexec_module modules/mod_suexec.so' }
    - { regexp: '^LoadModule userdir_module modules/mod_userdir.so$', replace: '#LoadModule userdir_module modules/mod_userdir.so' }
+   - { regexp: '^LoadModule actions_module modules/mod_actions.so$', replace: '#LoadModule actions_module modules/mod_actions.so' }
+   - { regexp: '^LoadModule auth_digest_module modules/mod_auth_digest.so$', replace: '#LoadModule auth_digest_module modules/mod_auth_digest.so' }
+   - { regexp: '^LoadModule authn_anon_module modules/mod_authn_anon.so$', replace: '#LoadModule authn_anon_module modules/mod_authn_anon.so' }
+   - { regexp: '^LoadModule authn_dbd_module modules/mod_authn_dbd.so$', replace: '#LoadModule authn_dbd_module modules/mod_authn_dbd.so' }
+   - { regexp: '^LoadModule authn_dbm_module modules/mod_authn_dbm.so$', replace: '#LoadModule authn_dbm_module modules/mod_authn_dbm.so' }
+   - { regexp: '^LoadModule authz_dbd_module modules/mod_authz_dbd.so$', replace: '#LoadModule authz_dbd_module modules/mod_authz_dbd.so' }
+   - { regexp: '^LoadModule authz_dbm_module modules/mod_authz_dbm.so$', replace: '#LoadModule authn_dbm_module modules/mod_authn_dbm.so' }
+   - { regexp: '^LoadModule data_module modules/mod_data.so$', replace: '#LoadModule data_module modules/mod_data.so' }
+   - { regexp: '^LoadModule dbd_module modules/mod_dbd.so$', replace: '#LoadModule dbd_module modules/mod_dbd.so' }
+   - { regexp: '^LoadModule echo_module modules/mod_echo.so$', replace: '#LoadModule echo_module modules/mod_echo.so' }
+   - { regexp: '^LoadModule info_module modules/mod_info.so$', replace: '#LoadModule info_module modules/mod_info.so' }
+   - { regexp: '^LoadModule status_module modules/mod_status.so$', replace: '#LoadModule status_module modules/mod_status.so' }
+   - { regexp: '^LoadModule watchdog_module modules/mod_watchdog.so$', replace: '#LoadModule watchdog_module modules/mod_watchdog.so' }
+   - { regexp: '^LoadModule socache_dbm_module modules/mod_socache_dbm.so$', replace: '#LoadModule socache_dbm_module modules/mod_socache_dbm.so' }
+   - { regexp: '^LoadModule socache_memcache_module modules/mod_socache_memcache.so$', replace: '#LoadModule socache_memcache_module modules/mod_socache_memcache.so' }
+   - { regexp: '^LoadModule socache_redis_module modules/mod_socache_redis.so$', replace: '#LoadModule socache_redis_module modules/mod_socache_redis.so' }
+disable_proxy_module: 
+   - { regexp: '^LoadModule lbmethod_bybusyness_module modules/mod_lbmethod_bybusyness.so$', replace: '#LoadModule lbmethod_bybusyness_module modules/mod_lbmethod_bybusyness.so' }
+   - { regexp: '^LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so$', replace: '#LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so' }
+   - { regexp: '^LoadModule lbmethod_bytraffic_module modules/mod_lbmethod_bytraffic.so$', replace: '#LoadModule lbmethod_bytraffic_module modules/mod_lbmethod_bytraffic.so' }
+   - { regexp: '^LoadModule lbmethod_heartbeat_module modules/mod_lbmethod_heartbeat.so$', replace: '#LoadModule lbmethod_heartbeat_module modules/mod_lbmethod_heartbeat.so' }
+   - { regexp: '^LoadModule proxy_ajp_module modules/mod_proxy_ajp.so$', replace: '#LoadModule proxy_ajp_module modules/mod_proxy_ajp.so' }
+   - { regexp: '^LoadModule proxy_balancer_module modules/mod_proxy_balancer.so$', replace: '#LoadModule proxy_balancer_module modules/mod_proxy_balancer.so' }
+   - { regexp: '^LoadModule proxy_connect_module modules/mod_proxy_connect.so$', replace: '#LoadModule proxy_connect_module modules/mod_proxy_connect.so' }
+   - { regexp: '^LoadModule proxy_express_module modules/mod_proxy_express.so$', replace: '#LoadModule proxy_express_module modules/mod_proxy_express.so' }
+   - { regexp: '^LoadModule proxy_ftp_module modules/mod_proxy_ftp.so$', replace: '#LoadModule proxy_ftp_module modules/mod_proxy_ftp.so' }
+   - { regexp: '^LoadModule proxy_hcheck_module modules/mod_proxy_hcheck.so$', replace: '#LoadModule proxy_hcheck_module modules/mod_proxy_hcheck.so' }
+   - { regexp: '^LoadModule proxy_scgi_module modules/mod_proxy_scgi.so$', replace: '#LoadModule proxy_scgi_module modules/mod_proxy_scgi.so' }
+   - { regexp: '^LoadModule proxy_uwsgi_module modules/mod_proxy_uwsgi.so$', replace: '#LoadModule proxy_uwsgi_module modules/mod_proxy_uwsgi.so' }
+   - { regexp: '^LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so$', replace: '#LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so' }
+replace_mpm_module: 
+   - { regexp: '^LoadModule mpm_prefork_module modules/mod_mpm_prefork.so$', replace: '#LoadModule mpm_prefork_module modules/mod_mpm_prefork.so' }
+   - { regexp: '^LoadModule mpm_worker_module modules/mod_mpm_worker.so$', replace: '#LoadModule mpm_worker_module modules/mod_mpm_worker.so' }
+   - { regexp: '^#+LoadModule mpm_event_module modules/mod_mpm_event.so$', replace: 'LoadModule mpm_event_module modules/mod_mpm_event.so' }
 aliasdirectory: | 
   <Directory /var/www/movabletype/mt-static>
     Options FollowSymLinks

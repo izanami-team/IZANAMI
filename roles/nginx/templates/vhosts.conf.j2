@@ -18,20 +18,11 @@ server {
     }
     {% endif -%}
 
-    {% if php and (centos7 or rhel7 ) -%}
+    {% if php and el9 -%}
     index index.html index.php;
-    
-    location ~ \.php$ {
-        try_files $uri =404;
-        fastcgi_intercept_errors on;
-        fastcgi_pass 127.0.0.1:9000; 
-        fastcgi_index  index.php;
-        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
-        include        fastcgi_params;
-    }
     {% endif -%}
 
-    {% if php and ( centos8 or rhel8 or amzn2) -%}
+    {% if php  -%}
     include /etc/nginx/default.d/php.conf;
     {% endif %}
 

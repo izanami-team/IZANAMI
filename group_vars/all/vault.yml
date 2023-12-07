@@ -4,17 +4,17 @@ vault:
       password: 1234@Password456
   ssh:
     users:
-      - { name: user1,  group: "wheel",                password: "vault@passwd" }
-      - { name: user2,  group: "{{ group.shared }}",   password: "vault@passwd" }
-      - { name: user3,  group: "{{ group.sftponly }}", password: "vault@passwd" }
+      #- { name: admin,  group: "wheel", password: "1234@Password456" }
+      #- { name: user, password: "1234@Password456" }
   postfix:
     smtp:
-      from: example.com
-      #user: 
-      #pass: 
-      #server:
-      #port: 587
+      from: 
+      user: 
+      pass: 
+      server: 
+      port: 
   mt:
     db:
       user: movabletype
-      passwd: 1234@Password456
+      password: 1234@Password456
+      server: local

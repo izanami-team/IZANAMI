@@ -1,27 +1,29 @@
-- name: downloaded letsencrypt
-  get_url: url=https://dl.eff.org/certbot-auto dest=/opt/certbot-auto force=True mode=0755
+- name: create venv directory
+  shell: sudo python3 -m venv /opt/certbot/
   tags: letsencrypt
-  when: centos_rhel
 
-- name: LetsEncrypt installed
-  yum: name="certbot-{{ owner }}" state=present enablerepo=epel
-  tags: package
-  when: amzn2
+- name: upgrade pip
+  shell: sudo /opt/certbot/bin/pip install --upgrade pip
+  tags: letsencrypt
+
+- name: install pip-certbot
+  shell: sudo /opt/certbot/bin/pip install certbot certbot
+  tags: letsencrypt
+
+- name: create link
+  file:
+    src: /opt/certbot/bin/certbot
+    dest: /usr/bin/certbot
+    state: link
+  tags: letsencrypt
 
 - name: create ssl
-  command: /opt/certbot-auto certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
+  command: /usr/bin/certbot certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
   with_items: "{{ vhosts }}"
   tags: letsencrypt
-  when: centos_rhel
-
-- name: create ssl
-  command: /bin/certbot certonly --keep-until-expiring --non-interactive --standalone -d "{{ item.name }}" --agree-tos -m "{{ item.email }}" --debug
-  with_items: "{{ vhosts }}"
-  tags: letsencrypt
-  when: amzn2
 
 - name: renew ssl 
-  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo /opt/certbot-auto certonly  --renew-by-default --webroot -n -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
+  cron: name="letsencrypt auto renew {{ item.name }}" job="sudo certbot certonly  --renew-by-default --webroot -n -w /var/www/vhosts/{{ item.name }}/htdocs -d {{ item.name }}" minute=0 hour=0 day=1 state=present
   with_items: "{{ vhosts }}"
   tags: letsencrypt
 

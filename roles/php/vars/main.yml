@@ -2,11 +2,11 @@ php_ini:
    - { regexp: '^\;date.timezone =$', line: 'date.timezone = Asia/Tokyo'} 
    - { regexp: '^expose_php = On$', line: 'expose_php = Off'} 
    - { regexp: '^\;error_log = php_errors.log$', line: 'error_log = /var/log/php_errors.log'} 
-   - { regexp: '^post_max_size\s?=\s?\d+M', line: 'post_max_size = 32M'} 
-   - { regexp: '^max_execution_time\s?=\s?\d+', line: 'max_execution_time = 300'} 
-   - { regexp: '^;max_input_vars\s?=\s?\d+', line: 'max_input_vars = 10000'} 
-   - { regexp: '^memory_limit\s?=\s?\d+M', line: 'memory_limit = 256M'} 
-   - { regexp: '^upload_max_filesize\s?=\s?\d+M', line: 'upload_max_filesize = 32M'}
+   - { regexp: '^post_max_size\s?=\s?\d+M', line: 'post_max_size = 64M'} 
+   - { regexp: '^max_execution_time\s?=\s?\d+', line: 'max_execution_time = 30'} 
+   - { regexp: '^;max_input_vars\s?=\s?\d+', line: 'max_input_vars = 3000'} 
+   - { regexp: '^memory_limit\s?=\s?\d+M', line: 'memory_limit = 128M'} 
+   - { regexp: '^upload_max_filesize\s?=\s?\d+M', line: 'upload_max_filesize = 64M'}
 php_fpm:
    - { regexp: '^\;pm.max_requests\s?=\s?\d+', line: 'pm.max_requests = 500' }
    - { regexp: '^pm.start_servers\s?=\s?\d+', line: 'pm.start_servers = 2' }

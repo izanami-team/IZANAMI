@@ -1,0 +1,15 @@
+php_ini_path: /etc/php.ini
+php_fpm_path: /etc/php-fpm.d/www.conf
+php_package:
+   - php
+   - php-cli
+   - php-common
+   - php-devel
+   - php-fpm
+   - php-gd
+   - php-mbstring
+   - php-mysqlnd
+   - php-opcache
+   - php-pdo
+   - php-xml
+   - php-process

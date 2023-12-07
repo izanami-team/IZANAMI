@@ -3,4 +3,5 @@ packages:
   - mysql-community-libs
   - mysql-community-server
   - mysql-community-devel
+  - mysql-selinux
 

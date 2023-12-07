@@ -6,7 +6,9 @@ group:
   shared: contents
   sftponly: sftponly
 movabletype: True
-ImageMagick: False
+perl: 
+  version: 5.36
+  version_full: 5.36.0
 letsencrypt: False
 mysqld: True
 basic:
@@ -16,9 +18,8 @@ postfix:
 php: False
 nginx: False
 apache: False
-amzn2: "{{ ansible_distribution_file_variety == \"Amazon\" and ansible_distribution_major_version == \"2\" }}"
-centos7: "{{ ansible_distribution == \"CentOS\" and ansible_distribution_major_version == \"7\" }}"
-centos8: "{{ ansible_distribution == \"CentOS\" and ansible_distribution_major_version == \"8\" }}"
-rhel7: "{{ ansible_distribution == \"RedHat\" and ansible_distribution_major_version == \"7\" }}"
-rhel8: "{{ ansible_distribution == \"RedHat\" and ansible_distribution_major_version == \"8\" }}"
-centos_rhel: "{{ ansible_distribution == \"RedHat\" or ansible_distribution == \"CentOS\" }}"
+al2023: "{{ ansible_distribution_file_variety == \"Amazon\" and ansible_distribution_major_version == \"2023\" }}"
+alma9: "{{ ansible_distribution == \"AlmaLinux\" and ansible_distribution_major_version == \"9\" }}"
+rocky9: "{{ ansible_distribution == \"Rocky\" and ansible_distribution_major_version == \"9\" }}"
+rhel9: "{{ ansible_distribution == \"RedHat\" and ansible_distribution_major_version == \"9\" }}"
+el9: "{{ alma9 or rocky9 or rhel9 }}"

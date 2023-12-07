@@ -6,3 +6,5 @@ site.retry
 MT-*
 *.pem
 .vagrant
+*.zip
+./roles/sshd/files/public_keys/*

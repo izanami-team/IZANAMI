@@ -1,7 +1,0 @@
-server_hostname:  "centos8.local"
-vhosts:
-  - name: centos8.local
-    letsencrypt: False
-    ssl:
-      use: False
-      only: False

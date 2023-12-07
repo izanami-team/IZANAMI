@@ -1,5 +1,5 @@
 - name: install the 'firewalld'
-  yum: name="firewalld" state=present
+  dnf: name="firewalld" state=present
   tags: firewall
 
 - name: firewall is runnning and enabled

@@ -1,6 +1,6 @@
-server_hostname:  "centos7.local"
+server_hostname:  "rocky9.local"
 vhosts:
-  - name: centos7.local
+  - name: rocky9.local
     letsencrypt: False
     ssl:
       use: False
