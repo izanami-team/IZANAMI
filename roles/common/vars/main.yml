@@ -17,6 +17,7 @@ packages:
   - rpm-build
   - sysstat
   - libwebp
+  - libwebp-tools
   - libwebp-devel
   - giflib
   - giflib-devel
