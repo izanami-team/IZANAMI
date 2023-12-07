@@ -142,6 +142,6 @@
 
 # pip passlibに依存
 - name: create htpasswd
-  htpasswd: path=/var/www/htpasswd name={{ item.user }} password={{ item.password }} owner=apache group={{ group.shared }} mode=0644
-  with_items: "{{ basic.users | default([]) }}"
+  htpasswd: path=/var/www/htpasswd name={{ basic.user }} password={{ basic.passwd }} owner=apache group={{group.shared}} mode=0644
   tags: httpd
+  when: basic.auth | bool
