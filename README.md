@@ -62,3 +62,14 @@ $ vagrant up
 ```bash
 $ ansible-playbook -i hosts site.yml -u ec2-user --private-key=~/.ssh/private_key.pem -l severname
 ```
+
+## Movable Type
+
+* http://rocky9.local/mt/admin
+* initial user
+    * admin / passowrd
+* documentroot
+    * /var/www/vhosts/rocky9.local/htdocs
+* movable type
+    * /var/www/movabletype
+

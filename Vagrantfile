@@ -4,7 +4,7 @@ Vagrant.configure(2) do |config|
   config.hostmanager.manage_host = true
 
   config.vm.define "rocky9" do |rocky9|
-    rocky9.vm.box = "bento/rockylinux-9"
+    rocky9.vm.box = "bento/rockylinux-9.2-arm64"
     rocky9.vm.network :private_network, ip: "192.168.33.99"
     rocky9.vm.hostname = "rocky9.local"
     # vhost用にドメインを複数記載 host_varsのvhostを複数記載する場合など
