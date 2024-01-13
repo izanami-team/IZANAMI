@@ -1,27 +1,3 @@
-root_email: "root@localhost"
-apache: False
-nginx: True
-owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
-php: True
-mt:
-  file: MT-8.0.2.zip
-  ver: MT-8.0.2
-  psgi: True
-  config: 
-    - {name: 'AdminScript', value: 'admin'}
-    - {name: 'ImageDriver', value: 'Imager'}
-  plugins:
-    - PSGIRestart
-  db:
-    name: movabletype
-    user: "{{ vault.mt.db.user }}"
-    password: "{{  vault.mt.db.password }}"
-    server: localhost
-  email: noreply@example.com
-postfix:  
-  relay: False
-  smtp:
-    from: example.com 
 mysql:
   root:
     password: "{{ vault.mysql.root.password }}"
