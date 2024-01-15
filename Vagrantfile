@@ -6,7 +6,7 @@ Vagrant.configure(2) do |config|
   config.hostmanager.manage_host = true
 
   config.vm.define "rocky9" do |rocky9|
-    if arch == 'x86_64'
+    if arch == 'x86_64' || arch == 'i386'
       rocky9.vm.box = "bento/rockylinux-9.2"
     else
       rocky9.vm.box = "bento/rockylinux-9.2-arm64"
