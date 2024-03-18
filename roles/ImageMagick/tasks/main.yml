@@ -1,0 +1,44 @@
+- name: Installing dependencies
+  dnf:
+    name:
+      - libxml2
+      - libxml2-devel
+      - ghostscript
+      - freetype
+    state: present
+  tags: ImageMagick
+
+- name: ImageMagick directory created
+  file:
+    path: /root/ImageMagick
+    state: directory
+  tags: ImageMagick
+
+- name: open ImageMagick
+  unarchive:
+    src: https://imageMagick.org/download/ImageMagick.tar.gz
+    dest: /root/ImageMagick
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+  tags: ImageMagick
+
+- name: ImageMagick configured
+  shell: ./configure --with-perl\=/usr/local/perl-{{ perl.version }}/bin/perl
+  args:
+    chdir: /root/ImageMagick
+  tags: ImageMagick
+
+- name: execute make
+  make:
+    chdir: /root/ImageMagick
+  tags: ImageMagick
+
+- name: ImageMagick installed
+  make:
+    target: install
+    chdir: /root/ImageMagick
+  tags: ImageMagick
+
+- name: run ldconfig
+  command: ldconfig
+  tags: ImageMagick

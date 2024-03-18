@@ -4,13 +4,14 @@ apache: False
 nginx: True
 owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 php: True
+ImageMagick: True
 mt:
   file: MT-8.0.2.zip
   ver: MT-8.0.2
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'admin'}
-    - {name: 'ImageDriver', value: 'Imager'}
+    - {name: 'ImageDriver', value: "{% if ImageMagick | bool %}ImageMagick{% else %}Imager{% endif %}"}
   plugins:
     - PSGIRestart
   db:
