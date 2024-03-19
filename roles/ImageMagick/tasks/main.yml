@@ -1,3 +1,9 @@
+- name: check exist convert command
+  command: which convert
+  register: exist_convert
+  ignore_errors: True
+  tags: ImageMagick
+
 - name: Installing dependencies
   dnf:
     name:
@@ -7,12 +13,14 @@
       - freetype
     state: present
   tags: ImageMagick
+  when: exist_convert['failed'] == True
 
 - name: ImageMagick directory created
   file:
     path: /root/ImageMagick
     state: directory
   tags: ImageMagick
+  when: exist_convert['failed'] == True
 
 - name: open ImageMagick
   unarchive:
@@ -21,24 +29,30 @@
     remote_src: yes
     extra_opts: [--strip-components=1]
   tags: ImageMagick
+  when: exist_convert['failed'] == True
 
 - name: ImageMagick configured
   shell: ./configure --with-perl\=/usr/local/perl-{{ perl.version }}/bin/perl
   args:
     chdir: /root/ImageMagick
   tags: ImageMagick
+  when: exist_convert['failed'] == True
 
 - name: execute make
   make:
     chdir: /root/ImageMagick
   tags: ImageMagick
+  when: exist_convert['failed'] == True
 
 - name: ImageMagick installed
   make:
     target: install
     chdir: /root/ImageMagick
   tags: ImageMagick
+  when: exist_convert['failed'] == True
 
 - name: run ldconfig
   command: ldconfig
   tags: ImageMagick
+  when: exist_convert['failed'] == True
+
