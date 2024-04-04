@@ -16,7 +16,7 @@ Environment=PERL5LIB=/var/www/movabletype/lib
 Environment=MT_HOME=/var/www/movabletype
 Environment=PID=/run/movabletype/mt.pid
 Environment=SOCKET=/run/movabletype/mt.sock
-ExecStart=/usr/local/perl-{{ perl.version }}/bin/starman --daemonize --workers=${WORKER} --max-requests=${MAXREQUESTS} --disable-keepalive --listen :${PORT} --listen ${SOCKET} --pid=${PID} --error-log=/var/log/movabletype/error.log ${MT_HOME}/mt.psgi
+ExecStart=/usr/local/perl-{{ perl.version }}/bin/starman --daemonize --workers=${WORKERS} --max-requests=${MAXREQUESTS} --disable-keepalive --listen :${PORT} --listen ${SOCKET} --pid=${PID} --error-log=/var/log/movabletype/error.log ${MT_HOME}/mt.psgi
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 RestartPreventExitStatus=1
