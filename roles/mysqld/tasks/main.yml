@@ -1,7 +1,7 @@
 - name: Install RPM-GPG-KEY-mysql
   rpm_key:
     state: present
-    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
   tags: mysqld
 
 - name: Install mysql-repo 

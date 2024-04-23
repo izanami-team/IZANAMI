@@ -85,7 +85,9 @@
   tags: common
 
 - name: set hostname
-  hostname: name={{ server_hostname }}
+  hostname:
+    name: "{{ server_hostname }}"
+    use: systemd 
   tags: common
 
 - name: rsyslog is runnning and enabled

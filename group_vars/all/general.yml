@@ -6,9 +6,10 @@ group:
   shared: contents
   sftponly: sftponly
 movabletype: True
+ImageMagick: False
 perl: 
   version: 5.36
-  version_full: 5.36.0
+  version_full: 5.36.3
 letsencrypt: False
 mysqld: True
 basic:
