@@ -36,7 +36,7 @@
       when: movabletype
     - role: ImageMagick
       tags: ImageMagick
-      when: movabletype
+      when: ImageMagick
     - role: movabletype
       tags: movabletype
       when: movabletype

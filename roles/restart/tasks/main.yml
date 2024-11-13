@@ -1,3 +1,43 @@
+- name: httpd is runnning and enabled
+  service: 
+    name: httpd.service
+    state: started
+    enabled: yes
+  when: apache
+  tags: restart
+
+- name: nginx is runnning and enabled
+  systemd:
+    name: nginx.service
+    state: started
+    enabled: yes
+  when: nginx
+  tags: restart
+
+- name: php-fpm is runnning and enabled
+  systemd:
+    name: php-fpm.service
+    state: started
+    enabled: yes
+  when: php
+  tags: restart
+
+- name: start movabletype service
+  systemd:
+    name: movabletype.service
+    state: started
+    enabled: yes
+  when: movabletype
+  tags: restart
+
+- name: start run-periodic-tasks service
+  systemd:
+    name: run-periodic-tasks.service
+    state: started
+    enabled: yes
+  when: movabletype
+  tags: restart
+
 - name: get selinux status
   shell: getenforce
   changed_when: False
@@ -21,43 +61,4 @@
   when: selinux_state.stdout != 'Permissive'
   tags: restart
 
-- name: httpd is runnning and enabled
-  service:
-    name: httpd
-    state: started
-    enabled: yes
-  when: apache
-  tags: restart
-
-- name: nginx is runnning and enabled
-  service: 
-    name: nginx
-    state: started
-    enabled: yes
-  when: nginx
-  tags: restart
-
-- name: php-fpm is runnning and enabled
-  service:
-    name: php-fpm
-    state: started
-    enabled: yes
-  when: php
-  tags: restart
-
-- name: start movabletype service
-  systemd:
-    name: movabletype.service
-    state: started
-    enabled: True
-  when: movabletype
-  tags: restart
-
-- name: start run-periodic-tasks service
-  systemd:
-    name: run-periodic-tasks.service
-    state: started
-    enabled: True
-  when: movabletype
-  tags: restart
 

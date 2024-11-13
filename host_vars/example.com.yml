@@ -1,0 +1,49 @@
+server_hostname:  "example-com"
+letsencrypt: True
+apache: True
+nginx: False
+root_email: "root@example.com"
+php: True
+ImageMagick: True
+owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
+basic:
+  auth: True
+  path: /
+  user: example
+  passwd: passwd
+mt:
+  email: mt_user@example.com
+  psgi: True
+  file: MT-8.0.4.zip
+  ver: MT-8.0.4
+  plugins:
+    - PSGIRestart
+  config:
+    - {name: 'AdminScript', value: 'admin'}
+    - {name: 'ImageDriver', value: "{% if ImageMagick | bool %}ImageMagick{% else %}Imager{% endif %}"}
+  db:
+    name: movabletype
+    user: "{{ vault.mt.db.user }}"
+    password: "{{  vault.mt.db.password }}"
+    server: localhost
+vhosts:
+  - name: www.example.com
+    letsencrypt: True
+    email: "ssl@example.com"
+    ssl:
+      use:  True
+      only: True
+postfix:
+  relay: True
+  smtp:
+    from: "{{ vault.postfix.smtp.from }}"
+    user: "{{ vault.postfix.smtp.user }}"
+    password: "{{ vault.postfix.smtp.pass }}"
+    server: "{{ vault.postfix.smtp.server }}"
+    port: "{{ vault.postfix.smtp.port }}"
+ssh:
+  users: "{{ vault.ssh.users }}"
+mysql:
+  root:
+    password: "{{ vault.mysql.root.password}}"
+

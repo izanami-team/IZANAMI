@@ -1,15 +1,15 @@
 php_ini_path: /etc/php.ini
 php_fpm_path: /etc/php-fpm.d/www.conf
 php_package:
-   - php8.2
-   - php8.2-cli
-   - php8.2-common
-   - php8.2-devel
-   - php8.2-fpm
-   - php8.2-gd
-   - php8.2-mbstring
-   - php8.2-mysqlnd
-   - php8.2-opcache
-   - php8.2-pdo
-   - php8.2-process
-   - php8.2-xml
+   - php8.3
+   - php8.3-cli
+   - php8.3-common
+   - php8.3-devel
+   - php8.3-fpm
+   - php8.3-gd
+   - php8.3-mbstring
+   - php8.3-mysqlnd
+   - php8.3-opcache
+   - php8.3-pdo
+   - php8.3-process
+   - php8.3-xml
