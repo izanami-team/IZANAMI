@@ -16,6 +16,31 @@
     state: present
   tags: perl
 
+- name: Install yum MySQL Repository
+  shell: |
+    /usr/bin/dnf localinstall -y https://dev.mysql.com/get/mysql80-community-release-el9-5.noarch.rpm
+  tags: perl
+
+- name: enable MySQL repository temporarily
+  replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled=0" replace="enabled=1"
+  tags: perl
+
+- name: install MySQL development libraries for DBD::mysql
+  dnf:
+    name:
+      - mysql-community-devel
+      - openssl-devel
+      - zlib-devel
+      - gcc
+      - make
+    state: present
+    enablerepo: mysql80-community
+  tags: perl
+
+- name: disable MySQL repository again
+  replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled=1" replace="enabled=0"
+  tags: perl
+
 - name: perl installed
   shell: |
     /root/xbuild-master/perl-install {{perl.version_full}} /usr/local/perl-{{ perl.version }}
@@ -24,11 +49,49 @@
 - name: cpm module installed 
   shell: /usr/local/perl-{{ perl.version }}/bin/cpanm -nq App::cpm
 
-- name: cpan module installed 
+- name: install DBI module
+  shell: /usr/local/perl-{{ perl.version }}/bin/cpm install -g DBI
+  register: dbi_result
+  tags: perl
+
+- name: debug DBI installation
+  debug:
+    msg: "DBI installation result: {{ dbi_result.stdout_lines }}"
+  tags: perl
+
+- name: install DBD::mysql module
+  shell: /usr/local/perl-{{ perl.version }}/bin/cpm install -g --show-build-log-on-failure DBD::mysql
+  register: dbd_mysql_result
+  ignore_errors: yes
+  tags: perl
+
+- name: debug DBD::mysql installation
+  debug:
+    msg: 
+      - "DBD::mysql stdout: {{ dbd_mysql_result.stdout_lines }}"
+      - "DBD::mysql stderr: {{ dbd_mysql_result.stderr_lines }}"
+      - "DBD::mysql rc: {{ dbd_mysql_result.rc }}"
+  tags: perl
+
+- name: retry DBD::mysql installation with different approach
+  shell: /usr/local/perl-{{ perl.version }}/bin/cpanm --force DBD::mysql
+  register: dbd_mysql_retry_result
+  ignore_errors: yes
+  when: dbd_mysql_result.rc != 0
+  tags: perl
+
+- name: debug DBD::mysql retry installation
+  debug:
+    msg: 
+      - "DBD::mysql retry stdout: {{ dbd_mysql_retry_result.stdout_lines | default('N/A') }}"
+      - "DBD::mysql retry stderr: {{ dbd_mysql_retry_result.stderr_lines | default('N/A') }}"
+      - "DBD::mysql retry rc: {{ dbd_mysql_retry_result.rc | default('N/A') }}"
+  when: dbd_mysql_retry_result is defined
+  tags: perl
+
+- name: install other CPAN modules
   shell: /usr/local/perl-{{ perl.version }}/bin/cpm install -g {{item}} 
   with_items:
-   - DBI
-   - DBD::mysql
    - Task::Plack
    - Test::TCP
    - HTML::Entities
