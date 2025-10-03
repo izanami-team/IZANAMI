@@ -16,6 +16,11 @@
     state: present
   tags: perl
 
+- name: Install yum MySQL Repository
+  shell: |
+    /usr/bin/dnf localinstall -y https://dev.mysql.com/get/mysql80-community-release-el9-5.noarch.rpm
+  tags: perl
+
 - name: enable MySQL repository temporarily
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled=0" replace="enabled=1"
   tags: perl
@@ -87,8 +92,6 @@
 - name: install other CPAN modules
   shell: /usr/local/perl-{{ perl.version }}/bin/cpm install -g {{item}} 
   with_items:
-   - DBI
-   - DBD::mysql
    - Task::Plack
    - Test::TCP
    - HTML::Entities
