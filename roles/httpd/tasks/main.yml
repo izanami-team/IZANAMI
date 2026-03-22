@@ -33,8 +33,6 @@
   with_items:
     - 00-dav.conf
     - 00-lua.conf
-    - 10-h2.conf
-    - 10-proxy_h2.conf
   tags: httpd
 
 - name: touch file from /etc/httpd/conf.modules.d/*
@@ -42,8 +40,6 @@
   with_items:
     - 00-dav.conf
     - 00-lua.conf
-    - 10-h2.conf
-    - 10-proxy_h2.conf
   tags: httpd
 
 - name: replace httpd.conf for httpd2.4

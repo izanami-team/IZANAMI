@@ -15,7 +15,6 @@ mt:
   email: mt_user@example.com
   psgi: True
   file: MT-8.0.4.zip
-  ver: MT-8.0.4
   plugins:
     - PSGIRestart
   config:

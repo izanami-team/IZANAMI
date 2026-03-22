@@ -7,7 +7,6 @@ php: True
 ImageMagick: True
 mt:
   file: MT-9.0.6.zip
-  ver: MT-9.0.6
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'admin'}

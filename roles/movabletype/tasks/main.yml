@@ -2,8 +2,18 @@
   unarchive: src={{ mt.file }} dest=/var/www/ owner={{ owner }} group={{ group.shared }} mode=0775 creates=/var/www/movabletype/
   tags: movabletype
 
+- name: detect extracted MT directory name
+  shell: ls -1d /var/www/MT-* 2>/dev/null | head -1
+  register: mt_extracted_dir
+  changed_when: false
+  failed_when: false
+  tags: movabletype
+
 - name: setup movabletype files
-  command: mv /var/www/{{ mt.ver }} /var/www/movabletype creates=/var/www/movabletype/
+  command: mv {{ mt_extracted_dir.stdout }} /var/www/movabletype
+  when: mt_extracted_dir.stdout != "" and mt_extracted_dir.rc == 0
+  args:
+    creates: /var/www/movabletype/
   tags: movabletype
 
 - name: ensure no plugin files exist

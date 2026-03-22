@@ -3,8 +3,7 @@
     ServerName  dummy.example.jp
     TraceEnable Off
     <Location />
-        Order deny,allow
-        Deny from all
+        Require all denied
     </Location>
 
     RewriteEngine on
