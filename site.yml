@@ -1,4 +1,4 @@
-- name: Movable Type 8, MySQL8, Apache2.4 or Nginx, Perl5.36, Starman(PSGI), PHP8 installed 
+- name: Movable Type 8, MySQL8.4, Apache2.4 or Nginx, Perl(auto), Starman(PSGI), PHP8.5 installed
   hosts: all
   gather_facts: True
   become: yes

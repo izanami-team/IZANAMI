@@ -23,8 +23,8 @@ packages:
   - giflib-devel
   - libpng
   - libpng-devel
-  - libjpeg
-  - libjpeg-devel
+  - libjpeg-turbo
+  - libjpeg-turbo-devel
   - libtiff
   - libtiff-devel
   - vim-enhanced

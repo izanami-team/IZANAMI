@@ -73,13 +73,13 @@
   tags: movabletype
 
 - name: replace shebangs of cgi files
-  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/env perl\E}{\#!/usr/local/perl-{{ perl.version }}/bin/perl}g'
+  shell: find . -name '*.cgi' | xargs perl -i -ple 's{\#!/usr/bin/env perl\E}{\#!/usr/local/perl-{{ perl_version }}/bin/perl}g'
   args:
     chdir: /var/www/movabletype
   tags: movabletype
 
 - name: replace shebang of tools scripts
-  shell: find . -type f | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-{{ perl.version }}/bin/perl}g'
+  shell: find . -type f | xargs perl -i -ple 's{\#!/usr/bin/perl\E}{\#!/usr/local/perl-{{ perl_version }}/bin/perl}g'
   args:
     chdir: /var/www/movabletype/tools
   tags: movabletype
@@ -112,19 +112,13 @@
   tags: movabletype
 
 - name: create database for mt
-  mysql_db:
-    db: "{{ mt.db.name }}"
-    state: present
-    encoding: utf8mb4
+  shell: mysql -uroot -p'{{ mysql.root.password }}' --execute="CREATE DATABASE IF NOT EXISTS {{ mt.db.name }} CHARACTER SET utf8mb4;"
   tags: movabletype
 
 - name: create database user
-  mysql_user:
-    name: "{{ mt.db.user }}"
-    host: "{{ item }}"
-    password: "{{ mt.db.password }}"
-    priv: "{{ mt.db.name }}.*:ALL"
-    state: present
+  shell: |
+    mysql -uroot -p'{{ mysql.root.password }}' --execute="CREATE USER IF NOT EXISTS '{{ mt.db.user }}'@'{{ item }}' IDENTIFIED BY '{{ mt.db.password }}';"
+    mysql -uroot -p'{{ mysql.root.password }}' --execute="GRANT ALL PRIVILEGES ON {{ mt.db.name }}.* TO '{{ mt.db.user }}'@'{{ item }}';"
   with_items:
    - "{{ ansible_hostname }}"
    - 127.0.0.1

@@ -8,8 +8,56 @@ group:
 movabletype: True
 ImageMagick: False
 perl: 
-  version: 5.38
-  version_full: 5.38.2
+  version: 5.40
+  version_full: 5.40.1
+mysql_tuning:
+  innodb_buffer_pool_size: "256M"
+  innodb_redo_log_capacity: "256M"
+  innodb_log_buffer_size: "16M"
+  innodb_flush_method: "O_DIRECT"
+  innodb_flush_log_at_trx_commit: 2
+  key_buffer_size: "8M"
+  max_connections: 150
+  max_connect_errors: 30
+  max_allowed_packet: "64M"
+  max_heap_table_size: "32M"
+  tmp_table_size: "32M"
+  sort_buffer_size: "512K"
+  read_buffer_size: "256K"
+  read_rnd_buffer_size: "512K"
+  join_buffer_size: "512K"
+  thread_cache_size: 64
+  thread_stack: "192K"
+  net_buffer_length: "16K"
+  long_query_time: 0.5
+  binlog: false
+  mysqlx: false
+php_tuning:
+  opcache:
+    memory_consumption: 256
+    interned_strings_buffer: 16
+    max_accelerated_files: 20000
+    revalidate_freq: 60
+    validate_timestamps: 1
+    save_comments: 0
+    enable_cli: 1
+    jit: "tracing"
+    jit_buffer_size: "128M"
+  ini:
+    memory_limit: "128M"
+    max_execution_time: 30
+    max_input_vars: 3000
+    post_max_size: "64M"
+    upload_max_filesize: "64M"
+    realpath_cache_size: "4M"
+    realpath_cache_ttl: 600
+  fpm:
+    pm: "dynamic"
+    max_children: 10
+    start_servers: 3
+    min_spare_servers: 2
+    max_spare_servers: 5
+    max_requests: 500
 letsencrypt: False
 mysqld: True
 basic:
@@ -24,3 +72,8 @@ alma9: "{{ ansible_distribution == \"AlmaLinux\" and ansible_distribution_major_
 rocky9: "{{ ansible_distribution == \"Rocky\" and ansible_distribution_major_version == \"9\" }}"
 rhel9: "{{ ansible_distribution == \"RedHat\" and ansible_distribution_major_version == \"9\" }}"
 el9: "{{ alma9 or rocky9 or rhel9 }}"
+alma10: "{{ ansible_distribution == \"AlmaLinux\" and ansible_distribution_major_version == \"10\" }}"
+rocky10: "{{ ansible_distribution == \"Rocky\" and ansible_distribution_major_version == \"10\" }}"
+rhel10: "{{ ansible_distribution == \"RedHat\" and ansible_distribution_major_version == \"10\" }}"
+el10: "{{ alma10 or rocky10 or rhel10 }}"
+el_major: "{{ '9' if (el9 or al2023) else '10' if el10 else ansible_distribution_major_version }}"

@@ -1,5 +1,23 @@
+- name: get selinux status
+  shell: getenforce
+  changed_when: False
+  register: selinux_state
+  tags: restart
+
+- name: Put SELinux in permissive mode, logging actions that would be blocked.
+  selinux:
+    policy: targeted
+    state: permissive
+  when: selinux_state.stdout != 'Permissive'
+  tags: restart
+
+- name: reboot if selinux changed
+  reboot:
+  when: selinux_state.stdout != 'Permissive'
+  tags: restart
+
 - name: httpd is runnning and enabled
-  service: 
+  service:
     name: httpd.service
     state: started
     enabled: yes
@@ -37,28 +55,3 @@
     enabled: yes
   when: movabletype
   tags: restart
-
-- name: get selinux status
-  shell: getenforce
-  changed_when: False
-  register: selinux_state
-  tags: restart
-
-- name: Put SELinux in permissive mode, logging actions that would be blocked.
-  selinux:
-    policy: targeted
-    state: permissive
-  when: selinux_state.stdout != 'Permissive'
-  tags: restart
-
-- name: reboot
-  reboot:
-  when: selinux_state.stdout != 'Permissive'
-  tags: restart
-
-- name: reboot
-  meta: end_host
-  when: selinux_state.stdout != 'Permissive'
-  tags: restart
-
-

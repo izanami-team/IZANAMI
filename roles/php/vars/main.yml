@@ -1,18 +1,21 @@
 php_ini:
-   - { regexp: '^\;date.timezone =$', line: 'date.timezone = Asia/Tokyo'} 
-   - { regexp: '^expose_php = On$', line: 'expose_php = Off'} 
-   - { regexp: '^\;error_log = php_errors.log$', line: 'error_log = /var/log/php_errors.log'} 
-   - { regexp: '^post_max_size\s?=\s?\d+M', line: 'post_max_size = 64M'} 
-   - { regexp: '^max_execution_time\s?=\s?\d+', line: 'max_execution_time = 30'} 
-   - { regexp: '^;max_input_vars\s?=\s?\d+', line: 'max_input_vars = 3000'} 
-   - { regexp: '^memory_limit\s?=\s?\d+M', line: 'memory_limit = 128M'} 
-   - { regexp: '^upload_max_filesize\s?=\s?\d+M', line: 'upload_max_filesize = 64M'}
+   - { regexp: '^\;date.timezone =$', line: 'date.timezone = Asia/Tokyo'}
+   - { regexp: '^expose_php = On$', line: 'expose_php = Off'}
+   - { regexp: '^\;error_log = php_errors.log$', line: 'error_log = /var/log/php_errors.log'}
+   - { regexp: '^post_max_size\s?=\s?\d+M', line: 'post_max_size = {{ php_tuning.ini.post_max_size }}'}
+   - { regexp: '^max_execution_time\s?=\s?\d+', line: 'max_execution_time = {{ php_tuning.ini.max_execution_time }}'}
+   - { regexp: '^;max_input_vars\s?=\s?\d+', line: 'max_input_vars = {{ php_tuning.ini.max_input_vars }}'}
+   - { regexp: '^memory_limit\s?=\s?\d+M', line: 'memory_limit = {{ php_tuning.ini.memory_limit }}'}
+   - { regexp: '^upload_max_filesize\s?=\s?\d+M', line: 'upload_max_filesize = {{ php_tuning.ini.upload_max_filesize }}'}
+   - { regexp: '^;?realpath_cache_size\s?=', line: 'realpath_cache_size = {{ php_tuning.ini.realpath_cache_size }}'}
+   - { regexp: '^;?realpath_cache_ttl\s?=', line: 'realpath_cache_ttl = {{ php_tuning.ini.realpath_cache_ttl }}'}
 php_fpm:
-   - { regexp: '^\;pm.max_requests\s?=\s?\d+', line: 'pm.max_requests = 500' }
-   - { regexp: '^pm.start_servers\s?=\s?\d+', line: 'pm.start_servers = 2' }
-   - { regexp: '^pm.max_children\s?=\s?\d+', line: 'pm.max_children = 8' }
-   - { regexp: '^pm.min_spare_servers\s?=\s?\d+', line: 'pm.min_spare_servers = 2' }
-   - { regexp: '^pm.max_spare_servers\s?=\s?\d+', line: 'pm.max_spare_servers = 4' }
+   - { regexp: '^pm\s?=\s?\w+', line: 'pm = {{ php_tuning.fpm.pm }}'}
+   - { regexp: '^pm.max_requests\s?=|^\;pm.max_requests\s?=', line: 'pm.max_requests = {{ php_tuning.fpm.max_requests }}' }
+   - { regexp: '^pm.start_servers\s?=\s?\d+', line: 'pm.start_servers = {{ php_tuning.fpm.start_servers }}' }
+   - { regexp: '^pm.max_children\s?=\s?\d+', line: 'pm.max_children = {{ php_tuning.fpm.max_children }}' }
+   - { regexp: '^pm.min_spare_servers\s?=\s?\d+', line: 'pm.min_spare_servers = {{ php_tuning.fpm.min_spare_servers }}' }
+   - { regexp: '^pm.max_spare_servers\s?=\s?\d+', line: 'pm.max_spare_servers = {{ php_tuning.fpm.max_spare_servers }}' }
    - { regexp: '^user\s?=\s?\w+', line: 'user = {{ owner }}'}
    - { regexp: '^group\s?=\s?\w+', line: 'group = {{ group.shared }}'}
    - { regexp: '^\;listen.owner\s?=\s?\w+', line: 'listen.owner = {{ owner }}'}

@@ -11,5 +11,5 @@ php_package:
    - php-mysqlnd
    - php-opcache
    - php-pdo
-   - php-xml
    - php-process
+   - php-xml

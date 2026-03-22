@@ -1,0 +1,12 @@
+; OPcache configuration - managed by Ansible
+[opcache]
+opcache.enable                  = 1
+opcache.enable_cli              = {{ php_tuning.opcache.enable_cli }}
+opcache.memory_consumption      = {{ php_tuning.opcache.memory_consumption }}
+opcache.interned_strings_buffer = {{ php_tuning.opcache.interned_strings_buffer }}
+opcache.max_accelerated_files   = {{ php_tuning.opcache.max_accelerated_files }}
+opcache.revalidate_freq         = {{ php_tuning.opcache.revalidate_freq }}
+opcache.validate_timestamps     = {{ php_tuning.opcache.validate_timestamps }}
+opcache.save_comments           = {{ php_tuning.opcache.save_comments }}
+opcache.jit                     = {{ php_tuning.opcache.jit }}
+opcache.jit_buffer_size         = {{ php_tuning.opcache.jit_buffer_size }}

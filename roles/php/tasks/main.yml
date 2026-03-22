@@ -4,15 +4,49 @@
   when: el9
   tags: php
 
+- name: vars for el10
+  include_vars: el10.yml
+  when: el10
+  tags: php
+
 - name: vars for al2023
   include_vars: al2023.yml
   when: al2023
+  tags: php
+
+- name: install remi repository
+  dnf:
+    name: "https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+    state: present
+    disable_gpg_check: yes
+  when: el9 or el10
+  tags: php
+
+- name: enable remi php8.5 module
+  shell: dnf module reset php -y && dnf module enable php:remi-8.5 -y
+  when: el9 or el10
   tags: php
 
 - name: php installed
   dnf:
     name: "{{ php_package }}"
     state: present
+  tags: php
+
+- name: find opcache config directory
+  shell: php -i 2>/dev/null | grep 'Scan this dir for additional .ini files' | awk '{print $NF}'
+  register: php_scan_dir
+  changed_when: false
+  tags: php
+
+- name: deploy opcache configuration
+  template:
+    src: opcache.ini.j2
+    dest: "{{ php_scan_dir.stdout }}/99-opcache-tuning.ini"
+    owner: root
+    group: root
+    mode: 0644
+  when: php_scan_dir.stdout != ""
   tags: php
 
 - name: change php-fpm settings

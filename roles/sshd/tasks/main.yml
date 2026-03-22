@@ -12,9 +12,8 @@
   replace: dest="/etc/ssh/sshd_config" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
   with_items:
    - { regexp: '^#?PermitRootLogin\s+yes$', replace: 'PermitRootLogin no' }
-   - { regexp: '^#Protocol\s+2$', replace: 'Protocol 2' }
    - { regexp: '^#PermitEmptyPasswords\s+no$', replace: 'PermitEmptyPasswords no' }
-   - { regexp: '^#PasswordAuthentication\s+yes$', replace: 'PasswordAuthentication no' }
+   - { regexp: '^#?PasswordAuthentication\s+yes$', replace: 'PasswordAuthentication no' }
    - { regexp: '^#PubkeyAuthentication\s+yes$', replace: 'PubkeyAuthentication yes' }
   tags: ssh
 
@@ -38,7 +37,7 @@
 - name: create ssh user
   user:
     name: "{{ item.name }}"
-    password: "{{ item.password | password_hash('sha256') }}"
+    password: "{{ item.password | password_hash('sha512') }}"
     groups: "{{ item.group | default(omit) }}"
     state: present
     append: yes

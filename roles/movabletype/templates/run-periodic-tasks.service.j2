@@ -14,7 +14,7 @@ UMask=0000
 EnvironmentFile=/var/www/movabletype.conf
 Environment=PERL5LIB=/var/www/movabletype/lib
 Environment=MT_HOME=/var/www/movabletype
-ExecStart=/usr/local/perl-{{ perl.version }}/bin/perl tools/run-periodic-tasks --daemon
+ExecStart=/usr/local/perl-{{ perl_version }}/bin/perl tools/run-periodic-tasks --daemon
 ExecStop=/usr/bin/pkill -f 'run-periodic-tasks'
 Restart=on-failure
 RestartPreventExitStatus=1

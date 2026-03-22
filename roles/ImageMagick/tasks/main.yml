@@ -32,7 +32,7 @@
   when: exist_convert['failed'] == True
 
 - name: ImageMagick configured
-  shell: ./configure --with-perl\=/usr/local/perl-{{ perl.version }}/bin/perl
+  shell: ./configure --with-perl\=/usr/local/perl-{{ perl_version }}/bin/perl
   args:
     chdir: /root/ImageMagick
   tags: ImageMagick

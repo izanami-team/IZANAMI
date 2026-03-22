@@ -6,8 +6,8 @@ owner: "{% if apache | bool %}apache{% else %}nginx{% endif %}"
 php: True
 ImageMagick: True
 mt:
-  file: MT-8.0.2.zip
-  ver: MT-8.0.2
+  file: MT-9.0.6.zip
+  ver: MT-9.0.6
   psgi: True
   config: 
     - {name: 'AdminScript', value: 'admin'}

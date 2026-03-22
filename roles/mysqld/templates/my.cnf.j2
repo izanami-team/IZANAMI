@@ -4,44 +4,49 @@ slow_query_log                  = 1
 slow_query_log_file             = /var/lib/mysql/slow-query.log
 character-set-server            = utf8mb4
 default-storage-engine          = InnoDB
-thread_stack                    = 192K
-key_buffer_size                 = 16M
-sort_buffer_size                = 2M
-read_buffer_size                = 2M
-read_rnd_buffer_size            = 1M
-join_buffer_size                = 1M
-net_buffer_length               = 2K
+thread_stack                    = {{ mysql_tuning.thread_stack }}
+key_buffer_size                 = {{ mysql_tuning.key_buffer_size }}
+sort_buffer_size                = {{ mysql_tuning.sort_buffer_size }}
+read_buffer_size                = {{ mysql_tuning.read_buffer_size }}
+read_rnd_buffer_size            = {{ mysql_tuning.read_rnd_buffer_size }}
+join_buffer_size                = {{ mysql_tuning.join_buffer_size }}
+net_buffer_length               = {{ mysql_tuning.net_buffer_length }}
 innodb_data_home_dir            = /var/lib/mysql
 innodb_log_group_home_dir       = /var/lib/mysql
 innodb_data_file_path           = ibdata1:10M:autoextend
 innodb_file_per_table
-innodb_buffer_pool_size         = 32M
-innodb_log_file_size            = 32M
-innodb_log_buffer_size          = 8M
+innodb_buffer_pool_size         = {{ mysql_tuning.innodb_buffer_pool_size }}
+innodb_redo_log_capacity        = {{ mysql_tuning.innodb_redo_log_capacity }}
+innodb_log_buffer_size          = {{ mysql_tuning.innodb_log_buffer_size }}
 innodb_lock_wait_timeout        = 50
-thread_cache_size               = 128
-max_connections                 = 386
-max_connect_errors              = 30
-max_allowed_packet              = 16M
-max_heap_table_size             = 4M
-tmp_table_size                  = 4M
-long_query_time                 = 0.5
+innodb_flush_method             = {{ mysql_tuning.innodb_flush_method }}
+innodb_flush_log_at_trx_commit  = {{ mysql_tuning.innodb_flush_log_at_trx_commit }}
+thread_cache_size               = {{ mysql_tuning.thread_cache_size }}
+max_connections                 = {{ mysql_tuning.max_connections }}
+max_connect_errors              = {{ mysql_tuning.max_connect_errors }}
+max_allowed_packet              = {{ mysql_tuning.max_allowed_packet }}
+max_heap_table_size             = {{ mysql_tuning.max_heap_table_size }}
+tmp_table_size                  = {{ mysql_tuning.tmp_table_size }}
+long_query_time                 = {{ mysql_tuning.long_query_time }}
 server-id                       = 1
+{% if mysql_tuning.binlog | default(false) | bool %}
 sync_binlog                     = 1
 log-bin                         = mysql-bin
 log-bin-index                   = mysql-bin
 binlog_expire_logs_seconds      = 1209600
+{% else %}
+skip-log-bin
+{% endif %}
+{% if not (mysql_tuning.mysqlx | default(true) | bool) %}
+mysqlx                          = 0
+{% endif %}
 default_password_lifetime       = 0
 log_timestamps                  = SYSTEM
-sql_mode                        = ""
-log_bin_trust_function_creators = 1
 explicit_defaults_for_timestamp
-;skip-character-set-client-handshake
-;default_authentication_plugin   = mysql_native_password
 
 [mysqldump]
 quick
-max_allowed_packet              = 16M
+max_allowed_packet              = {{ mysql_tuning.max_allowed_packet }}
 default-character-set           = utf8mb4
 single-transaction
 
@@ -49,4 +54,3 @@ single-transaction
 port                            = 3306
 default-character-set           = utf8mb4
 socket                          = /var/lib/mysql/mysql.sock
-

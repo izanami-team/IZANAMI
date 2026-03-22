@@ -9,30 +9,30 @@
     state: present
   tags: common
 
+- name: python packaging installed
+  shell: pip3 install packaging
+  tags: common
+
 - name: python passlib installed
   pip:
     name:
       - passlib
   tags: common
 
-- name: enable CodeReady Builder(rhel9-CRB) repository
-  command: subscription-manager repos --enable codeready-builder-for-rhel-9-$(arch)-rpms
+- name: enable CodeReady Builder(CRB) repository via subscription-manager
+  command: subscription-manager repos --enable codeready-builder-for-rhel-{{ ansible_distribution_major_version }}-$(arch)-rpms
   tags: common
-  when: rhel9
+  when: rhel9 or rhel10
+  ignore_errors: yes
 
-- name: enable CodeReady Builder(rhel9-CRB) repository
-  command: dnf config-manager --set-enabled codeready-builder-for-rhel-9-rhui-rpms
-  tags: common
-  when: rhel9
-
-- name: enable CodeReady Builder(rhel9-CRB) repository
+- name: enable CodeReady Builder(CRB) repository via dnf
   command: dnf config-manager --set-enabled crb
   tags: common
-  when: alma9 or rocky9
+  when: alma9 or rocky9 or alma10 or rocky10
 
 - name: install the 'epel repositry'
   dnf:
-    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
     state: present
     disable_gpg_check: yes
   tags: common
@@ -45,7 +45,16 @@
 
 - name: epel 9.x workaround
   replace: dest="/etc/yum.repos.d/epel.repo" regexp="\$releasever" replace="9"
-  when: not al2023
+  when: el9
+  tags: common
+
+- name: epel 10.x GPG key workaround
+  file:
+    src: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-10
+    dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-10_major
+    state: link
+  when: el10
+  ignore_errors: yes
   tags: common
 
 - name: install the 'Development tools' package group

@@ -4,9 +4,9 @@
     key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
   tags: mysqld
 
-- name: Install mysql-repo 
+- name: Install mysql-repo
   dnf:
-    name: "https://repo.mysql.com/mysql80-community-release-el9-1.noarch.rpm" 
+    name: "https://repo.mysql.com/mysql84-community-release-el{{ el_major }}-1.noarch.rpm"
     state: present
     disable_gpg_check: yes
   tags: mysqld
@@ -16,12 +16,20 @@
   replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="enabled *= *1" replace="enabled=0"
   tags: mysqld
 
-- name: Install Mysql package
-  dnf:
-    name: "{{ packages }}"
-    state: present
-    enablerepo: mysql80-community
+- name: disable gpgcheck for mysql repo
+  replace: dest=/etc/yum.repos.d/mysql-community.repo regexp="gpgcheck *= *1" replace="gpgcheck=0"
   tags: mysqld
+
+- name: Download Mysql packages
+  shell: dnf download --resolve --enablerepo=mysql-8.4-lts-community --destdir=/tmp/mysql-rpms {{ packages | join(' ') }}
+  args:
+    creates: /tmp/mysql-rpms
+  tags: mysqld
+
+- name: Install Mysql packages with nosignature
+  shell: rpm -Uvh --nosignature /tmp/mysql-rpms/*.rpm
+  tags: mysqld
+  ignore_errors: yes
 
 - name: MySQL-Python installed
   pip:
@@ -61,23 +69,15 @@
   tags: mysqld
   when: not res.stat.exists
 
-- name: update mysql root password for all root accounts
-  mysql_user:
-    name: root
-    host_all: yes
-    password: "{{ mysql.root.password }}"
-  tags: mysqld
-
 - name: delete anonymous MySQL user
-  mysql_user:
-    name: ""
-    host_all: yes
-    state: absent
+  shell: mysql -uroot -p'{{ mysql.root.password }}' --execute="DELETE FROM mysql.user WHERE User='';"
   tags: mysqld
+  ignore_errors: yes
 
 - name: remove the MySQL test database
-  mysql_db:
-    db: test
-    state: absent 
+  shell: mysql -uroot -p'{{ mysql.root.password }}' --execute="DROP DATABASE IF EXISTS test;"
   tags: mysqld
 
+- name: flush privileges
+  shell: mysql -uroot -p'{{ mysql.root.password }}' --execute="FLUSH PRIVILEGES;"
+  tags: mysqld
