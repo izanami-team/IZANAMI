@@ -3,8 +3,38 @@
   tags: nginx
 
 - name: replace nginx.conf
-  replace: dest="/etc/nginx/nginx.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}" 
+  replace: dest="/etc/nginx/nginx.conf" regexp="{{ item.regexp }}" replace="{{ item.replace }}"
   with_items: "{{ replace_vars }}"
+  tags: nginx
+
+- name: add worker_rlimit_nofile to nginx.conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    insertafter: '^worker_processes'
+    line: 'worker_rlimit_nofile 4096;'
+    state: present
+  tags: nginx
+
+- name: add multi_accept to nginx.conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    insertafter: '^\s+worker_connections'
+    line: '    multi_accept on;'
+    state: present
+  tags: nginx
+
+- name: tune http block in nginx.conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    insertafter: '^http {'
+    line: "    {{ item }}"
+    state: present
+  with_items:
+    - 'sendfile on;'
+    - 'tcp_nopush on;'
+    - 'tcp_nodelay on;'
+    - 'keepalive_timeout 30;'
+    - 'types_hash_max_size 2048;'
   tags: nginx
 
 - name: copy a new ssl files

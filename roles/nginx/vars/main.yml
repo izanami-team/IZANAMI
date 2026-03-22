@@ -1,5 +1,16 @@
 replace_vars:
    - { regexp: '^\s+listen\s+80 default_server;$', replace: 'listen       80;' }
    - { regexp: '^\s+listen\s+\[::\]:80 default_server;$', replace: 'listen       [::]:80;' }
+   - { regexp: '^worker_processes\s+\d+;$', replace: 'worker_processes auto;' }
+   - { regexp: '^\s+worker_connections\s+\d+;$', replace: '    worker_connections 2048;' }
 
+nginx_conf_extra:
+   - { regexp: '^worker_processes', line: 'worker_rlimit_nofile 4096;' }
 
+nginx_http_extra:
+   - 'multi_accept on;'
+   - 'sendfile on;'
+   - 'tcp_nopush on;'
+   - 'tcp_nodelay on;'
+   - 'keepalive_timeout 30;'
+   - 'types_hash_max_size 2048;'
