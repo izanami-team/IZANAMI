@@ -51,8 +51,9 @@
     /root/xbuild-master/perl-install {{ perl_version_full }} /usr/local/perl-{{ perl_version }}
   tags: perl
 
-- name: cpm module installed 
+- name: cpm module installed
   shell: /usr/local/perl-{{ perl_version }}/bin/cpanm -nq App::cpm
+  tags: perl
 
 - name: install DBI module
   shell: /usr/local/perl-{{ perl_version }}/bin/cpm install -g DBI

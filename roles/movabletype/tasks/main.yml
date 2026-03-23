@@ -140,6 +140,7 @@
   shell: ./tools/upgrade --username=admin --password=password --nickname=admin --email="{{ mt.email }}" --preferred_language=ja
   args:
     chdir: /var/www/movabletype/
+  tags: movabletype
 
 - name: reload systemd
   systemd:

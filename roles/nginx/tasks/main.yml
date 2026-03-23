@@ -42,7 +42,7 @@
   with_fileglob: "ssl/*"
   tags: nginx
 
-- name: revers proxy
+- name: reverse proxy
   template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf force=no
   tags: nginx
 
@@ -76,7 +76,7 @@
   tags: nginx
 
 - name: create htpasswd
-  htpasswd: path=/var/www/htpasswd name={{  basic.user }} password={{ basic.passwd }} owner=nginx group={{group.shared}} mode=0644
+  htpasswd: path=/var/www/htpasswd name={{ basic.user }} password={{ basic.passwd }} owner=nginx group={{ group.shared }} mode=0644
   when: basic.auth
   tags: nginx
 

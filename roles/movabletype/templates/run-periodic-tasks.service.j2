@@ -3,7 +3,7 @@ Description=run-periodic-tasks
 After=network.target
 After=syslog.target
 {% if mysqld %}
-After=mariadb.service
+After=mysqld.service
 {% endif %}
 
 [Service]

@@ -23,7 +23,7 @@ mt:
   db:
     name: movabletype
     user: "{{ vault.mt.db.user }}"
-    password: "{{  vault.mt.db.password }}"
+    password: "{{ vault.mt.db.password }}"
     server: localhost
 vhosts:
   - name: www.example.com
@@ -44,5 +44,5 @@ ssh:
   users: "{{ vault.ssh.users }}"
 mysql:
   root:
-    password: "{{ vault.mysql.root.password}}"
+    password: "{{ vault.mysql.root.password }}"
 

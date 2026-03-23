@@ -14,7 +14,7 @@
   with_items: "{{ main_cf }}"
   tags: postfix
 
-- name: insert postfix configuation block in transport
+- name: insert postfix configuration block in transport
   blockinfile:
     dest: /etc/postfix/transport
     block: "{{ transport }}"
@@ -25,7 +25,7 @@
 
 - name: run postmap
   shell: postmap /etc/postfix/transport
-  tags: postix
+  tags: postfix
 
 - name: add aliases
   lineinfile:
@@ -33,7 +33,7 @@
     line: "root: {{ root_email }}"
     state: present
     insertafter: EOF
-  tags: postix
+  tags: postfix
 
 - name: Create .forward to postfix
   template: src=forward.j2 dest=/root/.forward force=no
@@ -41,13 +41,13 @@
 
 - name: run postalias
   command: postalias /etc/aliases
-  tags: postix
+  tags: postfix
 
 - name: run newaliases
   command: newaliases
-  tags: postix
+  tags: postfix
 
-- name: insert postfix configuation block in main.cf
+- name: insert postfix configuration block in main.cf
   blockinfile:
     dest: /etc/postfix/main.cf
     block: "{{ postconf }}"
@@ -62,14 +62,14 @@
 - name: run postmap
   command: postmap hash:/etc/postfix/sasl_passwd
   when: postfix.relay | bool
-  tags: postix
+  tags: postfix
 
 - name: change permission 
   file: path="{{ item }}" owner=root group=root mode=0600
   with_items: "{{ files }}"
   when: postfix.relay | bool
-  tags: postix
+  tags: postfix
 
-- name: postifx is runnning and enabled
+- name: postfix is running and enabled
   service: name=postfix state=started enabled=yes
-  tags: postix
+  tags: postfix
